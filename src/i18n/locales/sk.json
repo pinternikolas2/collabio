@@ -1,0 +1,671 @@
+{
+    "common": {
+        "loading": "Načítanie...",
+        "save": "Uložiť",
+        "cancel": "Zrušiť",
+        "back": "Späť",
+        "delete": "Vymazať",
+        "edit": "Upraviť",
+        "confirm": "Potvrdiť"
+    },
+    "navigation": {
+        "home": "Domov",
+        "marketplace": "Nástenka",
+        "talents": "Talenti",
+        "companies": "Firmy",
+        "collaborations": "Spolupráce",
+        "admin": "Admin",
+        "login": "Prihlásiť sa",
+        "register": "Registrovať",
+        "logout": "Odhlásiť sa",
+        "my_profile": "Môj profil",
+        "my_account": "Môj účet",
+        "messages": "Správy",
+        "finance": "Financie",
+        "calls": "Hovory",
+        "contracts": "Zmluvy"
+    },
+    "marketplace": {
+        "title": "Nástenka",
+        "subtitle": "Projekty od firiem aj ponuky od talentov - nájdite ideálnu spoluprácu",
+        "search_placeholder": "Hľadať projekty...",
+        "filter_type": "Typ",
+        "filter_all": "Všetko",
+        "filter_offer": "Ponuky",
+        "filter_demand": "Dopyty",
+        "filter_category": "Kategória",
+        "filter_all_categories": "Všetky kategórie",
+        "sort_by": "Zoradiť podľa",
+        "sort_recent": "Najnovšie",
+        "sort_price_high": "Cena: Najvyššia",
+        "sort_price_low": "Cena: Najnižšia",
+        "sort_rating": "Hodnotenie",
+        "found_results": "Nájdených {{count}} projektov",
+        "found_result": "Nájdený {{count}} projekt",
+        "found_results_few": "Nájdené {{count}} projekty",
+        "add_offer": "Pridať ponuku",
+        "create_project": "Vytvoriť projekt",
+        "detail": "Detail",
+        "reset_filters": "Resetovať filtre",
+        "no_projects": "Žiadne projekty nenájdené",
+        "price": "Rozpočet",
+        "vat": "DPH",
+        "preview_title": "Obmedzený náhľad trhoviska",
+        "preview_desc": "Vidíte iba základný prehľad projektov. Pre zobrazenie detailov, kontaktovanie a vytváranie projektov sa musíte registrovať alebo prihlásiť.",
+        "register_action": "Registrovať sa"
+    },
+    "landing": {
+        "hero": {
+            "badge": "🚀 Nová éra spolupráce",
+            "title": "Prepájame talenty s firmami",
+            "subtitle": "Collabio je moderná platforma pre vytváranie úspešných spoluprác medzi športovcami, umelcami, influencermi a značkami. Bezpečne, rýchlo a transparentne.",
+            "btn_explore": "Preskúmať trhovisko",
+            "btn_start": "Začať zadarmo"
+        },
+        "features": {
+            "title": "Prečo Collabio?",
+            "subtitle": "Ponúkame komplexné riešenie pre úspešné spolupráce s dôrazom na bezpečnosť a transparentnosť",
+            "marketing_title": "Maximálny marketingový dosah",
+            "marketing_desc": "Firmy a značky získavajú autentické zviditeľnenie prostredníctvom talentov: športovcov, umelcov a influencerov, ktorí oslovujú cieľovú komunitu a zvyšujú dôveru.",
+            "security_title": "Bezpečné platby & správa dohôd",
+            "security_desc": "Platby sú chránené escrow systémom. Peniaze sú uvoľnené talentu až po úplnom dokončení spolupráce podľa dohodnutých podmienok, takže obe strany majú istotu.",
+            "legal_title": "Formálne dohody & zmluvy",
+            "legal_desc": "Každá spolupráca je podporená digitálnou zmluvou, ktorú obe strany potvrdzujú. Dohody sú jasné, transparentné a právne chránené.",
+            "transparency_title": "Hodnotenie a transparentnosť",
+            "transparency_desc": "Systém hodnotenia a recenzií buduje dôveru medzi partnermi. Každá strana môže ohodnotiť spoluprácu a zanechať spätnú väzbu pre ostatných."
+        },
+        "how_it_works": {
+            "title": "Ako to funguje?",
+            "subtitle": "Štyri jednoduché kroky k úspešnej spolupráci",
+            "step1_title": "Registrácia",
+            "step1_desc": "Vytvorte si účet ako talent alebo firma. Overenie e-mailom trvá len pár sekúnd.",
+            "step2_title": "Profil",
+            "step2_desc": "Doplňte svoje portfólio, prepojte sociálne siete a nastavte svoje preferencie.",
+            "step3_title": "Spolupráca",
+            "step3_desc": "Nájdite projekty alebo talenty, dohodnite podmienky a začnite spoluprácu.",
+            "step4_title": "Platba",
+            "step4_desc": "Bezpečná platba cez escrow. Peniaze sú uvoľnené až po úspešnom dokončení."
+        },
+        "benefits": {
+            "title": "Výhody pre všetkých",
+            "subtitle": "Či už ste talent alebo firma, Collabio vám prináša jedinečné výhody",
+            "for_talents": "Pre talenty",
+            "talent_list": [
+                "Prístup k prémiovým značkám a firmám",
+                "Férové podmienky a bezpečné platby",
+                "Rast sledovanosti a dosahu",
+                "Profesionálne zmluvy a faktúry",
+                "Bez provízií pre prijaté ponuky"
+            ],
+            "btn_talent": "Registrovať ako talent",
+            "for_companies": "Pre firmy",
+            "company_list": [
+                "Databáza overených influencerov a talentov",
+                "Transparentné štatistiky a dosah",
+                "Escrow systém pre bezpečnosť",
+                "Automatické generovanie zmlúv",
+                "Detailný reporting a analytics"
+            ],
+            "btn_company": "Registrovať ako firma"
+        },
+        "faq": {
+            "more_questions": "Máte ďalšie otázky? Pozrite si kompletné FAQ",
+            "view_all": "Zobraziť všetky otázky",
+            "items": [
+                {
+                    "q": "Čo je Collabio?",
+                    "a": "Collabio je moderná platforma, ktorá prepája firmy a sponzorov s talentovanými športovcami, umelcami a influencermi. Umožňuje rýchlo a bezpečne dohadovať spolupráce a sponzorstvá."
+                },
+                {
+                    "q": "Ako funguje proces spolupráce?",
+                    "a": "Firmy aj talenti si nastavia svoje profily a projekty. Po nájdení vhodného partnera sa dohodne spolupráca priamo cez Collabio, ktorá je chránená escrow platbou – peniaze sú uvoľnené až po dokončení dohody."
+                },
+                {
+                    "q": "Je používanie Collabio bezpečné?",
+                    "a": "Áno. Celý proces dohody a platby je zabezpečený. Vaše osobné údaje sú chránené podľa GDPR a komunikácia prebieha v šifrovanom prostredí."
+                },
+                {
+                    "q": "Ako fungujú platby a escrow?",
+                    "a": "Platba je uložená bezpečne cez Stripe a uvoľnená talentovi až po splnení dohodnutej práce. Tak získajú firmy istotu, že podmienky budú dodržané, a talent bezpečne dostane svoje peniaze."
+                },
+                {
+                    "q": "Môžem si zvoliť typ spolupráce?",
+                    "a": "Áno. Môžete ponúknuť malé rýchle spolupráce (napr. jedno story, krátky výkon) s okamžitou platbou, alebo dlhšie projekty s dohodnutými termínmi a escrow zabezpečením."
+                },
+                {
+                    "q": "Ako sa môžem registrovať a začať?",
+                    "a": "Stačí sa zaregistrovať, overiť e-mail, doplniť profil a prepojiť platobný účet (Stripe). Následne môžete vyhľadávať partnerov, dohadovať spolupráce a spravovať projekty."
+                }
+            ]
+        },
+        "cta": {
+            "title": "Pripravení začať?",
+            "subtitle": "Pripojte sa k stovkám úspešných talentov a firiem. Registrácia je zadarmo a trvá len chvíľu.",
+            "contact_us": "Kontaktujte nás"
+        },
+        "warning": {
+            "title": "⚠️ Obmedzený prístup pre neregistrovaných užívateľov",
+            "desc": "Pre plný prístup k trhovisku, kontaktom a všetkým funkciám platformy sa prosím registrujte alebo prihláste.",
+            "btn": "Registrovať sa teraz"
+        }
+    },
+    "footer": {
+        "about": "Prepájame talenty s firmami a vytvárame úspešné spolupráce.",
+        "links": "Rýchle odkazy",
+        "links_about": "O nás",
+        "links_marketplace": "Trhovisko",
+        "links_talents": "Zoznam talentov",
+        "links_companies": "Zoznam firiem",
+        "links_faq": "FAQ",
+        "legal": "Právne informácie",
+        "legal_terms": "Obchodné podmienky",
+        "legal_gdpr": "Ochrana osobných údajov (GDPR)",
+        "legal_cookies": "Zásady používania cookies",
+        "contact": "Kontakt",
+        "rights": "Všetky práva vyhradené."
+    },
+    "settings": {
+        "title": "Nastavenia",
+        "language": "Jazyk",
+        "theme": "Vzhľad",
+        "notifications": "Upozornenia",
+        "czech": "Čeština",
+        "slovak": "Slovenčina"
+    },
+    "auth": {
+        "title": "Collabio",
+        "subtitle": "Platforma na prepojenie talentov a firiem",
+        "back": "Späť",
+        "tabs": {
+            "signin": "Prihlásenie",
+            "signup": "Registrácia"
+        },
+        "labels": {
+            "email": "Email",
+            "password": "Heslo",
+            "confirm_password": "Potvrdenie hesla",
+            "first_name": "Meno",
+            "last_name": "Priezvisko",
+            "select_account_type": "Vyberte typ účtu",
+            "company_name": "Názov firmy",
+            "ico": "IČO"
+        },
+        "placeholders": {
+            "email": "vas@email.sk",
+            "ico": "12345678"
+        },
+        "buttons": {
+            "signin": "Prihlásiť sa",
+            "signing_in": "Prihlasovanie...",
+            "signup": "Zaregistrovať sa",
+            "signing_up": "Registrácia..."
+        },
+        "messages": {
+            "signin_success": "Úspešne prihlásené!",
+            "signin_failed": "Prihlásenie zlyhalo",
+            "signup_success": "Registrácia úspešná! Prihlasovanie...",
+            "signup_failed": "Registrácia zlyhala",
+            "passwords_mismatch": "Heslá sa nezhodujú",
+            "password_min_length": "Heslo musí mať aspoň 6 znakov",
+            "test_login_success": "Testovací režim: Prihlásené ako {{role}}",
+            "test_login_failed": "Chyba testovacieho prihlásenia: {{error}}"
+        },
+        "test_login": {
+            "title": "Rýchly Test (Automaticky vytvorí účet)",
+            "talent": "Test Športovec",
+            "company": "Test Firma"
+        },
+        "roles": {
+            "talent_title": "Talent",
+            "talent_desc": "Športovci, Umelci, Influenceri",
+            "company_title": "Firma & Sponzor",
+            "company_desc": "Firmy, Sponzori, Značky"
+        }
+    },
+    "talent_profile": {
+        "errors": {
+            "not_talent": "Tento profil nie je talent profil",
+            "backend_unavailable": "Backend nie je dostupný. Profil nie je možné načítať. Skontrolujte konzolu prehliadača pre ďalšie informácie.",
+            "user_not_found": "Profil užívateľa nebol nájdený v databáze.",
+            "fetch_error": "Nepodarilo sa načítať profil: {{error}}",
+            "load_error_title": "Chyba načítania profilu",
+            "not_found": "Talent nenájdený",
+            "what_to_do": "💡 Čo robiť:",
+            "check_console": "Skontrolujte konzolu prehliadača (F12)",
+            "backend_deploy": "Backend možno nie je nasadený na Supabase",
+            "docs": "Viď dokumentáciu: DEPLOYMENT_GUIDE.md"
+        },
+        "loading": "Načítavam profil...",
+        "verified": "Overené",
+        "send_message": "Napísať správu",
+        "message_short": "Správa",
+        "offer_collaboration": "Ponúknuť spoluprácu",
+        "collaboration_short": "Spolupráca",
+        "cant_contact_talent": "💡 Poznámka: Talenti nemôžu kontaktovať iných talentov. Collabio je platforma pre prepojenie talentov a firiem.",
+        "analytics": "Analytika",
+        "edit_profile": "Upraviť profil",
+        "back_to_list": "Späť na zoznam talentov",
+        "stats": {
+            "followers": "Sledujúcich",
+            "projects": "Projektov",
+            "rating": "Hodnotenie",
+            "member_since": "Členom od",
+            "total_earnings": "Celkové príjmy"
+        },
+        "sections": {
+            "social_media": "Sociálne siete",
+            "skills": "Zručnosti",
+            "upcoming_events": "Nadchádzajúce udalosti",
+            "upcoming_desc_own": "Spravujte svoje nadchádzajúce akcie a reklamné príležitosti",
+            "upcoming_desc_other": "Reklamné príležitosti počas nadchádzajúcich akcií",
+            "add_event": "Pridať udalosť",
+            "no_events": "Žiadne nadchádzajúce udalosti",
+            "add_events_hint": "Pridajte svoje nadchádzajúce akcie a získajte možnosti reklamných spoluprác",
+            "advertising": "Reklamné možnosti",
+            "contact_for_collab": "Kontaktovať a dohodnúť spoluprácu"
+        },
+        "tabs": {
+            "portfolio": "Portfólio",
+            "reviews": "Hodnotenia",
+            "projects": "Projekty"
+        },
+        "reviews": {
+            "count": "{{count}} hodnotení",
+            "none": "Zatiaľ žiadne hodnotenia"
+        },
+        "projects": {
+            "completed": "Dokončené",
+            "none": "Zatiaľ žiadne dokončené projekty"
+        },
+        "events": {
+            "visitors": "{{count}} návštevníkov",
+            "tv_broadcast": "TV prenos",
+            "price_agreement": "Cena podľa dohody",
+            "types": {
+                "match": "Zápas",
+                "tournament": "Turnaj",
+                "concert": "Koncert",
+                "show": "Vystúpenie",
+                "conference": "Konferencia",
+                "other": "Iné"
+            },
+            "ad_types": {
+                "banner": "🎯 Plachta/Banner",
+                "clothing": "👕 Logo na oblečení",
+                "social_post": "📱 Social Media Post",
+                "mention": "🎤 Zmienka",
+                "booth": "🏪 Stánok",
+                "other": "✨ Ostatné"
+            }
+        },
+        "add_event_form": {
+            "title": "Pridať nadchádzajúcu udalosť",
+            "name_label": "Názov udalosti *",
+            "name_placeholder": "napr. Pražský Maratón 2025",
+            "desc_label": "Popis udalosti *",
+            "desc_placeholder": "Popíšte udalosť, čoho sa týka, aký očakávate dosah...",
+            "type_label": "Typ udalosti *",
+            "attendance_label": "Očakávaná návštevnosť",
+            "attendance_placeholder": "napr. 5000",
+            "start_label": "Dátum začiatku *",
+            "end_label": "Dátum konca",
+            "city_label": "Mesto *",
+            "city_placeholder": "napr. Praha",
+            "venue_label": "Miesto konania",
+            "venue_placeholder": "napr. O2 Aréna",
+            "address_label": "Adresa",
+            "address_placeholder": "napr. Českomoravská 2345/17, Praha 9",
+            "tv_label": "Televízny prenos",
+            "platform_label": "Platforma vysielania",
+            "platform_placeholder": "napr. ČT Sport, YouTube Live...",
+            "tip": "💡 Tip: Po vytvorení udalosti budete môcť pridať konkrétne reklamné možnosti (plachty, logá na oblečení, zmienky atď.) a ich ceny.",
+            "submit": "Vytvoriť udalosť",
+            "cancel": "Zrušiť"
+        }
+    },
+    "company_profile": {
+        "errors": {
+            "not_company": "Tento profil nie je firemný profil",
+            "backend_unavailable": "Backend nie je dostupný. Profil nie je možné načítať. Skontrolujte konzolu prehliadača pre ďalšie informácie.",
+            "user_not_found": "Profil užívateľa nebol nájdený v databáze.",
+            "fetch_error": "Nepodarilo sa načítať profil: {{error}}",
+            "load_error_title": "Chyba načítania profilu",
+            "not_found": "Firma nenájdená",
+            "what_to_do": "💡 Čo robiť:",
+            "check_console": "Skontrolujte konzolu prehliadača (F12)",
+            "backend_deploy": "Backend možno nie je nasadený na Supabase",
+            "docs": "Viď dokumentáciu: DEPLOYMENT_GUIDE.md"
+        },
+        "loading": "Načítavam profil...",
+        "verified": "Overené",
+        "send_message": "Napísať správu",
+        "message_short": "Správa",
+        "offer_collaboration": "Ponúknuť spoluprácu",
+        "collaboration_short": "Spolupráca",
+        "cant_contact_company": "💡 Poznámka: Firmy nemôžu kontaktovať iné firmy. Collabio je platforma pre prepojenie talentov a firiem.",
+        "analytics": "Analytika",
+        "edit_profile": "Upraviť profil",
+        "back_to_list": "Späť na zoznam firiem",
+        "stats": {
+            "active_projects": "Aktívne projekty",
+            "completed": "Dokončených",
+            "rating": "Hodnotenie",
+            "member_since": "Členom od",
+            "total_spent": "Celkové výdavky"
+        },
+        "sections": {
+            "social_media": "Sociálne siete",
+            "industry_focus": "Oblasť záujmu",
+            "no_socials": "Žiadne sociálne siete nie sú prepojené"
+        },
+        "industry": {
+            "brand_awareness": "Brand Awareness",
+            "content_marketing": "Content Marketing",
+            "influencer_marketing": "Influencer Marketing"
+        },
+        "tabs": {
+            "projects": "Projekty",
+            "reviews": "Hodnotenia",
+            "collaborations": "Spolupráce"
+        },
+        "projects": {
+            "open": "Otvorené",
+            "closed": "Uzavreté",
+            "budget": "Rozpočet:",
+            "category": "Kategória:",
+            "none": "Zatiaľ žiadne projekty"
+        },
+        "reviews": {
+            "count": "{{count}} hodnotení",
+            "none": "Zatiaľ žiadne hodnotenia"
+        },
+        "collaborations": {
+            "completed": "Dokončené",
+            "none": "Zatiaľ žiadne dokončené spolupráce"
+        }
+    },
+    "admin": {
+        "title": "Admin Dashboard",
+        "subtitle": "Kompletný prehľad platformy Collabio",
+        "stats": {
+            "total_users": "Celkom užívateľov",
+            "talents": "Talentov:",
+            "companies": "Firiem:",
+            "collaborations": "Spolupráce",
+            "active": "Aktívne:",
+            "total_volume": "Celkový objem",
+            "platform_fees": "Poplatky platformy:",
+            "projects": "Projekty"
+        },
+        "tabs": {
+            "users": "Užívatelia",
+            "kyc": "KYC Overenie",
+            "projects": "Projekty",
+            "collaborations": "Spolupráce",
+            "transactions": "Transakcie",
+            "settings": "Nastavenia"
+        },
+        "users": {
+            "title": "Správa užívateľov",
+            "export": "Export dát",
+            "table": {
+                "name": "Meno",
+                "email": "Email",
+                "role": "Rola",
+                "category": "Kategória",
+                "verified": "Overený",
+                "actions": "Akcie"
+            },
+            "badges": {
+                "yes": "Áno",
+                "no": "Nie",
+                "talent": "Talent",
+                "company": "Firma",
+                "admin": "Admin"
+            },
+            "detail": "Detail"
+        },
+        "kyc": {
+            "title": "KYC Overenie totožnosti",
+            "subtitle": "Schvaľovanie dokumentov pre overenie totožnosti užívateľov",
+            "export": "Export",
+            "stats": {
+                "pending": "Čaká na schválenie",
+                "verified": "Overené",
+                "rejected": "Zamietnuté"
+            },
+            "table": {
+                "user": "Užívateľ",
+                "role": "Rola",
+                "doc_type": "Typ dokumentu",
+                "ico_company": "IČO/Firma",
+                "uploaded": "Nahrané",
+                "status": "Stav",
+                "actions": "Akcie"
+            },
+            "badges": {
+                "verified": "Overené",
+                "pending": "Čaká",
+                "rejected": "Zamietnuté"
+            },
+            "doc_types": {
+                "id_card": "Občiansky preukaz",
+                "business_license": "Živnostenský list",
+                "ico_certificate": "Výpis z OR"
+            },
+            "actions": {
+                "approve": "Schváliť",
+                "reject": "Zamietnuť",
+                "view": "Zobraziť"
+            }
+        },
+        "projects": {
+            "title": "Správa projektov",
+            "export": "Export dát",
+            "table": {
+                "title": "Názov",
+                "category": "Kategória",
+                "price": "Cena",
+                "status": "Stav",
+                "rating": "Hodnotenie",
+                "featured": "Odporúčané"
+            },
+            "badges": {
+                "active": "Aktívne",
+                "inactive": "Neaktívne",
+                "yes": "Áno"
+            }
+        },
+        "collaborations": {
+            "title": "Správa spoluprác",
+            "export": "Export dát",
+            "table": {
+                "id": "ID",
+                "talent": "Talent",
+                "company": "Firma",
+                "price": "Suma",
+                "status": "Stav",
+                "escrow": "Escrow"
+            },
+            "badges": {
+                "released": "Uvoľnené",
+                "held": "Držané"
+            }
+        },
+        "transactions": {
+            "title": "Transakcie platformy",
+            "export": "Export dát",
+            "financial_overview": "Finančný prehľad",
+            "stats": {
+                "volume": "Celkový objem",
+                "fees": "Poplatky platformy (5%)",
+                "count": "Transakcie"
+            },
+            "table": {
+                "date": "Dátum",
+                "user": "Užívateľ",
+                "type": "Typ",
+                "amount": "Suma",
+                "status": "Stav"
+            },
+            "badges": {
+                "income": "Príjem",
+                "expense": "Výdaj",
+                "escrow": "Escrow",
+                "completed": "Dokončené",
+                "pending": "Čaká",
+                "failed": "Zlyhalo"
+            }
+        },
+        "settings": {
+            "title": "Nastavenia platformy",
+            "service_fee": "Servisný poplatok (%)",
+            "service_fee_desc": "Aktuálny poplatok platformy z každej transakcie",
+            "min_project_price": "Minimálna cena projektu (CZK)",
+            "escrow_days": "Doba držania Escrow (dni)",
+            "escrow_days_desc": "Maximálna doba, počas ktorej sú peniaze držané v escrow",
+            "save": "Uložiť nastavenia"
+        }
+    },
+    "marketplace": {
+        "title": "Trhovisko príležitostí",
+        "subtitle": "Nájdite perfektnú spoluprácu pre vašu značku alebo talent",
+        "add_offer": "Pridať ponuku",
+        "create_project": "Vytvoriť projekt",
+        "preview_title": "Ukážka pre verejnosť",
+        "preview_desc": "Pre zobrazenie všetkých detailov sa prihláste",
+        "register_action": "Registrovať zadarmo",
+        "search_placeholder": "Hľadať projekty, talenty, kľúčové slová...",
+        "filter_type": "Typ spolupráce",
+        "filter_all": "Všetko",
+        "filter_offer": "Ponuka talentu",
+        "filter_demand": "Dopyt firmy",
+        "filter_category": "Kategória",
+        "filter_all_categories": "Všetky kategórie",
+        "sort_by": "Zoradiť podľa",
+        "sort_recent": "Najnovšie",
+        "sort_price_high": "Najdrahšie",
+        "sort_price_low": "Najlacnejšie",
+        "sort_rating": "Najlepšie hodnotené",
+        "found_result": "Nájdený {{count}} výsledok",
+        "found_results_few": "Nájdené {{count}} výsledky",
+        "found_results": "Nájdených {{count}} výsledkov",
+        "no_projects": "Neboli nájdené žiadne projekty",
+        "reset_filters": "Zrušiť filtre",
+        "price": "Cena / Rozpočet",
+        "vat": "DPH",
+        "detail": "Zobraziť detail"
+    },
+    "settings": {
+        "loading": "Načítanie nastavení...",
+        "user_not_found": "Užívateľ nenájdený",
+        "back_home": "Späť na hlavnú stránku",
+        "back_profile": "Späť na profil",
+        "title": "Nastavenia",
+        "subtitle": "Spravujte svoj účet a predvoľby",
+        "language": "Jazyk",
+        "tabs": {
+            "profile": "Profil",
+            "notifications": "Notifikácie",
+            "privacy": "Súkromie",
+            "security": "Zabezpečenie"
+        },
+        "profile": {
+            "photo_title": "Profilová fotka",
+            "photo_desc": "Aktualizujte svoju profilovú fotografiu",
+            "upload_photo": "Nahrať novú fotku",
+            "photo_constraints": "JPG, PNG alebo GIF (max. 5MB)",
+            "basic_info": "Základné informácie",
+            "basic_info_desc": "Upravte svoje osobné údaje",
+            "first_name": "Meno",
+            "last_name": "Priezvisko",
+            "email": "E-mail",
+            "email_verified": "E-mail overený",
+            "phone": "Telefón",
+            "phone_placeholder": "+421 xxx xxx xxx",
+            "address": "Adresa",
+            "address_placeholder": "Ulica, Mesto, PSČ",
+            "category": "Kategória",
+            "select_category": "Vyberte kategóriu",
+            "bio_talent": "O mne",
+            "bio_company": "O firme",
+            "bio_placeholder_talent": "Napíšte niečo o sebe...",
+            "bio_placeholder_company": "Napíšte niečo o svojej firme...",
+            "bio_limit": "{{count}}/500 znakov",
+            "save": "Uložiť zmeny",
+            "success": "Profil úspešne uložený",
+            "success_desc": "Vaše zmeny boli uložené",
+            "error": "Nepodarilo sa uložiť profil",
+            "load_error": "Nepodarilo sa načítať dáta užívateľa"
+        },
+        "social": {
+            "title": "Sociálne siete",
+            "desc": "Prepojte svoje sociálne účty",
+            "instagram_placeholder": "@vase_uzivatelske_meno",
+            "save": "Uložiť sociálne siete",
+            "saving": "Ukladanie..."
+        },
+        "notifications": {
+            "title": "Nastavenie notifikácií",
+            "desc": "Spravujte, ako chcete byť informovaní",
+            "email": "E-mailové notifikácie",
+            "email_desc": "Dostávajte aktualizácie e-mailom",
+            "push": "Push notifikácie",
+            "push_desc": "Dostávajte notifikácie v prehliadači",
+            "messages": "Nové správy",
+            "messages_desc": "Notifikácie pri novej správe v chate",
+            "projects": "Projekty a ponuky",
+            "projects_desc": "Notifikácie o nových projektoch a ponukách",
+            "marketing": "Marketingové e-maily",
+            "marketing_desc": "Tipy, novinky a špeciálne ponuky",
+            "save": "Uložiť nastavenie notifikácií",
+            "success": "Nastavenie notifikácií uložené"
+        },
+        "privacy": {
+            "title": "Nastavenie súkromia",
+            "desc": "Kontrolujte, kto môže vidieť vaše informácie",
+            "visibility": "Viditeľnosť profilu",
+            "public": "Verejný - Viditeľný pre všetkých",
+            "private": "Súkromný - Iba pre prihlásených",
+            "note": "Ochrana súkromia",
+            "note_text": "Vaše kontaktné údaje (e-mail a telefón) sú súkromné a nie sú nikdy zobrazené ostatným užívateľom. Všetka komunikácia prebieha výhradne cez interný chat a videohovory platformy.",
+            "save": "Uložiť nastavenie súkromia",
+            "success": "Nastavenie súkromia uložené"
+        },
+        "security": {
+            "kyc_title": "Overenie totožnosti (KYC)",
+            "kyc_desc_talent": "Nahrajte občIANSKY preukaz pre overenie účtu",
+            "kyc_desc_company": "Nahrajte výpis z OR alebo živnostenský list",
+            "verified": "Overené",
+            "pending": "Čaká na schválenie",
+            "unverified": "Neoverené",
+            "mandatory_verification": "Povinné overenie",
+            "mandatory_text": "Pre plné využívanie platformy, vrátane escrow platieb a uzatvárania zmlúv, je nutné overiť totožnosť nahraním",
+            "verify_btn": "Overiť totožnosť",
+            "view_btn": "Zobraziť overenie",
+            "verified_text": "Váš účet je plne overený a môžete využívať všetky funkcie",
+            "password_title": "Heslo",
+            "password_desc": "Zmeňte svoje prihlasovacie heslo",
+            "change_password": "Zmeniť heslo",
+            "password_note": "Na váš e-mail bude zaslaný odkaz pre zmenu hesla",
+            "password_info": "Funkcia zmeny hesla",
+            "password_info_desc": "V produkcii by bol zaslaný e-mail s odkazom na zmenu hesla",
+            "two_factor_title": "Dvojfázové overenie",
+            "two_factor_desc": "Pridajte extra vrstvu zabezpečenia",
+            "two_factor_inactive": "2FA nie je aktívne",
+            "two_factor_activate": "Aktivovať",
+            "payment_title": "Platobné metódy",
+            "payment_desc": "Spravujte svoje platobné údaje",
+            "stripe_connected": "Prepojené",
+            "stripe_disconnected": "Neprepojené",
+            "stripe_connect": "Prepojiť",
+            "danger_zone": "Nebezpečná zóna",
+            "danger_desc": "Nevratné akcie s vaším účtom",
+            "delete_warning": "Varovanie",
+            "delete_text": "Zmazanie účtu je nevratné. Všetky vaše dáta, projekty a správy budú trvalo odstránené.",
+            "delete_account": "Zmazať účet",
+            "delete_toast": "Zmazanie účtu",
+            "delete_toast_desc": "Táto akcia vyžaduje potvrdenie e-mailom"
+        }
+    }
+}

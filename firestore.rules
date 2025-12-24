@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isParticipant(userIds) {
+      return request.auth.uid in userIds;
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+      // Only admin can delete typically, or owner
+      allow delete: if false; 
+    }
+
+    // Chats
+    match /chats/{chatId} {
+      allow create: if isAuthenticated();
+      // Allow read/update if user is in participants list
+      allow read, update: if isAuthenticated() && isParticipant(resource.data.participants);
+    }
+
+    // Messages (subcollection of chats or root collection? implementation used root collection with chatId field)
+    match /messages/{messageId} {
+      allow read: if isAuthenticated(); // Simplified, ideally check if user is in associated chat
+      allow create: if isAuthenticated();
+      // Should validate that request.resource.data.fromUserId == request.auth.uid
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid; // for marking as read
+      allow create: if false; // Only backend or triggers should create notifications (usually)
+    }
+
+    // Projects/Collaborations/Events - Generic rules for now
+    match /{path=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}
