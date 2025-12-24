@@ -6,13 +6,13 @@ import { getStorage } from "firebase/storage";
 
 // TODO: Doplňte údaje z Firebase Console -> Project Settings
 const firebaseConfig = {
-    apiKey: "VLOZTE_API_KEY_ZDE",
-    authDomain: "VLOZTE_AUTH_DOMAIN_ZDE",
-    projectId: "VLOZTE_PROJECT_ID_ZDE",
-    storageBucket: "VLOZTE_STORAGE_BUCKET_ZDE",
-    messagingSenderId: "VLOZTE_MESSAGING_SENDER_ID_ZDE",
-    appId: "VLOZTE_APP_ID_ZDE",
-    measurementId: "VLOZTE_MEASUREMENT_ID_ZDE"
+    apiKey: "AIzaSyAhNMFLxioGM-fIpVwy4Ey-VpMjP9CX4lY",
+    authDomain: "collabio-242eb.firebaseapp.com",
+    projectId: "collabio-242eb",
+    storageBucket: "collabio-242eb.firebasestorage.app",
+    messagingSenderId: "451273484698",
+    appId: "1:451273484698:web:9f3b2d849bc3f21fc17223",
+    measurementId: "G-LLTKPEGJRK"
 };
 
 // Initialize Firebase
