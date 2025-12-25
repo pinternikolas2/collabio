@@ -48,7 +48,9 @@ firebase deploy --only hosting
 ```
 A změny se projeví na webu během pár sekund.
 
-## Automatické nasazení přes GitHub (Doporučeno)
+## Automagit add .
+git commit -m "Add debug error handler"
+git pushtické nasazení přes GitHub (Doporučeno)
 Pokud chcete, aby se web aktualizoval sám pokaždé, když nahrajete kód na GitHub, můžete nastavit automatický deploy.
 
 1.  Spusťte tento příkaz:
