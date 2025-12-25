@@ -35,22 +35,51 @@ exports.createPaymentIntent = functions.https.onCall(async (data, context) => {
 });
 
 /**
- * 2. Mock AI Assistant
- * Call from frontend for secure AI interaction
+ * 2. Gemini AI Assistant
+ * Call from frontend: const { content } = await chatWithAI({ message: "Hello", history: [] });
  */
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 exports.chatWithAI = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "User must be logged in.");
     }
 
-    const { messages } = data;
-    // TODO: Integrate real OpenAI call here
-    // const completion = await openai.chat.completions.create({ ... });
+    const { message, history = [] } = data;
 
-    return {
-        role: "assistant",
-        content: "Toto je odpověď z Cloud Function (backend). Systém je připraven na integraci OpenAI."
-    };
+    // Get API key from environment variables
+    const apiKey = process.env.GEMINI_API_KEY || functions.config().gemini.key;
+    if (!apiKey) {
+        throw new functions.https.HttpsError("failed-precondition", "Gemini API Key is missing.");
+    }
+
+    try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+        // Convert history to Gemini format if needed, or just use the latest message for simplicity in this turn
+        const chat = model.startChat({
+            history: history.map(h => ({
+                role: h.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: h.content }]
+            })),
+            generationConfig: {
+                maxOutputTokens: 1000,
+            },
+        });
+
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const text = response.text();
+
+        return {
+            role: "assistant",
+            content: text
+        };
+    } catch (error) {
+        console.error("Gemini Error:", error);
+        throw new functions.https.HttpsError("internal", error.message);
+    }
 });
 
 /**

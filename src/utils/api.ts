@@ -543,6 +543,26 @@ export const storageApi = {
 };
 
 // ============================================================================
+// AI API
+// ============================================================================
+
+import { functions } from '../config/firebase';
+import { httpsCallable } from 'firebase/functions';
+
+export const aiApi = {
+  chatWithAI: async (message: string, history: any[] = []) => {
+    try {
+      const chatFunction = httpsCallable(functions, 'chatWithAI');
+      const result = await chatFunction({ message, history });
+      return result.data as { role: string, content: string };
+    } catch (error) {
+      console.error("AI API Error:", error);
+      throw error;
+    }
+  }
+};
+
+// ============================================================================
 // HEALTH CHECK
 // ============================================================================
 

@@ -363,14 +363,24 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
     setIsTyping(true);
 
     try {
-      const response = await getAIResponse(inputValue);
+      // Import dynamically to avoid circular dependencies if any
+      const { aiApi } = await import('../utils/api');
+
+      // Convert history for API
+      const history = messages.map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
+      const response = await aiApi.chatWithAI(inputValue, history);
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: response.text,
+        content: response.content || "Nerozuměl jsem odpovědi.",
         timestamp: new Date(),
-        suggestions: response.suggestions
+        // Add basic suggestions based on keywords as fallback or parse from response if AI supports it
+        suggestions: []
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -379,7 +389,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Omlouvám se, došlo k chybě. Zkuste to prosím znovu.',
+        content: 'Omlouvám se, došlo k chybě při komunikaci s AI serverem. Zkontrolujte prosím připojení nebo zda byly nasazeny Cloud Functions.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -668,8 +678,8 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
                   >
                     <div
                       className={`max-w-[85%] rounded-2xl px-4 py-3 ${message.role === 'user'
-                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                          : 'bg-gray-100 text-gray-900'
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                        : 'bg-gray-100 text-gray-900'
                         }`}
                     >
                       {message.role === 'assistant' && (
