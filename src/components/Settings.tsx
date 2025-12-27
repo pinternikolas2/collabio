@@ -397,12 +397,12 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="title">Co přesně děláte? (Profese/Titul)</Label>
+                    <Label htmlFor="title">{t('settings.profile.job_title')}</Label>
                     <Input
                       id="title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Např. Tenisový hráč, Malíř, YouTuber..."
+                      placeholder={t('settings.profile.job_title_placeholder')}
                     />
                   </div>
 
@@ -533,17 +533,17 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
           <TabsContent value="notifications">
             <Card>
               <CardHeader>
-                <h3 className="text-xl font-semibold">Nastavení notifikací</h3>
+                <h3 className="text-xl font-semibold">{t('settings.notifications.title')}</h3>
                 <CardDescription>
-                  Spravujte, jak chcete být informováni
+                  {t('settings.notifications.desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>E-mailové notifikace</Label>
+                    <Label>{t('settings.notifications.email')}</Label>
                     <p className="text-sm text-gray-500">
-                      Dostávejte aktualizace e-mailem
+                      {t('settings.notifications.email_desc')}
                     </p>
                   </div>
                   <Switch
@@ -556,9 +556,9 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Push notifikace</Label>
+                    <Label>{t('settings.notifications.push')}</Label>
                     <p className="text-sm text-gray-500">
-                      Dostávejte notifikace v prohlížeči
+                      {t('settings.notifications.push_desc')}
                     </p>
                   </div>
                   <Switch
@@ -571,9 +571,9 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Nové zprávy</Label>
+                    <Label>{t('settings.notifications.messages')}</Label>
                     <p className="text-sm text-gray-500">
-                      Notifikace při nové zprávě v chatu
+                      {t('settings.notifications.messages_desc')}
                     </p>
                   </div>
                   <Switch
@@ -586,9 +586,9 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Projekty a nabídky</Label>
+                    <Label>{t('settings.notifications.projects')}</Label>
                     <p className="text-sm text-gray-500">
-                      Notifikace o nových projektech a nabídkách
+                      {t('settings.notifications.projects_desc')}
                     </p>
                   </div>
                   <Switch
@@ -601,9 +601,9 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Marketingové e-maily</Label>
+                    <Label>{t('settings.notifications.marketing')}</Label>
                     <p className="text-sm text-gray-500">
-                      Tipy, novinky a speciální nabídky
+                      {t('settings.notifications.marketing_desc')}
                     </p>
                   </div>
                   <Switch
@@ -628,30 +628,28 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
           <TabsContent value="privacy">
             <Card>
               <CardHeader>
-                <h3 className="text-xl font-semibold">Nastavení soukromí</h3>
+                <h3 className="text-xl font-semibold">{t('settings.privacy.title')}</h3>
                 <CardDescription>
-                  Kontrolujte, kdo může vidět vaše informace
+                  {t('settings.privacy.desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label>Viditelnost profilu</Label>
+                  <Label>{t('settings.privacy.visibility')}</Label>
                   <Select value={profileVisibility} onValueChange={(v: any) => setProfileVisibility(v)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="public">Veřejný - Viditelný pro všechny</SelectItem>
-                      <SelectItem value="private">Soukromý - Pouze pro přihlášené</SelectItem>
+                      <SelectItem value="public">{t('settings.privacy.public')}</SelectItem>
+                      <SelectItem value="private">{t('settings.privacy.private')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-800">
-                    <strong>🔒 Ochrana soukromí:</strong> Vaše kontaktní údaje (e-mail a telefon)
-                    jsou soukromé a nejsou nikdy zobrazeny ostatním uživatelům. Veškerá komunikace
-                    probíhá výhradně přes interní chat a videohovory platformy.
+                    <strong>🔒 {t('settings.privacy.note')}:</strong> {t('settings.privacy.note_text')}
                   </p>
                 </div>
 
@@ -794,7 +792,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                       </div>
                     </div>
                     {currentUser.stripeId ? (
-                      <Badge className="bg-green-100 text-green-800">Aktivní</Badge>
+                      <Badge className="bg-green-100 text-green-800">{t('settings.security.verified')}</Badge>
                     ) : (
                       <Button variant="outline">{t('settings.security.stripe_connect')}</Button>
                     )}

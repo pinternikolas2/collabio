@@ -361,7 +361,6 @@
             "project": "Projekt",
             "projects": "Projekty",
             "achievement": "Úspěch",
-            "achievements": "Úspěchy",
             "view": "zobrazit",
             "delete_confirm": "Opravdu smazat?",
             "delete_error": "Chyba při mazání",
@@ -603,6 +602,8 @@
             "address_placeholder": "Ulice, Město, PSČ",
             "category": "Kategorie",
             "select_category": "Vyberte kategorii",
+            "job_title": "Co přesně děláte? (Profese/Titul)",
+            "job_title_placeholder": "Např. Tenisový hráč, Malíř, YouTuber...",
             "bio_talent": "O mně",
             "bio_company": "O firmě",
             "bio_placeholder_talent": "Napište něco o sobě...",
@@ -695,9 +696,12 @@
     },
     "project": {
         "edit": {
-            "title": "Upravit projekt",
-            "subtitle": "Aktualizujte informace o vašem projektu",
-            "back_to_detail": "← Zpět na detail projektu"
+            "title": "Vítejte zpět",
+            "subtitle": "Přihlaste se ke svému účtu a pokračujte",
+            "forgot_password": "Zapomenuté heslo?",
+            "labels": {
+                "back_to_detail": "← Zpět na detail projektu"
+            }
         },
         "create": {
             "title": "Vytvořit projekt",
@@ -756,8 +760,13 @@
             "back_to_marketplace": "← Zpět na marketplace",
             "tip_offer": "💡 Tip: Jasné cenové podmínky a dostupnost zvyšují šanci na úspěšnou spolupráci.",
             "tip_project": "💡 Tip: Projekty s jasnými rozpočty a časovými rámci dostávají o 60% více kvalitních nabídek.",
-            "note_offer": "📝 Poznámka: Po zveřejnění nabídky vás budou firmy kontaktovat přes interní chat. Můžete si prohlédnout jejich profily před přijetím spolupráce.",
-            "note_project": "📝 Poznámka: Po zveřejnění projektu budete dostávat nabídky od talentů. Můžete si prohlédnout jejich profily a vybrat nejlepšího kandidáta.",
+            "note_offer": "Po zveřejnění nabídky vás budou firmy kontaktovat přes interní chat. Můžete si prohlédnout jejich profily před přijetím spolupráce.",
+            "note_project": "Po zveřejnění projektu budete dostávat nabídky od talentů. Můžete si prohlédnout jejich profily a vybrat nejlepšího kandidáta.",
+            "title_placeholder_offer": "Např. Profesionální influencer marketing - Instagram & TikTok",
+            "title_placeholder_project": "Např. Brand ambasador pro sportovní značku",
+            "talent_type_placeholder": "Např. MMA Zápasník, Rapper, K1, Malíř...",
+            "select_type_placeholder": "Vyberte typ",
+            "chars": "znaků",
             "budget_title_offer": "Ceník a dostupnost",
             "budget_desc_offer": "Vaše cenové podmínky a dostupnost",
             "budget_title_project": "Rozpočet a časová osa",
@@ -792,5 +801,31 @@
             "skills_desc": "Klíčová slova pro lepší vyhledávání",
             "duration_label": "Délka projektu"
         }
+    },
+    "chat": {
+        "title": "Zprávy",
+        "subtitle": "Komunikujte s partnery v reálném čase",
+        "search_placeholder": "Hledat konverzace...",
+        "no_messages": "Zatím žádné zprávy",
+        "no_conversations": "Žádné konverzace nenalezeny",
+        "offer_collaboration": "Nabídnout spolupráci",
+        "video_call": "Zahájit videohovor",
+        "schedule_call": "Domluvit videohovor",
+        "view_profile": "Zobrazit profil",
+        "type_message": "Napište zprávu...",
+        "file_too_large": "Soubor je příliš velký (max 10MB)",
+        "file_sent": "Soubor odeslán",
+        "upload_error": "Chyba při nahrávání souboru",
+        "send_error": "Chyba při odesílání zprávy",
+        "start_conversation_error": "Nepodařilo se zahájit konverzaci",
+        "select_conversation": "Vyberte konverzaci",
+        "start_chatting": "Začněte chatovat s vašimi partnery",
+        "info_title": "💬 Real-time komunikace",
+        "info_desc": "Všechny zprávy jsou zasílány v reálném čase. Dostanete e-mailové upozornění při nové zprávě. Konverzace jsou šifrované a bezpečné.",
+        "video_secure": "Zabezpečený videohovor (End-to-End Encrypted)",
+        "video_live": "LIVE",
+        "video_end": "Ukončit hovor",
+        "video_connecting": "Připojování k zabezpečenému kanálu...",
+        "video_permissions": "Prosím povolte přístup k mikrofonu a kameře"
     }
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Send, Search, Paperclip, MoreVertical, Briefcase, Video, Calendar, FileText, ArrowLeft, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Input } from './ui/input';
@@ -20,6 +21,7 @@ type ChatProps = {
 };
 
 export default function Chat({ userId, userRole, targetUserId, targetUserName, onNavigate }: ChatProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<any[]>([]);
@@ -80,7 +82,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
       setSelectedChatId(chatId);
     } catch (err) {
       console.error("Error creating chat:", err);
-      toast.error("Nepodařilo se zahájit konverzaci");
+      toast.error(t('chat.start_conversation_error'));
     }
   };
 
@@ -100,7 +102,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
       setMessageText('');
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Chyba při odesílání zprávy");
+      toast.error(t('chat.send_error'));
     }
   };
 
@@ -112,7 +114,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
     if (!file || !selectedChatId) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('Soubor je příliš velký (max 10MB)');
+      toast.error(t('chat.file_too_large'));
       return;
     }
 
@@ -126,11 +128,11 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
       if (toUserId) {
         const fileMessage = `[Soubor] ${file.name}\n${result.url}`; // Simple formatting
         await chatApi.sendMessage(toUserId, fileMessage, selectedChatId);
-        toast.success('Soubor odeslán');
+        toast.success(t('chat.file_sent'));
       }
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Chyba při nahrávání souboru');
+      toast.error(t('chat.upload_error'));
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -151,10 +153,10 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
-            Zprávy
+            {t('chat.title')}
           </h1>
           <p className="text-gray-600">
-            Komunikujte s partnery v reálném čase
+            {t('chat.subtitle')}
           </p>
         </div>
 
@@ -167,7 +169,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Hledat konverzace..."
+                    placeholder={t('chat.search_placeholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -207,7 +209,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                               )}
                             </div>
                             <p className="text-sm text-gray-600 truncate">
-                              {conv.lastMessage?.content || 'Zatím žádné zprávy'}
+                              {conv.lastMessage?.content || t('chat.no_messages')}
                             </p>
                             {conv.updatedAt && (
                               <p className="text-xs text-gray-400 mt-1">
@@ -226,7 +228,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
 
                     {filteredConversations.length === 0 && (
                       <div className="p-8 text-center text-gray-500">
-                        {searchTerm ? 'Žádné konverzace nenalezeny' : 'Zatím nemáte žádné zprávy'}
+                        {searchTerm ? t('chat.no_conversations') : t('chat.no_messages')}
                       </div>
                     )}
                   </>
@@ -260,7 +262,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                             {selectedConversation.user?.firstName} {selectedConversation.user?.lastName}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {selectedConversation.user?.role === 'talent' ? 'Talent' : 'Firma'}
+                            {selectedConversation.user?.role === 'talent' ? t('auth.roles.talent_title') : t('auth.roles.company_title')}
                           </p>
                         </div>
                       </div>
@@ -276,7 +278,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                                 targetUserName: `${selectedConversation.user?.firstName} ${selectedConversation.user?.lastName}`
                               })}
                               className="hover:bg-green-50 hover:text-green-600 hover:border-green-400 flex-shrink-0"
-                              title="Zahájit videohovor"
+                              title={t('chat.video_call')}
                             >
                               <Video className="w-4 h-4" />
                             </Button>
@@ -290,7 +292,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                                 targetUserName: `${selectedConversation.user?.firstName} ${selectedConversation.user?.lastName}`
                               })}
                               className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-400 lg:hidden flex-shrink-0"
-                              title="Nabídnout spolupráci"
+                              title={t('chat.offer_collaboration')}
                             >
                               <Briefcase className="w-4 h-4" />
                             </Button>
@@ -306,7 +308,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                               className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-400 hidden lg:flex"
                             >
                               <Briefcase className="w-4 h-4 mr-2" />
-                              Nabídnout spolupráci
+                              {t('chat.offer_collaboration')}
                             </Button>
                           </>
                         )}
@@ -327,7 +329,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                                 })}
                               >
                                 <Calendar className="w-4 h-4 mr-2" />
-                                Domluvit videohovor
+                                {t('chat.schedule_call')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => {
@@ -336,7 +338,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                                 }}
                               >
                                 <FileText className="w-4 h-4 mr-2" />
-                                Zobrazit profil
+                                {t('chat.view_profile')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -398,7 +400,7 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                         {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
                       </Button>
                       <Input
-                        placeholder="Napište zprávu..."
+                        placeholder={t('chat.type_message')}
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
                         onKeyPress={(e) => {
@@ -424,8 +426,8 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                     <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-100 to-orange-100 flex items-center justify-center">
                       <Send className="w-12 h-12 text-gray-400" />
                     </div>
-                    <p className="text-lg font-semibold mb-2">Vyberte konverzaci</p>
-                    <p className="text-sm">Začněte chatovat s vašimi partnery</p>
+                    <p className="text-lg font-semibold mb-2">{t('chat.select_conversation')}</p>
+                    <p className="text-sm">{t('chat.start_chatting')}</p>
                   </div>
                 </div>
               )}
@@ -436,9 +438,9 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
         {/* Info */}
         <Card className="mt-6 bg-gradient-to-r from-blue-50 to-orange-50 border-blue-200">
           <CardContent className="p-6">
-            <h3 className="font-semibold mb-2">💬 Real-time komunikace</h3>
+            <h3 className="font-semibold mb-2">{t('chat.info_title')}</h3>
             <p className="text-sm text-gray-700">
-              Všechny zprávy jsou zasílány v reálném čase. Dostanete e-mailové upozornění při nové zprávě. Konverzace jsou šifrované a bezpečné.
+              {t('chat.info_desc')}
             </p>
           </CardContent>
         </Card>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { PhoneOff, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +11,7 @@ type VideoCallProps = {
 };
 
 export default function VideoCall({ targetUserId, targetUserName, onNavigate }: VideoCallProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
@@ -29,9 +31,9 @@ export default function VideoCall({ targetUserId, targetUserName, onNavigate }: 
         <div className="flex items-center gap-4">
           <div className="flex flex-col">
             <h2 className="font-semibold text-lg">{targetUserName}</h2>
-            <span className="text-xs text-gray-400">Zabezpečený videohovor (End-to-End Encrypted)</span>
+            <span className="text-xs text-gray-400">{t('chat.video_secure')}</span>
           </div>
-          <span className="text-xs bg-red-600 px-2 py-0.5 rounded animate-pulse font-bold tracking-wider">LIVE</span>
+          <span className="text-xs bg-red-600 px-2 py-0.5 rounded animate-pulse font-bold tracking-wider">{t('chat.video_live')}</span>
         </div>
         <Button
           variant="destructive"
@@ -39,7 +41,7 @@ export default function VideoCall({ targetUserId, targetUserName, onNavigate }: 
           className="hover:bg-red-700 transition-colors"
         >
           <PhoneOff className="w-4 h-4 mr-2" />
-          Ukončit hovor
+          {t('chat.video_end')}
         </Button>
       </div>
 
@@ -47,8 +49,8 @@ export default function VideoCall({ targetUserId, targetUserName, onNavigate }: 
         {loading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white bg-gray-900 z-0">
             <Loader2 className="w-12 h-12 animate-spin mb-4 text-blue-500" />
-            <p className="text-lg font-medium">Připojování k zabezpečenému kanálu...</p>
-            <p className="text-sm text-gray-400 mt-2">Prosím povolte přístup k mikrofonu a kameře</p>
+            <p className="text-lg font-medium">{t('chat.video_connecting')}</p>
+            <p className="text-sm text-gray-400 mt-2">{t('chat.video_permissions')}</p>
           </div>
         )}
         <iframe

@@ -59,12 +59,18 @@ const translateError = (error: any): string => {
   if (message.includes('Email not confirmed')) {
     return 'Email nebyl potvrzen';
   }
-  if (message.includes('Failed to fetch')) {
-    return 'Nepodařilo se připojit k serveru';
-  }
+  return 'Nepodařilo se připojit k serveru';
+}
+if (message.includes('auth/identity-toolkit-api-has-not-been-used-in-project')) {
+  return 'Chyba konfigurace serveru (API). Prosím kontaktujte podporu.';
+}
+if (message.includes('auth/operation-not-allowed')) {
+  return 'Tato metoda přihlášení není povolena.';
+}
 
-  // Return translated or original message
-  return error?.message || 'Došlo k neznámé chybě';
+
+// Return translated or original message
+return error?.message || 'Došlo k neznámé chybě';
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

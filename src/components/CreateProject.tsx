@@ -213,8 +213,8 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={isTalentOffer
-                    ? "Např. Profesionální influencer marketing - Instagram & TikTok"
-                    : "Např. Brand ambasador pro sportovní značku"}
+                    ? t('project.create.title_placeholder_offer')
+                    : t('project.create.title_placeholder_project')}
                   required
                 />
               </div>
@@ -249,7 +249,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                     id="talentTypeSpec"
                     value={talentType}
                     onChange={(e) => setTalentType(e.target.value)}
-                    placeholder="Např. MMA Zápasník, Rapper, K1, Malíř..."
+                    placeholder={t('project.create.talent_type_placeholder')}
                   />
                   <p className="text-xs text-gray-500">
                     {t('project.create.talent_type_help')}
@@ -271,7 +271,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                     : t('project.create.desc_placeholder_project')}
                   required
                 />
-                <p className="text-sm text-gray-500">{description.length}/2000 znaků</p>
+                <p className="text-sm text-gray-500">{description.length}/2000 {t('common.chars')}</p>
               </div>
             </CardContent>
           </Card>
@@ -359,7 +359,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                     <Label htmlFor="talentType">{t('project.create.talent_type')}</Label>
                     <Select value={talentType} onValueChange={setTalentType}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Vyberte typ" />
+                        <SelectValue placeholder={t('project.create.select_type_placeholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         {talentTypes.map((type) => (

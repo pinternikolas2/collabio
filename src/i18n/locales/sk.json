@@ -576,6 +576,14 @@
         "user_not_found": "Užívateľ nenájdený",
         "back_home": "Späť na hlavnú stránku",
         "back_profile": "Späť na profil",
+        "login": {
+            "title": "Vitajte späť",
+            "subtitle": "Prihláste sa do svojho účtu a pokračujte",
+            "forgot_password": "Zabudnuté heslo?",
+            "labels": {
+                "language": "Jazyk"
+            }
+        },
         "title": "Nastavenia",
         "subtitle": "Spravujte svoj účet a predvoľby",
         "language": "Jazyk",
@@ -602,6 +610,8 @@
             "address_placeholder": "Ulica, Mesto, PSČ",
             "category": "Kategória",
             "select_category": "Vyberte kategóriu",
+            "job_title": "Čo presne robíte? (Profesia/Titul)",
+            "job_title_placeholder": "Napr. Tenisový hráč, Maliar, YouTuber...",
             "bio_talent": "O mne",
             "bio_company": "O firme",
             "bio_placeholder_talent": "Napíšte niečo o sebe...",
@@ -755,8 +765,13 @@
             "back_to_marketplace": "← Späť na marketplace",
             "tip_offer": "💡 Tip: Jasné cenové podmienky a dostupnosť zvyšujú šancu na úspešnú spoluprácu.",
             "tip_project": "💡 Tip: Projekty s jasnými rozpočtami a časovými rámcami dostávajú o 60% viac kvalitných ponúk.",
-            "note_offer": "📝 Poznámka: Po zverejnení ponuky vás budú firmy kontaktovať cez interný chat. Môžete si prezrieť ich profily pred prijatím spolupráce.",
-            "note_project": "📝 Poznámka: Po zverejnení projektu budete dostávať ponuky od talentov. Môžete si prezrieť ich profily a vybrať najlepšieho kandidáta.",
+            "note_offer": "Po zverejnení ponuky vás budú firmy kontaktovať cez interný chat. Môžete si prezrieť ich profily pred prijatím spolupráce.",
+            "note_project": "Po zverejnení projektu budete dostávať ponuky od talentov. Môžete si prezrieť ich profily a vybrať najlepšieho kandidáta.",
+            "title_placeholder_offer": "Napr. Profesionálny influencer marketing - Instagram & TikTok",
+            "title_placeholder_project": "Napr. Brand ambasádor pre športovú značku",
+            "talent_type_placeholder": "Napr. MMA Zápasník, Rapper, K1, Maliar...",
+            "select_type_placeholder": "Vyberte typ",
+            "chars": "znakov",
             "budget_title_offer": "Cenník a dostupnosť",
             "budget_desc_offer": "Vaše cenové podmienky a dostupnosť",
             "budget_title_project": "Rozpočet a časová os",
@@ -791,5 +806,31 @@
             "skills_desc": "Kľúčové slová pre lepšie vyhľadávanie",
             "duration_label": "Dĺžka projektu"
         }
+    },
+    "chat": {
+        "title": "Správy",
+        "subtitle": "Komunikujte s partnermi v reálnom čase",
+        "search_placeholder": "Hľadať konverzácie...",
+        "no_messages": "Zatiaľ žiadne správy",
+        "no_conversations": "Žiadne konverzácie nenájdené",
+        "offer_collaboration": "Ponúknuť spoluprácu",
+        "video_call": "Začať videohovor",
+        "schedule_call": "Dohodnúť videohovor",
+        "view_profile": "Zobraziť profil",
+        "type_message": "Napíšte správu...",
+        "file_too_large": "Súbor je príliš veľký (max 10MB)",
+        "file_sent": "Súbor odoslaný",
+        "upload_error": "Chyba pri nahrávaní súboru",
+        "send_error": "Chyba pri odosielaní správy",
+        "start_conversation_error": "Nepodarilo sa začať konverzáciu",
+        "select_conversation": "Vyberte konverzáciu",
+        "start_chatting": "Začnite chatovať s vašimi partnermi",
+        "info_title": "💬 Real-time komunikácia",
+        "info_desc": "Všetky správy sú zasielané v reálnom čase. Dostanete e-mailové upozornenie pri novej správe. Konverzácie sú šifrované a bezpečné.",
+        "video_secure": "Zabezpečený videohovor (End-to-End Encrypted)",
+        "video_live": "LIVE",
+        "video_end": "Ukončiť hovor",
+        "video_connecting": "Pripájanie k zabezpečenému kanálu...",
+        "video_permissions": "Prosím povoľte prístup k mikrofónu a kamere"
     }
 }

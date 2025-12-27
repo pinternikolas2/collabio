@@ -238,7 +238,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         onClick={() => onNavigate?.('forgot-password')}
                         className="text-sm text-blue-600 hover:underline font-medium"
                       >
-                        {t('auth.forgot_password') || 'Zapomenuté heslo?'}
+                        {t('auth.forgot_password')}
                       </button>
                     </div>
                   </div>
