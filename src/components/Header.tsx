@@ -221,7 +221,7 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
                     className="px-4 py-1.5 text-left rounded-lg text-gray-700 hover:bg-gray-50 flex items-center gap-2 text-sm"
                   >
                     <Bell className="h-4 w-4" />
-                    {t('settings.notifications')}
+                    {t('settings.tabs.notifications')}
                     {unreadNotifications > 0 && (
                       <Badge className="ml-auto h-5 w-5 flex items-center justify-center p-0 bg-orange-500 text-xs">
                         {unreadNotifications}
