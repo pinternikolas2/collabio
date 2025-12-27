@@ -26,6 +26,116 @@
         "contracts": "Zmluvy",
         "settings": "Nastavenia"
     },
+    "landing": {
+        "hero": {
+            "badge": "🚀 Nová éra spolupráce",
+            "title": "Prepájame talenty s firmami",
+            "subtitle": "Collabio je moderná platforma pre vytváranie úspešných spoluprác medzi športovcami, umelcami, influencermi a značkami. Bezpečne, rýchlo a transparentne.",
+            "btn_explore": "Preskúmať trhovisko",
+            "btn_start": "Začať zadarmo"
+        },
+        "features": {
+            "title": "Prečo Collabio?",
+            "subtitle": "Ponúkame komplexné riešenie pre úspešné spolupráce s dôrazom na bezpečnosť a transparentnosť",
+            "marketing_title": "Maximálny marketingový dosah",
+            "marketing_desc": "Firmy a značky získavajú autentické zviditeľnenie prostredníctvom talentov: športovcov, umelcov a influencerov, ktorí oslovujú cieľovú komunitu a zvyšujú dôveru.",
+            "security_title": "Bezpečné platby & správa dohôd",
+            "security_desc": "Platby sú chránené escrow systémom. Peniaze sú uvoľnené talentu až po úplnom dokončení spolupráce podľa dohodnutých podmienok, takže obe strany majú istotu.",
+            "legal_title": "Formálne dohody & zmluvy",
+            "legal_desc": "Každá spolupráca je podporená digitálnou zmluvou, ktorú obe strany potvrdzujú. Dohody sú jasné, transparentné a právne chránené.",
+            "transparency_title": "Hodnotenie a transparentnosť",
+            "transparency_desc": "Systém hodnotenia a recenzií buduje dôveru medzi partnermi. Každá strana môže ohodnotiť spoluprácu a zanechať spätnú väzbu pre ostatných."
+        },
+        "how_it_works": {
+            "title": "Ako to funguje?",
+            "subtitle": "Štyri jednoduché kroky k úspešnej spolupráci",
+            "step1_title": "Registrácia",
+            "step1_desc": "Vytvorte si účet ako talent alebo firma. Overenie e-mailom trvá len pár sekúnd.",
+            "step2_title": "Profil",
+            "step2_desc": "Doplňte svoje portfólio, prepojte sociálne siete a nastavte svoje preferencie.",
+            "step3_title": "Spolupráca",
+            "step3_desc": "Nájdite projekty alebo talenty, dohodnite podmienky a začnite spoluprácu.",
+            "step4_title": "Platba",
+            "step4_desc": "Bezpečná platba cez escrow. Peniaze sú uvoľnené až po úspešnom dokončení."
+        },
+        "benefits": {
+            "title": "Výhody pre všetkých",
+            "subtitle": "Či už ste talent alebo firma, Collabio vám prináša jedinečné výhody",
+            "for_talents": "Pre talenty",
+            "talent_list": [
+                "Prístup k prémiovým značkám a firmám",
+                "Férové podmienky a bezpečné platby",
+                "Rast sledovanosti a dosahu",
+                "Profesionálne zmluvy a faktúry",
+                "Bez provízií pre prijaté ponuky"
+            ],
+            "btn_talent": "Registrovať ako talent",
+            "for_companies": "Pre firmy",
+            "company_list": [
+                "Databáza overených influencerov a talentov",
+                "Transparentné štatistiky a dosah",
+                "Escrow systém pre bezpečnosť",
+                "Automatické generovanie zmlúv",
+                "Detailný reporting a analytics"
+            ],
+            "btn_company": "Registrovať ako firma"
+        },
+        "faq": {
+            "more_questions": "Máte ďalšie otázky? Pozrite si kompletné FAQ",
+            "view_all": "Zobraziť všetky otázky",
+            "items": [
+                {
+                    "q": "Čo je Collabio?",
+                    "a": "Collabio je moderná platforma, ktorá prepája firmy a sponzorov s talentovanými športovcami, umelcami a influencermi. Umožňuje rýchlo a bezpečne dohadovať spolupráce a sponzorstvá."
+                },
+                {
+                    "q": "Ako funguje proces spolupráce?",
+                    "a": "Firmy aj talenti si nastavia svoje profily a projekty. Po nájdení vhodného partnera sa dohodne spolupráca priamo cez Collabio, ktorá je chránená escrow platbou – peniaze sú uvoľnené až po dokončení dohody."
+                },
+                {
+                    "q": "Je používanie Collabio bezpečné?",
+                    "a": "Áno. Celý proces dohody a platby je zabezpečený. Vaše osobné údaje sú chránené podľa GDPR a komunikácia prebieha v šifrovanom prostredí."
+                },
+                {
+                    "q": "Ako fungujú platby a escrow?",
+                    "a": "Platba je uložená bezpečne cez Stripe a uvoľnená talentovi až po splnení dohodnutej práce. Tak získajú firmy istotu, že podmienky budú dodržané, a talent bezpečne dostane svoje peniaze."
+                },
+                {
+                    "q": "Môžem si zvoliť typ spolupráce?",
+                    "a": "Áno. Môžete ponúknuť malé rýchle spolupráce (napr. jedno story, krátky výkon) s okamžitou platbou, alebo dlhšie projekty s dohodnutými termínmi a escrow zabezpečením."
+                },
+                {
+                    "q": "Ako sa môžem registrovať a začať?",
+                    "a": "Stačí sa zaregistrovať, overiť e-mail, doplniť profil a prepojiť platobný účet (Stripe). Následne môžete vyhľadávať partnerov, dohadovať spolupráce a spravovať projekty."
+                }
+            ]
+        },
+        "cta": {
+            "title": "Pripravení začať?",
+            "subtitle": "Pripojte sa k stovkám úspešných talentov a firiem. Registrácia je zadarmo a trvá len chvíľu.",
+            "contact_us": "Kontaktujte nás"
+        },
+        "warning": {
+            "title": "⚠️ Obmedzený prístup pre neregistrovaných užívateľov",
+            "desc": "Pre plný prístup k trhovisku, kontaktom a všetkým funkciám platformy sa prosím registrujte alebo prihláste.",
+            "btn": "Registrovať sa teraz"
+        }
+    },
+    "footer": {
+        "about": "Prepájame talenty s firmami a vytvárame úspešné spolupráce.",
+        "links": "Rýchle odkazy",
+        "links_about": "O nás",
+        "links_marketplace": "Trhovisko",
+        "links_talents": "Zoznam talentov",
+        "links_companies": "Zoznam firiem",
+        "links_faq": "FAQ",
+        "legal": "Právne informácie",
+        "legal_terms": "Obchodné podmienky",
+        "legal_gdpr": "Ochrana osobných údajov (GDPR)",
+        "legal_cookies": "Zásady používania cookies",
+        "contact": "Kontakt",
+        "rights": "Všetky práva vyhradené."
+    },
     "auth": {
         "title": "Collabio",
         "subtitle": "Platforma na prepojenie talentov a firiem",

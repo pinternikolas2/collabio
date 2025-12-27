@@ -66,7 +66,8 @@ export default function LandingPage({ onNavigate, isLoggedIn }: LandingPageProps
     companies: (t('landing.benefits.company_list', { returnObjects: true }) as string[]),
   };
 
-  const faqs = (t('landing.faq.items', { returnObjects: true }) as Array<{ q: string, a: string }>).map(item => ({
+  const rawFaqs = t('landing.faq.items', { returnObjects: true });
+  const faqs = (Array.isArray(rawFaqs) ? rawFaqs : []).map((item: any) => ({
     question: item.q,
     answer: item.a
   }));
