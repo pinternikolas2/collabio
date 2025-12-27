@@ -48,7 +48,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
         }
       } catch (err: any) {
         console.error('[TalentProfile] Error loading talent:', err);
-        const errorMessage = err?.message || 'Neznámá chyba';
+        const errorMessage = err?.message || t('common.unknown_error');
 
         // Check if it's a network error (backend offline)
         if (errorMessage.includes('Failed to fetch') || errorMessage.includes('fetch')) {
@@ -238,7 +238,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                             navigator.share ? navigator.share({
                               title: `${talent.firstName} ${talent.lastName} - Collabio`,
                               url: window.location.href
-                            }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
+                            }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success(t('talent_profile.copy_link')));
                           }}
                         >
                           <Share2 className="w-6 h-6" />
@@ -254,7 +254,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                           navigator.share ? navigator.share({
                             title: `${talent.firstName} ${talent.lastName} - Collabio`,
                             url: window.location.href
-                          }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
+                          }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success(t('talent_profile.copy_link')));
                         }}
                       >
                         <Share2 className="w-6 h-6" />
@@ -474,24 +474,24 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                     <CardHeader className="flex flex-row items-center justify-between">
                       <div>
                         <h3 className="text-xl font-semibold">{t('talent_profile.tabs.portfolio')}</h3>
-                        <p className="text-sm text-gray-500">Ukázky tvé práce</p>
+                        <p className="text-sm text-gray-500">{t('talent_profile.portfolio.work_samples')}</p>
                       </div>
                       {isOwnProfile && (
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button size="sm" className="bg-gradient-to-r from-blue-600 to-orange-500">
                               <Plus className="w-4 h-4 mr-2" />
-                              Přidat ukázku
+                              {t('talent_profile.portfolio.add_sample')}
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Přidat položku do portfolia</DialogTitle>
+                              <DialogTitle>{t('talent_profile.portfolio.add_item')}</DialogTitle>
                             </DialogHeader>
                             <AddPortfolioItemForm
                               userId={userId}
                               onSuccess={() => {
-                                toast.success('Položka přidána!');
+                                toast.success(t('talent_profile.portfolio.item_added'));
                                 window.location.reload();
                               }}
                             />
@@ -508,12 +508,12 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                               value={type}
                               className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 border border-gray-200 bg-white rounded-full px-4"
                             >
-                              {type === 'all' && 'Vše'}
-                              {type === 'image' && 'Galerie'}
-                              {type === 'video' && 'Videa'}
-                              {type === 'social' && 'Social Posts'}
-                              {type === 'project' && 'Projekty'}
-                              {type === 'achievement' && 'Úspěchy'}
+                              {type === 'all' && t('talent_profile.portfolio.all')}
+                              {type === 'image' && t('talent_profile.portfolio.gallery')}
+                              {type === 'video' && t('talent_profile.portfolio.videos')}
+                              {type === 'social' && t('talent_profile.portfolio.social_posts')}
+                              {type === 'project' && t('talent_profile.portfolio.projects')}
+                              {type === 'achievement' && t('talent_profile.portfolio.achievements')}
                             </TabsTrigger>
                           ))}
                         </TabsList>
@@ -522,7 +522,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                           <TabsContent key={filterType} value={filterType} className="mt-0">
                             {(!talent.portfolio || talent.portfolio.filter(i => filterType === 'all' || i.type === filterType).length === 0) ? (
                               <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                                <p className="text-gray-500">V této sekci zatím nic není.</p>
+                                <p className="text-gray-500">{t('talent_profile.portfolio.empty')}</p>
                               </div>
                             ) : (
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -558,11 +558,11 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
 
                                         <div className="absolute top-2 right-2 flex gap-2">
                                           <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm shadow-sm">
-                                            {item.type === 'image' && 'Obrázek'}
-                                            {item.type === 'video' && 'Video'}
-                                            {item.type === 'social' && 'Social'}
-                                            {item.type === 'project' && 'Projekt'}
-                                            {item.type === 'achievement' && 'Úspěch'}
+                                            {item.type === 'image' && t('talent_profile.portfolio.image')}
+                                            {item.type === 'video' && t('talent_profile.portfolio.video')}
+                                            {item.type === 'social' && t('talent_profile.portfolio.social')}
+                                            {item.type === 'project' && t('talent_profile.portfolio.project')}
+                                            {item.type === 'achievement' && t('talent_profile.portfolio.achievement')}
                                           </Badge>
                                         </div>
                                       </div>
@@ -579,7 +579,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                                             rel="noreferrer"
                                             className="text-blue-600 text-xs font-semibold inline-flex items-center hover:underline mt-auto"
                                           >
-                                            zobrazit <TrendingUp className="w-3 h-3 ml-1" />
+                                            {t('talent_profile.portfolio.view')} <TrendingUp className="w-3 h-3 ml-1" />
                                           </a>
                                         )}
                                       </div>
@@ -591,12 +591,12 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                                           size="icon"
                                           className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 z-10"
                                           onClick={async () => {
-                                            if (confirm('Opravdu smazat?')) {
+                                            if (confirm(t('talent_profile.portfolio.delete_confirm'))) {
                                               try {
                                                 const updatedPortfolio = talent.portfolio?.filter(p => p.id !== item.id) || [];
                                                 await userApi.updateUser(userId, { portfolio: updatedPortfolio });
                                                 window.location.reload();
-                                              } catch (e) { toast.error('Chyba při mazání'); }
+                                              } catch (e) { toast.error(t('talent_profile.portfolio.delete_error')); }
                                             }
                                           }}
                                         >
@@ -824,7 +824,7 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-blue-600 to-orange-500">
                   <Plus className="w-4 h-4 mr-2" />
-                  Přidat událost
+                  {t('talent_profile.sections.add_event_btn')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -900,7 +900,7 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
                   <div className="mt-4 pt-4 border-t">
                     <h5 className="font-semibold mb-3 flex items-center gap-2">
                       <Tag className="w-4 h-4 text-blue-600" />
-                      Reklamní možnosti
+                      {t('talent_profile.events.advertising_options')}
                     </h5>
                     <div className="grid gap-3">
                       {event.advertisingOptions.filter(opt => opt.available).map((option) => (
@@ -922,7 +922,7 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
                                 {formatPrice(option.price)}
                               </p>
                             ) : (
-                              <p className="text-sm text-gray-500">Cena dle dohody</p>
+                              <p className="text-sm text-gray-500">{t('talent_profile.events.price_negotiable')}</p>
                             )}
                           </div>
                         </div>
@@ -1127,6 +1127,7 @@ function AddEventForm({ onClose }: { onClose: () => void }) {
 }
 
 function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess: () => void }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [link, setLink] = useState('');
@@ -1158,7 +1159,7 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
       onSuccess();
     } catch (error) {
       console.error(error);
-      toast.error('Chyba při ukládání');
+      toast.error(t('talent_profile.portfolio_form.save_error'));
     } finally {
       setLoading(false);
     }
@@ -1172,7 +1173,7 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 50 * 1024 * 1024) { // Increased limit to 50MB for videos
-        toast.error('Soubor je příliš velký (max 50MB)');
+        toast.error(t('talent_profile.portfolio_form.file_size_error'));
         return;
       }
 
@@ -1180,10 +1181,10 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
       try {
         const result = await storageApi.uploadAttachment(file);
         setImageUrl(result.url);
-        toast.success('Soubor úspěšně nahrán');
+        toast.success(t('talent_profile.portfolio_form.upload_success'));
       } catch (error) {
         console.error('Upload error:', error);
-        toast.error('Chyba při nahrávání souboru');
+        toast.error(t('talent_profile.portfolio_form.upload_error'));
       } finally {
         setLoading(false);
       }
@@ -1193,33 +1194,33 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label>Typ položky</Label>
+        <Label>{t('talent_profile.portfolio_form.type_label')}</Label>
         <Select value={type} onValueChange={setType}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="image">Obrázek / Galerie</SelectItem>
-            <SelectItem value="video">Video / Reel</SelectItem>
-            <SelectItem value="social">Instagram Post / TikTok</SelectItem>
-            <SelectItem value="project">Projekt / Spolupráce</SelectItem>
-            <SelectItem value="achievement">Úspěch / Ocenění</SelectItem>
+            <SelectItem value="image">{t('talent_profile.portfolio_form.types.image')}</SelectItem>
+            <SelectItem value="video">{t('talent_profile.portfolio_form.types.video')}</SelectItem>
+            <SelectItem value="social">{t('talent_profile.portfolio_form.types.social')}</SelectItem>
+            <SelectItem value="project">{t('talent_profile.portfolio_form.types.project')}</SelectItem>
+            <SelectItem value="achievement">{t('talent_profile.portfolio_form.types.achievement')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label>Název</Label>
-        <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder={type === 'achievement' ? 'Např. 1. místo ve Forbes 30pod30' : "Např. Kampaň pro Nike"} />
+        <Label>{t('talent_profile.portfolio_form.title_label')}</Label>
+        <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder={type === 'achievement' ? t('talent_profile.portfolio_form.title_placeholder_achievement') : t('talent_profile.portfolio_form.title_placeholder')} />
       </div>
 
       <div className="space-y-2">
-        <Label>Popis</Label>
-        <Textarea required value={description} onChange={e => setDescription(e.target.value)} placeholder="Detailní popis..." />
+        <Label>{t('talent_profile.portfolio_form.desc_label')}</Label>
+        <Textarea required value={description} onChange={e => setDescription(e.target.value)} placeholder={t('talent_profile.portfolio_form.desc_placeholder')} />
       </div>
 
       <div className="space-y-2">
-        <Label>Obrázek / Náhled</Label>
+        <Label>{t('talent_profile.portfolio_form.image_label')}</Label>
         <div className="flex flex-col gap-3">
           {/* Preview if available */}
           {imageUrl && (
@@ -1252,11 +1253,11 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
                 onChange={handleFileChange}
               />
               <Image className="w-6 h-6 text-gray-500" />
-              <span className="text-xs">Nahrát soubor</span>
+              <span className="text-xs">{t('talent_profile.portfolio_form.upload_btn')}</span>
             </Button>
 
             <div className="h-24 flex flex-col gap-2 p-3 border rounded-lg bg-gray-50 justify-center">
-              <span className="text-xs font-semibold mb-1">nebo vložte URL</span>
+              <span className="text-xs font-semibold mb-1">{t('talent_profile.portfolio_form.url_label')}</span>
               <Input
                 value={imageUrl.startsWith('data:') ? '' : imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
@@ -1269,12 +1270,12 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
       </div>
 
       <div className="space-y-2">
-        <Label>Odkaz na {type === 'social' ? 'post' : 'projekt'}</Label>
+        <Label>{t('talent_profile.portfolio_form.link_label', { type: type === 'social' ? 'post' : 'projekt' })}</Label>
         <Input value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
       </div>
 
       <Button type="submit" disabled={loading} className="w-full bg-blue-600">
-        {loading ? <Loader2 className="animate-spin w-4 h-4" /> : 'Přidat do portfolia'}
+        {loading ? <Loader2 className="animate-spin w-4 h-4" /> : t('talent_profile.portfolio_form.submit_btn')}
       </Button>
     </form>
   );

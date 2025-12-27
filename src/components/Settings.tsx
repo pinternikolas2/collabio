@@ -96,7 +96,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
     if (!currentUser) return;
 
     if (phone && !validatePhone(phone)) {
-      toast.error('Neplatné telefonní číslo. Zadejte prosím číslo ve formátu +420xxxxxxxxx nebo +421xxxxxxxxx.');
+      toast.error(t('settings.errors.phone_invalid'));
       return;
     }
 
@@ -273,7 +273,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                             const file = e.target.files?.[0];
                             if (!file) return;
                             if (file.size > 5 * 1024 * 1024) {
-                              toast.error('Obrázek je příliš velký (max 5MB)');
+                              toast.error(t('settings.errors.image_too_large'));
                               return;
                             }
 
@@ -283,10 +283,10 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                               await userApi.updateUser(userId, { profileImage: result.url });
                               await loadUserData(); // Reload to show new image
                               await refreshUser(); // Update context
-                              toast.success('Profilová fotka byla aktualizována');
+                              toast.success(t('settings.messages.photo_updated'));
                             } catch (error) {
                               console.error('Upload error:', error);
-                              toast.error('Chyba při nahrávání fotky');
+                              toast.error(t('settings.errors.photo_upload_error'));
                             } finally {
                               setSaving(false);
                             }
@@ -381,7 +381,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                   )}
 
                   <div className="space-y-2">
-                    <Label htmlFor="category">Jsem</Label>
+                    <Label htmlFor="category">{t('settings.profile.category')}</Label>
                     <Select value={category} onValueChange={setCategory}>
                       <SelectTrigger>
                         <SelectValue placeholder="Vyberte..." />
@@ -616,7 +616,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                   onClick={handleSaveNotifications}
                   className="w-full bg-gradient-to-r from-blue-600 to-orange-500"
                 >
-                  Uložit nastavení notifikací
+                  {t('settings.notifications.save')}
                 </Button>
               </CardContent>
             </Card>
@@ -659,7 +659,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                   onClick={handleSavePrivacy}
                   className="w-full bg-gradient-to-r from-blue-600 to-orange-500"
                 >
-                  Uložit nastavení soukromí
+                  {t('settings.privacy.save')}
                 </Button>
               </CardContent>
             </Card>
@@ -705,7 +705,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
                   {currentUser.verificationStatus !== 'verified' && (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5 mb-2">
                       <p className="text-xs text-yellow-800 leading-tight">
-                        <strong>⚠️ {t('settings.security.mandatory_verification')}:</strong> {t('settings.security.mandatory_text')} {currentUser.role === 'talent' ? 'občanského průkazu' : 'výpisu z obchodního rejstříku nebo živnostenského listu'}.
+                        <strong>⚠️ {t('settings.security.mandatory_verification')}:</strong> {t('settings.security.mandatory_text')} {currentUser.role === 'talent' ? t('settings.security.kyc_desc_talent_short', { defaultValue: 'občanského průkazu' }) : t('settings.security.kyc_desc_company_short', { defaultValue: 'výpisu z obchodního rejstříku nebo živnostenského listu' })}.
                       </p>
                     </div>
                   )}

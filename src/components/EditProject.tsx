@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Briefcase, DollarSign, X, Sparkles, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -17,9 +18,10 @@ type EditProjectProps = {
 };
 
 export default function EditProject({ onNavigate, projectId }: EditProjectProps) {
+  const { t } = useTranslation();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -52,7 +54,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
       setLoading(true);
       const projectData = await projectApi.getProject(projectId);
       setProject(projectData);
-      
+
       // Populate form with existing data
       setTitle(projectData.title || '');
       setDescription(projectData.description || '');
@@ -62,8 +64,8 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
       setSkills(projectData.tags || []);
     } catch (error) {
       console.error('Error loading project:', error);
-      toast.error('Chyba při načítání projektu', {
-        description: error instanceof Error ? error.message : 'Zkuste to znovu'
+      toast.error(t('project.form.load_error'), {
+        description: error instanceof Error ? error.message : t('project.form.try_again')
       });
       onNavigate('marketplace');
     } finally {
@@ -86,7 +88,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
     e.preventDefault();
 
     if (!title || !description || !category || !budget) {
-      toast.error('Vyplňte všechna povinná pole');
+      toast.error(t('project.form.fill_required'));
       return;
     }
 
@@ -103,8 +105,8 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
         tags: skills,
       });
 
-      toast.success('Projekt aktualizován!', {
-        description: 'Změny byly úspěšně uloženy',
+      toast.success(t('project.form.update_success'), {
+        description: t('project.form.update_success_desc'),
       });
 
       // Navigate to project detail
@@ -114,8 +116,8 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
 
     } catch (error) {
       console.error('Error updating project:', error);
-      toast.error('Chyba při aktualizaci projektu', {
-        description: error instanceof Error ? error.message : 'Zkuste to prosím znovu',
+      toast.error(t('project.form.update_error'), {
+        description: error instanceof Error ? error.message : t('project.form.try_again'),
       });
     } finally {
       setSubmitting(false);
@@ -127,7 +129,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Načítání projektu...</p>
+          <p className="text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -147,16 +149,16 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
             onClick={() => onNavigate('project-detail', { projectId })}
             className="mb-4"
           >
-            ← Zpět na detail projektu
+            {t('project.edit.back_to_detail')}
           </Button>
           <div className="flex items-center gap-3 mb-2">
             <Sparkles className="w-8 h-8 text-orange-500" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
-              Upravit projekt
+              {t('project.edit.title')}
             </h1>
           </div>
           <p className="text-gray-600 mt-2">
-            Aktualizujte informace o vašem projektu
+            {t('project.edit.subtitle')}
           </p>
         </div>
 
@@ -164,16 +166,16 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
           {/* Basic Information */}
           <Card>
             <CardHeader>
-              <h3 className="text-xl font-semibold">Základní informace</h3>
+              <h3 className="text-xl font-semibold">{t('project.form.basic_info')}</h3>
               <CardDescription>
-                Základní detaily o vašem projektu
+                {t('project.form.basic_info_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Title */}
               <div className="space-y-2">
                 <Label htmlFor="title">
-                  Název projektu <span className="text-red-500">*</span>
+                  {t('project.create.project_name')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="title"
@@ -187,14 +189,14 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description">
-                  Popis projektu <span className="text-red-500">*</span>
+                  {t('project.create.desc_project')} <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={6}
-                  placeholder="Popište váš projekt, cíle, očekávání..."
+                  placeholder={t('project.create.desc_placeholder_project')}
                   required
                 />
                 <p className="text-sm text-gray-500">{description.length}/2000 znaků</p>
@@ -203,11 +205,11 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
               {/* Category */}
               <div className="space-y-2">
                 <Label htmlFor="category">
-                  Kategorie <span className="text-red-500">*</span>
+                  {t('project.create.role_project')} <span className="text-red-500">*</span>
                 </Label>
                 <Select value={category} onValueChange={setCategory} required>
                   <SelectTrigger>
-                    <SelectValue placeholder="Vyberte kategorii" />
+                    <SelectValue placeholder={t('project.create.role_select_project')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -224,9 +226,9 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
           {/* Budget & Timeline */}
           <Card>
             <CardHeader>
-              <h3 className="text-xl font-semibold">Rozpočet a časový rámec</h3>
+              <h3 className="text-xl font-semibold">{t('project.form.budget_title')}</h3>
               <CardDescription>
-                Finanční podmínky a délka projektu
+                {t('project.form.budget_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -234,7 +236,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                 {/* Budget */}
                 <div className="space-y-2">
                   <Label htmlFor="budget">
-                    Rozpočet (Kč) <span className="text-red-500">*</span>
+                    {t('project.create.budget_project')} <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -248,17 +250,17 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                       required
                     />
                   </div>
-                  <p className="text-xs text-gray-500">+ 21% DPH</p>
+                  <p className="text-xs text-gray-500">{t('project.form.budget_vat')}</p>
                 </div>
 
                 {/* Duration */}
                 <div className="space-y-2">
-                  <Label htmlFor="duration">Délka projektu</Label>
+                  <Label htmlFor="duration">{t('project.form.duration_label')}</Label>
                   <Input
                     id="duration"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
-                    placeholder="Např. 3 měsíce"
+                    placeholder={t('project.create.duration_placeholder_project')}
                   />
                 </div>
               </div>
@@ -268,14 +270,14 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
           {/* Skills & Tags */}
           <Card>
             <CardHeader>
-              <h3 className="text-xl font-semibold">Dovednosti a tagy</h3>
+              <h3 className="text-xl font-semibold">{t('project.form.skills_title')}</h3>
               <CardDescription>
-                Klíčová slova pro lepší vyhledávání
+                {t('project.form.skills_desc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="skills">Přidat tag</Label>
+                <Label htmlFor="skills">{t('project.form.add_tag')}</Label>
                 <div className="flex gap-2">
                   <Input
                     id="skills"
@@ -287,10 +289,10 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                         handleAddSkill();
                       }
                     }}
-                    placeholder="Např. Social Media, Instagram, TikTok..."
+                    placeholder={t('project.create.skills_placeholder_project')}
                   />
                   <Button type="button" onClick={handleAddSkill} variant="outline">
-                    Přidat
+                    {t('project.form.add')}
                   </Button>
                 </div>
               </div>
@@ -326,7 +328,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                   className="flex-1"
                   disabled={submitting}
                 >
-                  Zrušit
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -336,12 +338,12 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                   {submitting ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Ukládání...
+                      {t('project.form.saving')}
                     </>
                   ) : (
                     <>
                       <Briefcase className="w-5 h-5 mr-2" />
-                      Uložit změny
+                      {t('common.save_changes')}
                     </>
                   )}
                 </Button>

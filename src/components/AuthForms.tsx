@@ -162,7 +162,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
               <img src="/logo.jpg" alt="Collabio Logo" className="relative w-20 h-20 rounded-2xl shadow-lg" />
             </div>
-            <CardTitle className="text-center text-3xl font-bold bg-gradient-to-r from-blue-700 to-orange-600 bg-clip-text text-transparent">
+            <CardTitle className="text-center text-3xl font-bold text-black">
               {t('auth.title')}
             </CardTitle>
             <CardDescription className="text-center text-base mt-2">
@@ -509,7 +509,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                       className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       required
                     />
-                    <Label htmlFor="terms" className="text-sm font-normal text-gray-600 leading-tight cursor-pointer">
+                    <Label htmlFor="terms" className="text-xs font-normal text-gray-600 leading-tight cursor-pointer">
                       Souhlasím s{' '}
                       <button type="button" onClick={() => onNavigate?.('terms')} className="text-blue-600 hover:underline font-medium">
                         obchodními podmínkami
