@@ -8,6 +8,7 @@ import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
 import { mockKYCDocuments, mockUsers } from '../data/seedData';
 import { VerificationStatus } from '../types';
+import { kycApi } from '../utils/api';
 import { toast } from 'sonner';
 
 type KYCVerificationProps = {
@@ -97,9 +98,10 @@ export default function KYCVerification({ userId, userRole, onNavigate }: KYCVer
 
     setUploading(true);
 
-    // Simulate upload
-    setTimeout(() => {
-      setUploading(false);
+    try {
+      const documentType = userRole === 'talent' ? 'id_card' : 'company_registry';
+      await kycApi.uploadDocument(userId, selectedFile, documentType, ico, companyName);
+
       toast.success('Dokument nahrán', {
         description: 'Váš dokument byl úspěšně nahrán a čeká na schválení administrátorem.'
       });
@@ -111,9 +113,14 @@ export default function KYCVerification({ userId, userRole, onNavigate }: KYCVer
           onNavigate('my-profile');
         }
       }, 1500);
-
-      // In production, this would upload to backend
-    }, 2000);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast.error('Chyba při nahrávání', {
+        description: 'Nepodařilo se nahrát dokument. Zkuste to prosím později.'
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const formatDate = (dateString: string) => {

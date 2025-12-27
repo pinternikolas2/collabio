@@ -130,25 +130,40 @@ export const userApi = {
 export const kycApi = {
   // TODO: Integrate Firebase Storage for file uploads
   uploadDocument: async (
+    userId: string,
     file: File,
     documentType: string,
     ico?: string,
     companyName?: string
   ) => {
-    // Placeholder: You need to implement Firebase Storage upload here
-    // const storageRef = ref(storage, 'kyc/' + file.name);
-    // await uploadBytes(storageRef, file);
-    // const url = await getDownloadURL(storageRef);
+    console.log('[KYC] Uploading document for user:', userId);
 
-    // For now returning mock to satisfy TS
-    return {
-      id: 'mock-id',
-      userId: 'temp-user',
+    // 1. Upload file to Firebase Storage
+    // Structure: kyc/{userId}/{timestamp}_{filename}
+    const storageRef = ref(storage, `kyc/${userId}/${Date.now()}_${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const fileUrl = await getDownloadURL(snapshot.ref);
+
+    // 2. Create document record in Firestore
+    const docData = {
+      userId,
       documentType,
-      status: 'pending',
-      fileUrl: 'https://via.placeholder.com/150',
-      uploadedAt: new Date().toISOString()
-    } as KYCDocument;
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+      status: 'pending', // Default status
+      fileUrl,
+      uploadedAt: new Date().toISOString(),
+      ...(ico ? { ico } : {}),
+      ...(companyName ? { companyName } : {})
+    };
+
+    const docRef = await addDoc(collection(db, 'kyc_documents'), docData);
+    const newDoc = await getDoc(docRef);
+
+    console.log('[KYC] Document record created:', newDoc.id);
+
+    return { id: newDoc.id, ...newDoc.data() } as KYCDocument;
   },
 
   getDocuments: async (userId: string) => {
@@ -373,19 +388,37 @@ export const chatApi = {
 
 export const paymentApi = {
   createConnectAccount: async () => {
-    // This typically requires a backend Cloud Function/Server to talk to Stripe
-    console.warn("Stripe Connect requires backend. Implement Firebase Cloud Function.");
-    return { url: '#' };
+    try {
+      const createAccount = httpsCallable(functions, 'createConnectAccount');
+      const result = await createAccount({});
+      return result.data as { url: string, accountId: string };
+    } catch (error) {
+      console.error('Payment API Error:', error);
+      throw error;
+    }
   },
 
-  createEscrow: async (collaborationId: string, amount: number, currency = 'czk') => {
-    console.warn("Escrow requires backend. Implement Firebase Cloud Function.");
-    return { escrow: {}, clientSecret: 'mock_secret' };
+  createEscrow: async (amount: number, currency: string, destinationAccountId: string) => {
+    try {
+      console.log('Creating escrow:', { amount, currency, destinationAccountId });
+      const createEscrowFn = httpsCallable(functions, 'createEscrow');
+      const result = await createEscrowFn({ amount, currency, destinationAccountId });
+      return result.data as { clientSecret: string, id: string };
+    } catch (error) {
+      console.error('Escrow API Error:', error);
+      throw error;
+    }
   },
 
-  releaseEscrow: async (escrowId: string) => {
-    console.warn("Escrow release requires backend. Implement Firebase Cloud Function.");
-    return { success: true, escrow: {} };
+  releaseEscrow: async (paymentIntentId: string) => {
+    try {
+      const releaseFn = httpsCallable(functions, 'releaseEscrow');
+      const result = await releaseFn({ paymentIntentId });
+      return result.data as { success: boolean };
+    } catch (error) {
+      console.error('Release Escrow API Error:', error);
+      throw error;
+    }
   },
 };
 

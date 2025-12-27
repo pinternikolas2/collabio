@@ -1,5 +1,9 @@
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
-// Note: functions is not used in this file but exported for use in other files
 
 // TODO: Doplňte údaje z Firebase Console -> Project Settings
 const firebaseConfig = {

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
-import { chatApi } from '../utils/api';
+import { chatApi, storageApi } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -101,6 +101,39 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Chyba při odesílání zprávy");
+    }
+  };
+
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedChatId) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Soubor je příliš velký (max 10MB)');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const result = await storageApi.uploadAttachment(file);
+
+      const selectedConv = conversations.find(c => c.id === selectedChatId);
+      const toUserId = selectedConv?.userId || targetUserId;
+
+      if (toUserId) {
+        const fileMessage = `[Soubor] ${file.name}\n${result.url}`; // Simple formatting
+        await chatApi.sendMessage(toUserId, fileMessage, selectedChatId);
+        toast.success('Soubor odeslán');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Chyba při nahrávání souboru');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -349,15 +382,20 @@ export default function Chat({ userId, userRole, targetUserId, targetUserName, o
                   {/* Message Input */}
                   <div className="border-t p-4 bg-white">
                     <div className="flex items-center gap-3">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={handleFileUpload}
+                      />
                       <Button
                         variant="ghost"
                         size="icon"
                         title="Připojit soubor"
-                        onClick={() => {
-                          toast.info("Nahrávání souborů do chatu bude funkční po implementaci Storage");
-                        }}
+                        disabled={loading || uploading}
+                        onClick={() => fileInputRef.current?.click()}
                       >
-                        <Paperclip className="w-5 h-5" />
+                        {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
                       </Button>
                       <Input
                         placeholder="Napište zprávu..."

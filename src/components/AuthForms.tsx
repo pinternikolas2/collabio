@@ -142,7 +142,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-orange-50 p-4">
       <div className="w-full max-w-4xl space-y-6">
-        <Card className="w-full max-w-md mx-auto">
+        <Card className="w-full max-w-md mx-auto border-2 border-blue-100 shadow-2xl bg-white/90 backdrop-blur-sm">
           <CardHeader>
             <div className="flex items-center justify-between mb-2">
               {onNavigate && (
@@ -158,23 +158,36 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
               )}
               <div className="flex-1" />
             </div>
-            <div className="mx-auto mb-4">
-              <img src="/logo.jpg" alt="Collabio Logo" className="w-16 h-16 rounded-2xl shadow-2xl" />
+            <div className="mx-auto mb-4 relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-orange-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
+              <img src="/logo.jpg" alt="Collabio Logo" className="relative w-20 h-20 rounded-2xl shadow-lg" />
             </div>
-            <CardTitle className="text-center">{t('auth.title')}</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-center text-3xl font-bold bg-gradient-to-r from-blue-700 to-orange-600 bg-clip-text text-transparent">
+              {t('auth.title')}
+            </CardTitle>
+            <CardDescription className="text-center text-base mt-2">
               {t('auth.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">{t('auth.tabs.signin')}</TabsTrigger>
-                <TabsTrigger value="signup">{t('auth.tabs.signup')}</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 p-1 bg-gray-100/80 rounded-xl">
+                <TabsTrigger
+                  value="signin"
+                  className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm font-medium transition-all"
+                >
+                  {t('auth.tabs.signin')}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="signup"
+                  className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
+                >
+                  {t('auth.tabs.signup')}
+                </TabsTrigger>
               </TabsList>
 
               {error && (
-                <Alert variant="destructive" className="mt-4">
+                <Alert variant="destructive" className="mt-4 mb-6 border-red-200 bg-red-50">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
@@ -191,6 +204,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                       value={signInData.email}
                       onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                       required
+                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                     />
                   </div>
 
@@ -203,7 +217,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         value={signInData.password}
                         onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                         required
-                        className="pr-10"
+                        className="pr-10 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                       <button
                         type="button"
@@ -222,14 +236,18 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                       <button
                         type="button"
                         onClick={() => onNavigate?.('forgot-password')}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="text-sm text-blue-600 hover:underline font-medium"
                       >
                         {t('auth.forgot_password') || 'Zapomenuté heslo?'}
                       </button>
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold h-11 shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5"
+                    disabled={loading}
+                  >
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -241,17 +259,22 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                   </Button>
 
                   {/* Test Login Buttons */}
-                  <div className="pt-4 mt-4 border-t border-gray-100">
-                    <div className="text-xs text-center text-gray-500 mb-2 uppercase tracking-wider font-semibold">
-                      {t('auth.test_login.title')}
+                  <div className="pt-6 mt-6 border-t border-gray-100">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold whitespace-nowrap">
+                        Rychlé přihlášení (Demo)
+                      </div>
+                      <div className="h-px bg-gray-200 flex-1"></div>
                     </div>
+
                     <div className="grid grid-cols-2 gap-3">
                       <Button
                         type="button"
                         variant="outline"
                         disabled={loading}
                         onClick={() => handleTestLogin('talent')}
-                        className="text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                        className="text-xs border-blue-100 text-blue-700 hover:bg-blue-50 hover:border-blue-200 transition-all"
                       >
                         <User className="w-3 h-3 mr-1.5" />
                         {t('auth.test_login.talent')}
@@ -261,7 +284,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         variant="outline"
                         disabled={loading}
                         onClick={() => handleTestLogin('company')}
-                        className="text-xs border-orange-200 text-orange-700 hover:bg-orange-50"
+                        className="text-xs border-orange-100 text-orange-700 hover:bg-orange-50 hover:border-orange-200 transition-all"
                       >
                         <Building2 className="w-3 h-3 mr-1.5" />
                         {t('auth.test_login.company')}
@@ -271,10 +294,10 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         variant="outline"
                         disabled={loading}
                         onClick={() => handleTestLogin('admin')}
-                        className="text-xs border-purple-200 text-purple-700 hover:bg-purple-50 col-span-2"
+                        className="text-xs border-purple-100 text-purple-700 hover:bg-purple-50 hover:border-purple-200 col-span-2 transition-all"
                       >
                         <Shield className="w-3 h-3 mr-1.5" />
-                        Admin Test Login
+                        Admin Demo
                       </Button>
                     </div>
                   </div>
@@ -283,38 +306,38 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
 
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-3">
-                    <Label>{t('auth.labels.select_account_type')}</Label>
-                    <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-4">
+                    <Label className="text-base">{t('auth.labels.select_account_type')}</Label>
+                    <div className="grid grid-cols-2 gap-4">
                       {/* Talent Card */}
                       <div
                         onClick={() => setSignUpData({ ...signUpData, role: 'talent' })}
-                        className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 ${signUpData.role === 'talent'
-                          ? 'border-blue-600 bg-blue-50 shadow-lg scale-105'
-                          : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                        className={`relative cursor-pointer rounded-2xl border-2 p-4 transition-all duration-300 group ${signUpData.role === 'talent'
+                          ? 'border-blue-500 bg-blue-50/50 shadow-md transform scale-[1.02]'
+                          : 'border-gray-100 hover:border-blue-200 hover:bg-white hover:shadow-sm'
                           }`}
                       >
-                        <div className="flex flex-col items-center text-center space-y-2">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${signUpData.role === 'talent'
-                            ? 'bg-gradient-to-br from-blue-600 to-blue-400'
-                            : 'bg-gray-200'
+                        <div className="flex flex-col items-center text-center space-y-3">
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${signUpData.role === 'talent'
+                            ? 'bg-gradient-to-br from-blue-600 to-blue-400 shadow-lg shadow-blue-500/30'
+                            : 'bg-gray-100 group-hover:bg-blue-50'
                             }`}>
-                            <User className={`w-6 h-6 ${signUpData.role === 'talent' ? 'text-white' : 'text-gray-600'
+                            <User className={`w-7 h-7 ${signUpData.role === 'talent' ? 'text-white' : 'text-gray-400 group-hover:text-blue-500'
                               }`} />
                           </div>
                           <div>
-                            <div className={`font-semibold ${signUpData.role === 'talent' ? 'text-blue-600' : 'text-gray-700'
+                            <div className={`font-bold transition-colors ${signUpData.role === 'talent' ? 'text-blue-700' : 'text-gray-600'
                               }`}>
                               {t('auth.roles.talent_title')}
                             </div>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-gray-500 mt-1 leading-tight">
                               {t('auth.roles.talent_desc')}
                             </div>
                           </div>
                         </div>
                         {signUpData.role === 'talent' && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-sm">
+                            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </div>
@@ -324,32 +347,32 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                       {/* Company Card */}
                       <div
                         onClick={() => setSignUpData({ ...signUpData, role: 'company' })}
-                        className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 ${signUpData.role === 'company'
-                          ? 'border-orange-600 bg-orange-50 shadow-lg scale-105'
-                          : 'border-gray-200 hover:border-orange-300 hover:bg-gray-50'
+                        className={`relative cursor-pointer rounded-2xl border-2 p-4 transition-all duration-300 group ${signUpData.role === 'company'
+                          ? 'border-orange-500 bg-orange-50/50 shadow-md transform scale-[1.02]'
+                          : 'border-gray-100 hover:border-orange-200 hover:bg-white hover:shadow-sm'
                           }`}
                       >
-                        <div className="flex flex-col items-center text-center space-y-2">
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center ${signUpData.role === 'company'
-                            ? 'bg-gradient-to-br from-orange-600 to-orange-400'
-                            : 'bg-gray-200'
+                        <div className="flex flex-col items-center text-center space-y-3">
+                          <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${signUpData.role === 'company'
+                            ? 'bg-gradient-to-br from-orange-600 to-orange-400 shadow-lg shadow-orange-500/30'
+                            : 'bg-gray-100 group-hover:bg-orange-50'
                             }`}>
-                            <Building2 className={`w-6 h-6 ${signUpData.role === 'company' ? 'text-white' : 'text-gray-600'
+                            <Building2 className={`w-7 h-7 ${signUpData.role === 'company' ? 'text-white' : 'text-gray-400 group-hover:text-orange-500'
                               }`} />
                           </div>
                           <div>
-                            <div className={`font-semibold ${signUpData.role === 'company' ? 'text-orange-600' : 'text-gray-700'
+                            <div className={`font-bold transition-colors ${signUpData.role === 'company' ? 'text-orange-700' : 'text-gray-600'
                               }`}>
                               {t('auth.roles.company_title')}
                             </div>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-gray-500 mt-1 leading-tight">
                               {t('auth.roles.company_desc')}
                             </div>
                           </div>
                         </div>
                         {signUpData.role === 'company' && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-orange-600 rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center shadow-sm">
+                            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </div>
@@ -366,6 +389,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         value={signUpData.firstName}
                         onChange={(e) => setSignUpData({ ...signUpData, firstName: e.target.value })}
                         required
+                        className="border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                     </div>
 
@@ -376,6 +400,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         value={signUpData.lastName}
                         onChange={(e) => setSignUpData({ ...signUpData, lastName: e.target.value })}
                         required
+                        className="border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                     </div>
                   </div>
@@ -391,6 +416,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                             setSignUpData({ ...signUpData, companyName: e.target.value })
                           }
                           required
+                          className="border-gray-200 focus:border-orange-400 focus:ring-orange-400/20"
                         />
                       </div>
 
@@ -401,6 +427,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                           value={signUpData.ico}
                           onChange={(e) => setSignUpData({ ...signUpData, ico: e.target.value })}
                           placeholder="12345678"
+                          className="border-gray-200 focus:border-orange-400 focus:ring-orange-400/20"
                         />
                       </div>
                     </>
@@ -415,6 +442,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                       value={signUpData.email}
                       onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                       required
+                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                     />
                   </div>
 
@@ -427,7 +455,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                         value={signUpData.password}
                         onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                         required
-                        className="pr-10"
+                        className="pr-10 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                       <button
                         type="button"
@@ -455,7 +483,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                           setSignUpData({ ...signUpData, confirmPassword: e.target.value })
                         }
                         required
-                        className="pr-10"
+                        className="pr-10 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20"
                       />
                       <button
                         type="button"
@@ -472,31 +500,35 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 pt-2">
                     <input
                       type="checkbox"
                       id="terms"
                       checked={signUpData.termsAccepted}
                       onChange={(e) => setSignUpData({ ...signUpData, termsAccepted: e.target.checked })}
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                       required
                     />
-                    <Label htmlFor="terms" className="text-sm font-normal text-gray-600">
+                    <Label htmlFor="terms" className="text-sm font-normal text-gray-600 leading-tight cursor-pointer">
                       Souhlasím s{' '}
-                      <button type="button" onClick={() => onNavigate?.('terms')} className="text-blue-600 hover:underline">
+                      <button type="button" onClick={() => onNavigate?.('terms')} className="text-blue-600 hover:underline font-medium">
                         obchodními podmínkami
                       </button>
                       {' '}a{' '}
-                      <button type="button" onClick={() => onNavigate?.('gdpr')} className="text-blue-600 hover:underline">
+                      <button type="button" onClick={() => onNavigate?.('gdpr')} className="text-blue-600 hover:underline font-medium">
                         zpracováním údajů
                       </button>
                     </Label>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-bold h-12 text-lg shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 mt-4"
+                    disabled={loading}
+                  >
                     {loading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         {t('auth.buttons.signing_up')}
                       </>
                     ) : (

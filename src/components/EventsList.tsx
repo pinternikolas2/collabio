@@ -124,16 +124,16 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8 overflow-x-hidden">
             <div className="container mx-auto px-4 max-w-6xl">
-                
+
                 {/* Header Section */}
-                <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="text-center md:text-left">
-                        <h1 className="text-3xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
+                <div className="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
                             Události & Eventy
                         </h1>
-                        <p className="text-gray-600 text-lg max-w-2xl">
-                            Objevte exkluzivní akce, castingy a networkingová setkání. 
-                            Propojujeme svět byznysu s kreativitou na živých akcích.
+                        <p className="text-gray-600">
+                            Najděte nadcházející události, jako jsou zápasy bojovníků,
+                            a využijte možnost zakoupit si reklamní místo na jejich plachtě nebo dresu.
                         </p>
                     </div>
 
@@ -141,7 +141,7 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                     {currentUser?.role === 'company' && (
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button className="bg-gradient-to-r from-blue-600 to-orange-500 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all text-base px-6 py-6 h-auto rounded-xl">
+                                <Button className="bg-gradient-to-r from-blue-600 to-orange-500">
                                     <Plus className="w-5 h-5 mr-2" />
                                     Vytvořit událost
                                 </Button>
@@ -156,66 +156,36 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                     )}
                 </div>
 
-                {/* "How it works" Info Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="bg-white/60 backdrop-blur border-blue-100 shadow-sm hover:shadow-md transition-all">
-                        <CardContent className="p-5 flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                                <Calendar className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 mb-1">Dění v okolí</h3>
-                                <p className="text-sm text-gray-600">Najděte vernisáže, koncerty a networkingy ve vašem městě.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
 
-                    <Card className="bg-white/60 backdrop-blur border-orange-100 shadow-sm hover:shadow-md transition-all">
-                        <CardContent className="p-5 flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
-                                <Briefcase className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 mb-1">Práce na eventech</h3>
-                                <p className="text-sm text-gray-600">Firmy poptávají talenty, hostesky i fotografy.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-white/60 backdrop-blur border-purple-100 shadow-sm hover:shadow-md transition-all">
-                        <CardContent className="p-5 flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
-                                <Star className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 mb-1">Exkluzivní VIP</h3>
-                                <p className="text-sm text-gray-600">Speciální pozvánky pouze pro ověřené členy Collabio.</p>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
 
                 {/* Public Preview Banner (if not logged in) */}
                 {!currentUser && (
-                    <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-orange-50 rounded-2xl border-2 border-blue-200 shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                        <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
-                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
-                                <Lock className="w-8 h-8 text-white" />
+                    <div className="mb-8 p-4 bg-gradient-to-r from-blue-50 to-orange-50 rounded-lg border-2 border-blue-300 shadow-md">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center">
+                                <span className="text-white text-xl">🔒</span>
                             </div>
-                            <div className="flex-1 text-center md:text-left">
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">Ukázka pro veřejnost</h3>
-                                <p className="text-gray-600 mb-4 md:mb-0">
-                                    Prohlížíte si omezenou verzi událostí. Pro zobrazení detailů, kontaktů a možnost přihlášení se prosím registrujte.
+                            <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900 mb-1">{t('marketplace.preview_title')}</h3>
+                                <p className="text-sm text-gray-700 mb-3">
+                                    {t('marketplace.preview_desc')}
                                 </p>
-                            </div>
-                            <div className="flex gap-3">
-                                <Button size="lg" onClick={() => onNavigate('register')} className="bg-gradient-to-r from-blue-600 to-orange-500 text-white hover:shadow-lg">
-                                    Registrovat zdarma
-                                </Button>
-                                <Button size="lg" variant="outline" onClick={() => onNavigate('login')} className="border-blue-200 hover:bg-blue-50 text-blue-700">
-                                    Přihlásit se
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        size="sm"
+                                        onClick={() => onNavigate('register')}
+                                        className="bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
+                                    >
+                                        {t('marketplace.register_action')}
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => onNavigate('login')}
+                                    >
+                                        {t('navigation.login')}
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -264,11 +234,11 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                 </Card>
 
                 {/* Feed Grid */}
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {filteredEvents.map(event => (
                         <Card
                             key={event.id}
-                            className={`group overflow-hidden transition-all hover:shadow-xl cursor-pointer border-0 ring-1 ${event.type === 'company_demand' ? 'ring-blue-100 hover:ring-blue-300' : 'ring-orange-100 hover:ring-orange-300'}`}
+                            className={`group overflow-hidden transition-all duration-300 hover:shadow-2xl cursor-pointer border-2 hover:border-blue-500 relative bg-white flex flex-col h-full`}
                             onClick={() => {
                                 if (!currentUser) {
                                     onNavigate('register');
@@ -281,108 +251,93 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                                 }
                             }}
                         >
-                            <CardContent className="p-0">
-                                <div className="flex flex-col md:flex-row">
+                            {/* Image / Date Header */}
+                            <div className="relative h-40 overflow-hidden">
+                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
 
-                                    {/* Date / Image Section */}
-                                    <div className="md:w-64 bg-gray-100 relative shrink-0 h-48 md:h-auto overflow-hidden">
-                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
-                                        {event.type === 'talent_offer' ? (
-                                            <>
-                                                <img 
-                                                    src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} 
-                                                    alt={event.subtitle} 
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                                                />
-                                                <div className="absolute top-0 left-0 bg-white/95 backdrop-blur-md px-4 py-3 rounded-br-2xl shadow-lg z-20">
-                                                    <div className="text-center">
-                                                        <div className="text-2xl font-black text-gray-900 leading-none">{formatDateDay(event.date)}</div>
-                                                        <div className="text-xs font-bold text-orange-500 uppercase tracking-wider">{formatDateMonth(event.date)}</div>
-                                                    </div>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-white relative">
-                                                <div className="absolute top-3 left-3 bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-md">
-                                                    {formatDateDay(event.date)} {formatDateMonth(event.date)}
-                                                </div>
-                                                <Avatar className="w-20 h-20 mb-3 ring-4 ring-white shadow-lg">
-                                                    <AvatarImage src={event.imageUrl} />
-                                                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-bold text-xl">
-                                                        {event.subtitle[0]}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className="px-3 py-1 rounded-full bg-white/80 backdrop-blur text-xs font-semibold text-gray-600 shadow-sm">
-                                                    Firemní Event
-                                                </div>
-                                            </div>
-                                        )}
+                                {event.type === 'talent_offer' ? (
+                                    <img
+                                        src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'}
+                                        alt={event.subtitle}
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-white relative group-hover:scale-110 transition-transform duration-500">
+                                        <Avatar className="w-20 h-20 mb-3 ring-4 ring-white shadow-lg">
+                                            <AvatarImage src={event.imageUrl} />
+                                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white font-bold text-xl">
+                                                {event.subtitle[0]}
+                                            </AvatarFallback>
+                                        </Avatar>
                                     </div>
+                                )}
 
-                                    {/* Content Section */}
-                                    <div className="p-6 md:p-8 flex-1 flex flex-col justify-center relative">
-                                        {/* Top Badge */}
-                                        <div className="flex justify-between items-start mb-3">
-                                             <Badge variant="outline" className={`mb-2 ${event.type === 'company_demand' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-orange-50 text-orange-700 border-orange-200'}`}>
-                                                {event.type === 'company_demand' ? 'Poptávka' : 'Nabídka'}
-                                            </Badge>
-                                            
-                                            {!currentUser && (
-                                                <Lock className="w-4 h-4 text-gray-400" />
-                                            )}
-                                        </div>
-                                       
-                                        <h3 className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-orange-500 transition-all mb-2">
-                                            {event.title}
-                                        </h3>
-                                        
-                                        <div className="flex items-center gap-3 text-sm text-gray-600 font-medium mb-4">
-                                            {event.type === 'company_demand' ? (
-                                                <div className="flex items-center gap-2">
-                                                    <Briefcase className="w-4 h-4 text-blue-500" />
-                                                    <span>{event.subtitle}</span>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center gap-2">
-                                                    <Star className="w-4 h-4 text-orange-500" />
-                                                    <span>{event.subtitle}</span>
-                                                </div>
-                                            )}
-                                            {event.location && (
-                                                <>
-                                                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                    <div className="flex items-center gap-1">
-                                                        <MapPin className="w-4 h-4 text-gray-400" />
-                                                        {event.location}
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
-
-                                        <p className="text-gray-600 line-clamp-2 mb-6 text-sm leading-relaxed">
-                                            {event.description}
-                                        </p>
-
-                                        {/* Action Area */}
-                                        <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                                            {currentUser ? (
-                                                <>
-                                                    <div className="font-semibold text-gray-900">
-                                                        {event.type === 'company_demand' ? 'Rozpočet dohodou' : 'Cena v profilu'}
-                                                    </div>
-                                                    <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                                                        Zobrazit detail <ArrowRight className="w-4 h-4 ml-1" />
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div className="w-full text-center text-sm font-medium text-gray-500 italic bg-gray-50 py-2 rounded-lg">
-                                                    Pro zobrazení ceny se přihlaste
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                                {/* Date Badge Overlay */}
+                                <div className="absolute top-3 left-3 z-20 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-lg flex flex-col items-center border border-gray-100">
+                                    <div className="text-xl font-black text-gray-900 leading-none">{formatDateDay(event.date)}</div>
+                                    <div className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">{formatDateMonth(event.date)}</div>
                                 </div>
-                            </CardContent>
+
+                                {/* Type Badge */}
+                                <Badge className={`absolute top-3 right-3 z-20 shadow-sm ${event.type === 'company_demand'
+                                    ? 'bg-blue-600 hover:bg-blue-700'
+                                    : 'bg-orange-500 hover:bg-orange-600'
+                                    }`}>
+                                    {event.type === 'company_demand' ? (
+                                        <><Briefcase className="w-3 h-3 mr-1" /> Poptávka</>
+                                    ) : (
+                                        <><Sparkles className="w-3 h-3 mr-1" /> Nabídka</>
+                                    )}
+                                </Badge>
+                            </div>
+
+                            {/* Content */}
+                            <div className="p-5 flex-1 flex flex-col">
+                                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 mb-2">
+                                    {event.type === 'company_demand' ? (
+                                        <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                                            <Briefcase className="w-3 h-3" />
+                                            <span className="truncate max-w-[150px]">{event.subtitle}</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-1.5 text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+                                            <Star className="w-3 h-3" />
+                                            <span className="truncate max-w-[150px]">{event.subtitle}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+                                    {event.title}
+                                </h3>
+
+                                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                                    <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                                    <span className="truncate">{event.location || 'Online / Neuvedeno'}</span>
+                                </div>
+
+                                <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
+                                    {event.description}
+                                </p>
+
+                                <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
+                                    {currentUser ? (
+                                        <>
+                                            <div className="font-bold text-gray-900">
+                                                {event.type === 'company_demand' ? 'Rozpočet dohodou' : 'Cena v profilu'}
+                                            </div>
+                                            <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                                <ArrowRight className="w-4 h-4" />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="w-full text-center text-xs font-semibold text-gray-400 italic">
+                                            <Lock className="w-3 h-3 inline-block mr-1" />
+                                            Přihlaste se pro detail
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </Card>
                     ))}
 

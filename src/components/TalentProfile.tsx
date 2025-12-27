@@ -131,95 +131,109 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-4 md:py-8 overflow-x-hidden w-full">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8 md:py-12 overflow-x-hidden w-full">
       <div className="container mx-auto px-4 max-w-6xl w-full overflow-x-hidden">
         {/* Header Card */}
-        <Card className="mb-8 max-w-full">
-          {/* Cover */}
-          <div className="h-24 md:h-32 bg-gradient-to-r from-blue-600 to-orange-500"></div>
+        <Card className="mb-8 max-w-full overflow-hidden border-none shadow-xl bg-white/80 backdrop-blur-md">
+          {/* Cover - Full Gradient */}
+          <div className="h-48 md:h-64 bg-gradient-to-r from-blue-600 via-purple-500 to-orange-500 relative">
+            <div className="absolute inset-0 bg-black/10"></div>
+          </div>
 
-          <CardContent className="relative pb-6 overflow-x-hidden max-w-full -mt-16 md:-mt-20">
-            {/* Profile Image */}
-            <div className="flex flex-col md:flex-row md:items-end gap-6 mb-6">
-              <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 md:border-8 border-white shadow-2xl bg-white">
-                <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} />
-                <AvatarFallback className="text-4xl">{talent.firstName[0]}{talent.lastName[0]}</AvatarFallback>
-              </Avatar>
+          <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">
+            {/* Profile Image & Info */}
+            <div className="flex flex-col md:flex-row md:items-end gap-6 mb-8">
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                <Avatar className="w-32 h-32 md:w-48 md:h-48 border-4 border-white shadow-2xl bg-white relative">
+                  <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} className="object-cover" />
+                  <AvatarFallback className="text-5xl font-bold bg-gradient-to-br from-blue-100 to-orange-100 text-blue-900">{talent.firstName[0]}{talent.lastName[0]}</AvatarFallback>
+                </Avatar>
+                {talent.verified && (
+                  <div className="absolute bottom-2 right-2 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-lg" title={t('talent_profile.verified')}>
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                )}
+              </div>
 
-              <div className="flex-1 md:mb-4 min-w-0 max-w-full overflow-x-hidden">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 max-w-full">
+              <div className="flex-1 md:mb-6 min-w-0 max-w-full overflow-x-hidden">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 max-w-full">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                      <h1 className="text-2xl md:text-3xl font-bold break-words">{talent.firstName} {talent.lastName}</h1>
-                      {talent.verified && (
-                        <Badge className="bg-blue-600">✓ {t('talent_profile.verified')}</Badge>
+                    <div className="flex items-center gap-3 mb-1 flex-wrap">
+                      <h1 className="text-3xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                        {talent.firstName} {talent.lastName}
+                      </h1>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      {talent.category && (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200 px-3 py-1 text-sm border border-blue-200">
+                          {talent.category}
+                        </Badge>
+                      )}
+                      {talent.title && (
+                        <span className="text-lg text-gray-600 font-medium border-l-2 border-gray-300 pl-3">
+                          {talent.title}
+                        </span>
                       )}
                     </div>
-                    {talent.category && (
-                      <Badge variant="secondary" className="mb-2">{talent.category}</Badge>
-                    )}
-                    {talent.title && (
-                      <p className="text-lg font-medium text-gray-800 mb-2">{talent.title}</p>
-                    )}
-                    <p className="text-gray-600">{talent.bio}</p>
+
+                    <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">{talent.bio}</p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 max-w-full">
+                  <div className="flex flex-wrap gap-3 max-w-full mt-4 md:mt-0">
                     {!isOwnProfile && currentUserRole === 'company' && (
                       <>
                         <Button
-                          className="bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 whitespace-nowrap flex-shrink-0"
+                          className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5"
                           onClick={() => onNavigate('chat', { userId })}
-                          size="sm"
+                          size="lg"
                         >
-                          <MessageSquare className="w-4 h-4 mr-1 md:mr-2" />
+                          <MessageSquare className="w-5 h-5 mr-2" />
                           <span className="hidden sm:inline">{t('talent_profile.send_message')}</span>
                           <span className="sm:hidden">{t('talent_profile.message_short')}</span>
                         </Button>
                         <Button
-                          variant="outline"
+                          className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-0.5 border-none"
                           onClick={() => onNavigate('create-project', {
                             targetUserId: userId,
                             targetUserName: `${talent.firstName} ${talent.lastName}`
                           })}
-                          className="whitespace-nowrap flex-shrink-0"
-                          size="sm"
+                          size="lg"
                         >
-                          <Briefcase className="w-4 h-4 mr-1 md:mr-2" />
+                          <Briefcase className="w-5 h-5 mr-2" />
                           <span className="hidden sm:inline">{t('talent_profile.offer_collaboration')}</span>
                           <span className="sm:hidden">{t('talent_profile.collaboration_short')}</span>
                         </Button>
                       </>
                     )}
                     {!isOwnProfile && currentUserRole === 'talent' && (
-                      <div className="w-full p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <p className="text-sm text-blue-900">
-                          {t('talent_profile.cant_contact_talent')}
-                        </p>
+                      <div className="px-4 py-2 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-500 italic">
+                        {t('talent_profile.cant_contact_talent')}
                       </div>
                     )}
                     {isOwnProfile && (
                       <>
                         <Button
                           onClick={() => onNavigate('talent-analytics')}
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 whitespace-nowrap flex-shrink-0"
-                          size="sm"
+                          className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
+                          size="lg"
                         >
-                          <TrendingUp className="w-4 h-4 mr-1 md:mr-2" />
+                          <TrendingUp className="w-5 h-5 mr-2" />
                           {t('talent_profile.analytics')}
                         </Button>
                         <Button
                           variant="outline"
                           onClick={() => onNavigate('settings')}
-                          className="whitespace-nowrap flex-shrink-0"
-                          size="sm"
+                          className="border-gray-200 hover:bg-gray-50"
+                          size="lg"
                         >
                           {t('talent_profile.edit_profile')}
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="hover:bg-blue-100 text-blue-600"
+                          className="hover:bg-blue-50 text-blue-600 rounded-full w-12 h-12"
                           onClick={() => {
                             navigator.share ? navigator.share({
                               title: `${talent.firstName} ${talent.lastName} - Collabio`,
@@ -227,7 +241,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                             }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
                           }}
                         >
-                          <Share2 className="w-5 h-5" />
+                          <Share2 className="w-6 h-6" />
                         </Button>
                       </>
                     )}
@@ -235,7 +249,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="hover:bg-blue-100 text-blue-600"
+                        className="hover:bg-blue-50 text-blue-600 rounded-full w-12 h-12"
                         onClick={() => {
                           navigator.share ? navigator.share({
                             title: `${talent.firstName} ${talent.lastName} - Collabio`,
@@ -243,7 +257,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                           }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
                         }}
                       >
-                        <Share2 className="w-5 h-5" />
+                        <Share2 className="w-6 h-6" />
                       </Button>
                     )}
                   </div>
@@ -251,50 +265,60 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-              <div className="text-center p-3 md:p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Users className="w-4 h-4 md:w-5 md:h-5 text-blue-600" />
-                  <p className="text-xl md:text-2xl font-bold">{formatFollowers(talent.followers)}</p>
+            {/* Stats Grid - Premium Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.followers')}</p>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">{t('talent_profile.stats.followers')}</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{formatFollowers(talent.followers)}</p>
               </div>
 
-              <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
-                  <p className="text-xl md:text-2xl font-bold">{completedCollabs}</p>
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-100 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.projects')}</p>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">{t('talent_profile.stats.projects')}</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{completedCollabs}</p>
               </div>
 
-              <div className="text-center p-3 md:p-4 bg-yellow-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-600" />
-                  <p className="text-xl md:text-2xl font-bold">{avgRating.toFixed(1)}</p>
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                    <Star className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.rating')}</p>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">{t('talent_profile.stats.rating')}</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{avgRating.toFixed(1)}</p>
               </div>
 
-              <div className="text-center p-3 md:p-4 bg-orange-50 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Calendar className="w-4 h-4 md:w-5 md:h-5 text-orange-600" />
-                  <p className="text-xl md:text-2xl font-bold">
-                    {new Date(talent.createdAt).toLocaleDateString('cs-CZ', { year: 'numeric' })}
-                  </p>
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-orange-100 rounded-lg text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.member_since')}</p>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">{t('talent_profile.stats.member_since')}</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">
+                  {new Date(talent.createdAt).getFullYear()}
+                </p>
               </div>
 
               {/* Celkové příjmy - pouze pro vlastníka profilu */}
               {isOwnProfile && (
-                <div className="text-center p-3 md:p-4 bg-purple-50 rounded-lg col-span-2 md:col-span-1">
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
-                    <p className="text-xl md:text-2xl font-bold">{formatPrice(totalEarnings)}</p>
+                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg text-white col-span-2 md:col-span-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-white/20 rounded-lg">
+                      <TrendingUp className="w-5 h-5 text-white" />
+                    </div>
+                    <p className="text-xs md:text-sm font-medium opacity-90">{t('talent_profile.stats.total_earnings')}</p>
                   </div>
-                  <p className="text-xs md:text-sm text-gray-600">{t('talent_profile.stats.total_earnings')}</p>
+                  <p className="text-2xl md:text-3xl font-bold">{formatPrice(totalEarnings)}</p>
                 </div>
               )}
             </div>
@@ -305,25 +329,29 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
           {/* Left Column */}
           <div className="space-y-6">
             {/* Social Media */}
-            {/* Social Media */}
-            <Card>
-              <CardHeader>
-                <h3 className="text-xl font-semibold">{t('talent_profile.sections.social_media')}</h3>
+            <Card className="border-none shadow-md overflow-hidden">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-blue-500" />
+                  {t('talent_profile.sections.social_media')}
+                </h3>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4 pt-6">
                 {talent.instagram && (
                   <a
                     href={`https://instagram.com/${talent.instagram.replace('@', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-pink-50 transition-colors group"
+                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
                   >
-                    <Instagram className="w-5 h-5 text-pink-600" />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold group-hover:text-pink-600">Instagram</p>
-                      <p className="text-xs text-gray-600">{talent.instagram}</p>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-pink-600">
+                      <Instagram className="w-5 h-5" />
                     </div>
-                    <Badge variant="outline">{formatFollowers(talent.followers)}</Badge>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">Instagram</p>
+                      <p className="text-xs text-gray-500">{talent.instagram}</p>
+                    </div>
+                    <Badge variant="secondary" className="bg-white/50">{formatFollowers(talent.followers)}</Badge>
                   </a>
                 )}
                 {talent.tiktok && (
@@ -331,14 +359,14 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                     href={`https://tiktok.com/${talent.tiktok.replace('@', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-gray-100 to-transparent border border-gray-200/50 hover:border-gray-300 transition-all group"
                   >
-                    <div className="w-5 h-5 bg-black rounded-lg flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">Tt</span>
+                    <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-white">
+                      <span className="font-bold text-xs">Tt</span>
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold">TikTok</p>
-                      <p className="text-xs text-gray-600">{talent.tiktok}</p>
+                      <p className="font-semibold text-gray-900">TikTok</p>
+                      <p className="text-xs text-gray-500">{talent.tiktok}</p>
                     </div>
                   </a>
                 )}
@@ -347,12 +375,14 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                     href={`https://linkedin.com/in/${talent.linkedin}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
+                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-transparent border border-blue-100/50 hover:border-blue-200 transition-all group"
                   >
-                    <Linkedin className="w-5 h-5 text-blue-700" />
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-blue-700">
+                      <Linkedin className="w-5 h-5" />
+                    </div>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold group-hover:text-blue-700">LinkedIn</p>
-                      <p className="text-xs text-gray-600">{talent.linkedin}</p>
+                      <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">LinkedIn</p>
+                      <p className="text-xs text-gray-500">{talent.linkedin}</p>
                     </div>
                   </a>
                 )}
@@ -360,33 +390,41 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
             </Card>
 
             {/* Skills/Categories */}
-            {/* Skills/Categories */}
-            <Card>
-              <CardHeader>
-                <h3 className="text-xl font-semibold">{t('talent_profile.sections.skills')}</h3>
+            <Card className="border-none shadow-md">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                  {t('talent_profile.sections.skills')}
+                </h3>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
+              <CardContent className="pt-6">
+                <div className="space-y-5">
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Content Creation</span>
-                      <span className="text-sm font-semibold">95%</span>
+                      <span className="text-sm font-medium text-gray-700">Content Creation</span>
+                      <span className="text-sm font-bold text-blue-600">95%</span>
                     </div>
-                    <Progress value={95} />
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
+                    </div>
                   </div>
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Social Media Marketing</span>
-                      <span className="text-sm font-semibold">90%</span>
+                      <span className="text-sm font-medium text-gray-700">Social Media Marketing</span>
+                      <span className="text-sm font-bold text-orange-600">90%</span>
                     </div>
-                    <Progress value={90} />
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
+                    </div>
                   </div>
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Brand Collaboration</span>
-                      <span className="text-sm font-semibold">88%</span>
+                      <span className="text-sm font-medium text-gray-700">Brand Collaboration</span>
+                      <span className="text-sm font-bold text-purple-600">88%</span>
                     </div>
-                    <Progress value={88} />
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -394,7 +432,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
           </div>
 
           {/* Right Column */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             {/* Upcoming Events Section */}
             <UpcomingEventsSection
               userId={userId}
@@ -403,285 +441,302 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
               onNavigate={onNavigate}
             />
 
-            <Tabs defaultValue="portfolio">
-              <TabsList className="w-full">
-                <TabsTrigger value="portfolio" className="flex-1">{t('talent_profile.tabs.portfolio')}</TabsTrigger>
-                <TabsTrigger value="reviews" className="flex-1">
-                  {t('talent_profile.tabs.reviews')} ({talentRatings.length})
-                </TabsTrigger>
-                <TabsTrigger value="collaborations" className="flex-1">
-                  {t('talent_profile.tabs.projects')} ({completedCollabs})
-                </TabsTrigger>
-              </TabsList>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <Tabs defaultValue="portfolio" className="w-full">
+                <div className="border-b border-gray-100 px-6 pt-6">
+                  <TabsList className="w-full justify-start h-auto p-1 bg-gray-50/50 rounded-xl gap-1 mb-6 inline-flex">
+                    <TabsTrigger
+                      value="portfolio"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('talent_profile.tabs.portfolio')}
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="reviews"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-yellow-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('talent_profile.tabs.reviews')}
+                      <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 border-none">{talentRatings.length}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="collaborations"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('talent_profile.tabs.projects')}
+                      <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-none">{completedCollabs}</Badge>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
-              {/* Portfolio Tab */}
-              <TabsContent value="portfolio">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold">{t('talent_profile.tabs.portfolio')}</h3>
-                      <p className="text-sm text-gray-500">Ukázky tvé práce</p>
-                    </div>
-                    {isOwnProfile && (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="bg-gradient-to-r from-blue-600 to-orange-500">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Přidat ukázku
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Přidat položku do portfolia</DialogTitle>
-                          </DialogHeader>
-                          <AddPortfolioItemForm
-                            userId={userId}
-                            onSuccess={() => {
-                              toast.success('Položka přidána!');
-                              window.location.reload();
-                            }}
-                          />
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <Tabs defaultValue="all" className="w-full">
-                      <TabsList className="mb-6 flex flex-wrap h-auto gap-2 bg-transparent justify-start p-0">
-                        {['all', 'image', 'video', 'social', 'project', 'achievement'].map(type => (
-                          <TabsTrigger
-                            key={type}
-                            value={type}
-                            className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 border border-gray-200 bg-white rounded-full px-4"
-                          >
-                            {type === 'all' && 'Vše'}
-                            {type === 'image' && 'Galerie'}
-                            {type === 'video' && 'Videa'}
-                            {type === 'social' && 'Social Posts'}
-                            {type === 'project' && 'Projekty'}
-                            {type === 'achievement' && 'Úspěchy'}
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-
-                      {['all', 'image', 'video', 'social', 'project', 'achievement'].map(filterType => (
-                        <TabsContent key={filterType} value={filterType} className="mt-0">
-                          {(!talent.portfolio || talent.portfolio.filter(i => filterType === 'all' || i.type === filterType).length === 0) ? (
-                            <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                              <p className="text-gray-500">V této sekci zatím nic není.</p>
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              {talent.portfolio
-                                .filter(item => filterType === 'all' || item.type === filterType)
-                                .map((item) => (
-                                  <div key={item.id} className="group relative rounded-xl overflow-hidden border bg-white hover:shadow-lg transition-all flex flex-col">
-                                    {/* Image/Preview */}
-                                    <div className="aspect-video bg-gray-100 relative overflow-hidden shrink-0">
-                                      {item.type === 'video' || item.type === 'social' ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">
-                                          {item.imageUrl ? (
-                                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover opacity-60" />
-                                          ) : (
-                                            item.type === 'video' ? <Tv className="w-12 h-12" /> : <Instagram className="w-12 h-12" />
-                                          )}
-                                          <div className="absolute inset-0 flex items-center justify-center">
-                                            {item.type === 'video' ? <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm"><Tv className="w-8 h-8" /></div> : null}
-                                          </div>
-                                        </div>
-                                      ) : item.type === 'achievement' ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-600">
-                                          <Star className="w-16 h-16" />
-                                        </div>
-                                      ) : (
-                                        <img
-                                          src={item.imageUrl || 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&auto=format&fit=crop&q=60'}
-                                          alt={item.title}
-                                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&auto=format&fit=crop&q=60'; }}
-                                        />
-                                      )}
-
-                                      <div className="absolute top-2 right-2 flex gap-2">
-                                        <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm shadow-sm">
-                                          {item.type === 'image' && 'Obrázek'}
-                                          {item.type === 'video' && 'Video'}
-                                          {item.type === 'social' && 'Social'}
-                                          {item.type === 'project' && 'Projekt'}
-                                          {item.type === 'achievement' && 'Úspěch'}
-                                        </Badge>
-                                      </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="p-4 flex flex-col flex-1">
-                                      <h4 className="font-bold text-lg mb-1">{item.title}</h4>
-                                      <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-1">{item.description}</p>
-
-                                      {item.link && (
-                                        <a
-                                          href={item.link}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          className="text-blue-600 text-xs font-semibold inline-flex items-center hover:underline mt-auto"
-                                        >
-                                          zobrazit <TrendingUp className="w-3 h-3 ml-1" />
-                                        </a>
-                                      )}
-                                    </div>
-
-                                    {/* Delete Action */}
-                                    {isOwnProfile && (
-                                      <Button
-                                        variant="destructive"
-                                        size="icon"
-                                        className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 z-10"
-                                        onClick={async () => {
-                                          if (confirm('Opravdu smazat?')) {
-                                            try {
-                                              const updatedPortfolio = talent.portfolio?.filter(p => p.id !== item.id) || [];
-                                              await userApi.updateUser(userId, { portfolio: updatedPortfolio });
-                                              window.location.reload();
-                                            } catch (e) { toast.error('Chyba při mazání'); }
-                                          }
-                                        }}
-                                      >
-                                        <X className="w-4 h-4" />
-                                      </Button>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          )}
-                        </TabsContent>
-                      ))}
-                    </Tabs>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Reviews Tab */}
-              <TabsContent value="reviews">
-                <Card>
-                  <CardContent className="p-6 space-y-6">
-                    {/* Rating Summary */}
-                    <div className="flex items-center gap-6 pb-6 border-b">
-                      <div className="text-center">
-                        <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
-                        <div className="flex gap-1 mb-2">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                                }`}
+                {/* Portfolio Tab */}
+                <TabsContent value="portfolio" className="p-0 m-0">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <h3 className="text-xl font-semibold">{t('talent_profile.tabs.portfolio')}</h3>
+                        <p className="text-sm text-gray-500">Ukázky tvé práce</p>
+                      </div>
+                      {isOwnProfile && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-orange-500">
+                              <Plus className="w-4 h-4 mr-2" />
+                              Přidat ukázku
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Přidat položku do portfolia</DialogTitle>
+                            </DialogHeader>
+                            <AddPortfolioItemForm
+                              userId={userId}
+                              onSuccess={() => {
+                                toast.success('Položka přidána!');
+                                window.location.reload();
+                              }}
                             />
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <Tabs defaultValue="all" className="w-full">
+                        <TabsList className="mb-6 flex flex-wrap h-auto gap-2 bg-transparent justify-start p-0">
+                          {['all', 'image', 'video', 'social', 'project', 'achievement'].map(type => (
+                            <TabsTrigger
+                              key={type}
+                              value={type}
+                              className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 border border-gray-200 bg-white rounded-full px-4"
+                            >
+                              {type === 'all' && 'Vše'}
+                              {type === 'image' && 'Galerie'}
+                              {type === 'video' && 'Videa'}
+                              {type === 'social' && 'Social Posts'}
+                              {type === 'project' && 'Projekty'}
+                              {type === 'achievement' && 'Úspěchy'}
+                            </TabsTrigger>
                           ))}
+                        </TabsList>
+
+                        {['all', 'image', 'video', 'social', 'project', 'achievement'].map(filterType => (
+                          <TabsContent key={filterType} value={filterType} className="mt-0">
+                            {(!talent.portfolio || talent.portfolio.filter(i => filterType === 'all' || i.type === filterType).length === 0) ? (
+                              <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                                <p className="text-gray-500">V této sekci zatím nic není.</p>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {talent.portfolio
+                                  .filter(item => filterType === 'all' || item.type === filterType)
+                                  .map((item) => (
+                                    <div key={item.id} className="group relative rounded-xl overflow-hidden border bg-white hover:shadow-lg transition-all flex flex-col">
+                                      {/* Image/Preview */}
+                                      <div className="aspect-video bg-gray-100 relative overflow-hidden shrink-0">
+                                        {item.type === 'video' || item.type === 'social' ? (
+                                          <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">
+                                            {item.imageUrl ? (
+                                              <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover opacity-60" />
+                                            ) : (
+                                              item.type === 'video' ? <Tv className="w-12 h-12" /> : <Instagram className="w-12 h-12" />
+                                            )}
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                              {item.type === 'video' ? <div className="bg-white/20 p-4 rounded-full backdrop-blur-sm"><Tv className="w-8 h-8" /></div> : null}
+                                            </div>
+                                          </div>
+                                        ) : item.type === 'achievement' ? (
+                                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-600">
+                                            <Star className="w-16 h-16" />
+                                          </div>
+                                        ) : (
+                                          <img
+                                            src={item.imageUrl || 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&auto=format&fit=crop&q=60'}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&auto=format&fit=crop&q=60'; }}
+                                          />
+                                        )}
+
+                                        <div className="absolute top-2 right-2 flex gap-2">
+                                          <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm shadow-sm">
+                                            {item.type === 'image' && 'Obrázek'}
+                                            {item.type === 'video' && 'Video'}
+                                            {item.type === 'social' && 'Social'}
+                                            {item.type === 'project' && 'Projekt'}
+                                            {item.type === 'achievement' && 'Úspěch'}
+                                          </Badge>
+                                        </div>
+                                      </div>
+
+                                      {/* Content */}
+                                      <div className="p-4 flex flex-col flex-1">
+                                        <h4 className="font-bold text-lg mb-1">{item.title}</h4>
+                                        <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-1">{item.description}</p>
+
+                                        {item.link && (
+                                          <a
+                                            href={item.link}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-blue-600 text-xs font-semibold inline-flex items-center hover:underline mt-auto"
+                                          >
+                                            zobrazit <TrendingUp className="w-3 h-3 ml-1" />
+                                          </a>
+                                        )}
+                                      </div>
+
+                                      {/* Delete Action */}
+                                      {isOwnProfile && (
+                                        <Button
+                                          variant="destructive"
+                                          size="icon"
+                                          className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity w-8 h-8 z-10"
+                                          onClick={async () => {
+                                            if (confirm('Opravdu smazat?')) {
+                                              try {
+                                                const updatedPortfolio = talent.portfolio?.filter(p => p.id !== item.id) || [];
+                                                await userApi.updateUser(userId, { portfolio: updatedPortfolio });
+                                                window.location.reload();
+                                              } catch (e) { toast.error('Chyba při mazání'); }
+                                            }
+                                          }}
+                                        >
+                                          <X className="w-4 h-4" />
+                                        </Button>
+                                      )}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </TabsContent>
+                        ))}
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Reviews Tab */}
+                <TabsContent value="reviews">
+                  <Card>
+                    <CardContent className="p-6 space-y-6">
+                      {/* Rating Summary */}
+                      <div className="flex items-center gap-6 pb-6 border-b">
+                        <div className="text-center">
+                          <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
+                          <div className="flex gap-1 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-sm text-gray-600">{t('talent_profile.reviews.count', { count: talentRatings.length })}</p>
                         </div>
-                        <p className="text-sm text-gray-600">{t('talent_profile.reviews.count', { count: talentRatings.length })}</p>
+
+                        <div className="flex-1 space-y-2">
+                          {[5, 4, 3, 2, 1].map((rating) => {
+                            const count = talentRatings.filter((r) => r.rating === rating).length;
+                            const percentage = talentRatings.length > 0 ? (count / talentRatings.length) * 100 : 0;
+                            return (
+                              <div key={rating} className="flex items-center gap-2">
+                                <span className="text-sm w-8">{rating} ⭐</span>
+                                <Progress value={percentage} className="flex-1" />
+                                <span className="text-sm text-gray-600 w-8">{count}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
 
-                      <div className="flex-1 space-y-2">
-                        {[5, 4, 3, 2, 1].map((rating) => {
-                          const count = talentRatings.filter((r) => r.rating === rating).length;
-                          const percentage = talentRatings.length > 0 ? (count / talentRatings.length) * 100 : 0;
+                      {/* Individual Reviews */}
+                      <div className="space-y-4">
+                        {talentRatings.map((rating) => {
+                          const reviewer = mockUsers.find((u) => u.id === rating.fromUserId);
                           return (
-                            <div key={rating} className="flex items-center gap-2">
-                              <span className="text-sm w-8">{rating} ⭐</span>
-                              <Progress value={percentage} className="flex-1" />
-                              <span className="text-sm text-gray-600 w-8">{count}</span>
+                            <div key={rating.id} className="border-b pb-4 last:border-0">
+                              <div className="flex items-start gap-3 mb-2">
+                                <Avatar className="w-10 h-10">
+                                  <AvatarImage src={reviewer?.profileImage} />
+                                  <AvatarFallback>{reviewer?.firstName[0]}</AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <p className="font-semibold">
+                                      {reviewer?.firstName} {reviewer?.lastName}
+                                    </p>
+                                    <p className="text-sm text-gray-500">
+                                      {new Date(rating.createdAt).toLocaleDateString('cs-CZ')}
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-1 mb-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <Star
+                                        key={star}
+                                        className={`w-4 h-4 ${star <= rating.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                          }`}
+                                      />
+                                    ))}
+                                  </div>
+                                  <p className="text-sm text-gray-700">{rating.comment}</p>
+                                </div>
+                              </div>
                             </div>
                           );
                         })}
-                      </div>
-                    </div>
 
-                    {/* Individual Reviews */}
-                    <div className="space-y-4">
-                      {talentRatings.map((rating) => {
-                        const reviewer = mockUsers.find((u) => u.id === rating.fromUserId);
-                        return (
-                          <div key={rating.id} className="border-b pb-4 last:border-0">
-                            <div className="flex items-start gap-3 mb-2">
-                              <Avatar className="w-10 h-10">
-                                <AvatarImage src={reviewer?.profileImage} />
-                                <AvatarFallback>{reviewer?.firstName[0]}</AvatarFallback>
+                        {talentRatings.length === 0 && (
+                          <p className="text-center text-gray-500 py-8">
+                            {t('talent_profile.reviews.none')}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Collaborations Tab */}
+                <TabsContent value="collaborations">
+                  <Card>
+                    <CardContent className="p-6 space-y-4">
+                      {mockCollaborations
+                        .filter((c) => c.talentId === userId && c.status === 'completed')
+                        .map((collab) => {
+                          const project = mockProjects.find((p) => p.id === collab.projectId);
+                          const company = mockUsers.find((u) => u.id === collab.companyId);
+                          return (
+                            <div
+                              key={collab.id}
+                              className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                              <Avatar className="w-12 h-12">
+                                <AvatarImage src={company?.profileImage} />
+                                <AvatarFallback>{company?.firstName[0]}</AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
-                                <div className="flex items-center justify-between mb-1">
-                                  <p className="font-semibold">
-                                    {reviewer?.firstName} {reviewer?.lastName}
-                                  </p>
-                                  <p className="text-sm text-gray-500">
-                                    {new Date(rating.createdAt).toLocaleDateString('cs-CZ')}
-                                  </p>
-                                </div>
-                                <div className="flex gap-1 mb-2">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star
-                                      key={star}
-                                      className={`w-4 h-4 ${star <= rating.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                                        }`}
-                                    />
-                                  ))}
-                                </div>
-                                <p className="text-sm text-gray-700">{rating.comment}</p>
+                                <p className="font-semibold">{project?.title}</p>
+                                <p className="text-sm text-gray-600">
+                                  {company?.firstName} {company?.lastName}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-semibold">{formatPrice(collab.price)}</p>
+                                <Badge className="bg-green-100 text-green-800">{t('talent_profile.projects.completed')}</Badge>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
 
-                      {talentRatings.length === 0 && (
+                      {completedCollabs === 0 && (
                         <p className="text-center text-gray-500 py-8">
-                          {t('talent_profile.reviews.none')}
+                          {t('talent_profile.projects.none')}
                         </p>
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Collaborations Tab */}
-              <TabsContent value="collaborations">
-                <Card>
-                  <CardContent className="p-6 space-y-4">
-                    {mockCollaborations
-                      .filter((c) => c.talentId === userId && c.status === 'completed')
-                      .map((collab) => {
-                        const project = mockProjects.find((p) => p.id === collab.projectId);
-                        const company = mockUsers.find((u) => u.id === collab.companyId);
-                        return (
-                          <div
-                            key={collab.id}
-                            className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                          >
-                            <Avatar className="w-12 h-12">
-                              <AvatarImage src={company?.profileImage} />
-                              <AvatarFallback>{company?.firstName[0]}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <p className="font-semibold">{project?.title}</p>
-                              <p className="text-sm text-gray-600">
-                                {company?.firstName} {company?.lastName}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold">{formatPrice(collab.price)}</p>
-                              <Badge className="bg-green-100 text-green-800">{t('talent_profile.projects.completed')}</Badge>
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                    {completedCollabs === 0 && (
-                      <p className="text-center text-gray-500 py-8">
-                        {t('talent_profile.projects.none')}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
