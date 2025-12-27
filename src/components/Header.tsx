@@ -91,28 +91,6 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0 z-10">
-            {/* Language Switcher */}
-            <div className="flex items-center gap-1 mr-2 border-r pr-2 border-gray-200">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`px-2 min-w-[32px] ${i18n.language === 'cs' ? 'bg-gray-100 font-bold' : 'opacity-60 hover:opacity-100'}`}
-                onClick={() => changeLanguage('cs')}
-                title="Čeština"
-              >
-                🇨🇿
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={`px-2 min-w-[32px] ${i18n.language === 'sk' ? 'bg-gray-100 font-bold' : 'opacity-60 hover:opacity-100'}`}
-                onClick={() => changeLanguage('sk')}
-                title="Slovenčina"
-              >
-                🇸🇰
-              </Button>
-            </div>
-
             {isLoggedIn ? (
               <>
                 <Button
@@ -197,6 +175,28 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
                 </Button>
               </>
             )}
+
+            {/* Language Switcher (Right side) */}
+            <div className="flex items-center gap-1 ml-2 border-l pl-2 border-gray-200">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`px-1.5 min-w-[32px] ${i18n.language === 'cs' ? 'bg-gray-100 font-bold' : 'opacity-60 hover:opacity-100'}`}
+                onClick={() => changeLanguage('cs')}
+                title="Čeština"
+              >
+                🇨🇿
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`px-1.5 min-w-[32px] ${i18n.language === 'sk' ? 'bg-gray-100 font-bold' : 'opacity-60 hover:opacity-100'}`}
+                onClick={() => changeLanguage('sk')}
+                title="Slovenčina"
+              >
+                🇸🇰
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -212,25 +212,6 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
         {mobileMenuOpen && (
           <div className="md:hidden py-2 border-t">
             <nav className="flex flex-col gap-1">
-              {/* Mobile Language Switcher */}
-              <div className="flex items-center justify-center gap-4 py-2 border-b mb-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`gap-2 ${i18n.language === 'cs' ? 'bg-gray-100 font-bold' : ''}`}
-                  onClick={() => changeLanguage('cs')}
-                >
-                  <span className="text-lg">🇨🇿</span> Čeština
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={`gap-2 ${i18n.language === 'sk' ? 'bg-gray-100 font-bold' : ''}`}
-                  onClick={() => changeLanguage('sk')}
-                >
-                  <span className="text-lg">🇸🇰</span> Slovenčina
-                </Button>
-              </div>
               {filteredNavItems.map((item) => (
                 <button
                   key={item.page}
@@ -362,6 +343,26 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
                   </button>
                 </>
               )}
+
+              {/* Mobile Language Switcher (Moved to bottom) */}
+              <div className="mt-2 pt-2 border-t flex items-center justify-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`gap-2 ${i18n.language === 'cs' ? 'bg-gray-100 font-bold' : ''}`}
+                  onClick={() => changeLanguage('cs')}
+                >
+                  <span className="text-lg">🇨🇿</span> CZ
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`gap-2 ${i18n.language === 'sk' ? 'bg-gray-100 font-bold' : ''}`}
+                  onClick={() => changeLanguage('sk')}
+                >
+                  <span className="text-lg">🇸🇰</span> SK
+                </Button>
+              </div>
             </nav>
           </div>
         )}
