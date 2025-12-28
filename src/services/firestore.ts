@@ -201,27 +201,4 @@ export const createAdminProfile = async (userId: string, email: string) => {
     }
 };
 
-export const createAdminProfile = async (userId: string, email: string) => {
-    try {
-        const adminData: User = {
-            id: userId,
-            email: email,
-            role: 'admin',
-            firstName: 'Admin',
-            lastName: 'User',
-            verified: true,
-            emailVerified: true,
-            verificationStatus: 'verified',
-            profileImage: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
-            createdAt: new Date().toISOString(),
-            lastLogin: new Date().toISOString()
-        };
 
-        await setDoc(doc(db, 'users', userId), adminData);
-        console.log("Admin profile created successfully");
-        return adminData;
-    } catch (error) {
-        console.error("Error creating admin profile:", error);
-        throw error;
-    }
-};
