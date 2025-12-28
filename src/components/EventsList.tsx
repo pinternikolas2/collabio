@@ -15,7 +15,7 @@ import {
     DialogTrigger,
 } from './ui/dialog';
 import { useAuth } from '../contexts/AuthContext';
-import { userApi, projectApi } from '../utils/api'; // Assuming you have projectApi or similar
+import { userApi, projectApi, eventApi } from '../utils/api'; // Assuming you have projectApi or similar
 import { User, Project, Event } from '../types';
 import CreateEventRequest from './CreateEventRequest'; // Will create next
 import { mockEvents, mockProjects, mockUsers } from '../data/seedData'; // Fallback / mock data
@@ -49,10 +49,18 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
         const loadData = async () => {
             setLoading(true);
             try {
-                // 1. Get Talent Events (Offers) from mockEvents (or API)
-                // In real app: fetch all public events. For now filter mockEvents.
-                const talentEvents = mockEvents.filter(e => e.public).map(e => {
-                    const owner = mockUsers.find(u => u.id === e.userId);
+                // 1. Get Talent Events (Offers) from API
+                const eventsData = await eventApi.getAllEvents();
+                // We need to fetch owner details for each event usually, but for now we might rely on what comes back or separate fetching
+                // Optimization: fetch all relevant users or fetch individually. For simple prototype, fetching one by one is okay or better: fetch all users once.
+
+                // Let's fetch all users for mapping (perf warning for large apps)
+                const users = await userApi.getTalents(); // Simplified: assume we get all relevant users (or companies)
+                const companies = await userApi.getCompanies();
+                const allUsers = [...users, ...companies];
+
+                const talentEvents = eventsData.map(e => {
+                    const owner = allUsers.find(u => u.id === e.userId);
                     return {
                         id: e.id,
                         type: 'talent_offer' as const,
@@ -67,9 +75,10 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                     };
                 });
 
-                // 2. Get Company Event Demands from mockProjects (or API)
-                const companyDemands = mockProjects.filter(p => isEventDemand(p)).map(p => {
-                    const owner = mockUsers.find(u => u.id === p.ownerId);
+                // 2. Get Company Event Demands from Projects
+                const projectsData = await projectApi.getProjects();
+                const companyDemands = projectsData.filter(p => isEventDemand(p)).map(p => {
+                    const owner = allUsers.find(u => u.id === p.ownerId);
                     return {
                         id: p.id,
                         type: 'company_demand' as const,

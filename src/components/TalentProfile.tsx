@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Star, Users, Instagram, Linkedin, MessageSquare, Briefcase, Calendar, TrendingUp, MapPin, Tv, Eye, Plus, X, DollarSign, Tag, Loader2, Share2, AlertTriangle, User } from 'lucide-react';
+import { Star, Users, Instagram, Linkedin, MessageSquare, Briefcase, Calendar, TrendingUp, MapPin, Tv, Eye, Plus, X, DollarSign, Tag, Loader2, Share2, AlertTriangle, User, CheckCircle, Image, PenLine } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
@@ -16,7 +16,7 @@ import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
 import { mockRatings, mockCollaborations, mockProjects, mockEvents } from '../data/seedData';
 import { Event, AdvertisingOptionType, User } from '../types';
-import { userApi, storageApi } from '../utils/api';
+import { userApi, storageApi, eventApi } from '../utils/api';
 
 type TalentProfileProps = {
   onNavigate: (page: string, data?: any) => void;
@@ -133,199 +133,168 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8 md:py-12 overflow-x-hidden w-full">
       <div className="container mx-auto px-4 max-w-6xl w-full overflow-x-hidden">
-        {/* Header Card */}
-        <Card className="mb-8 max-w-full overflow-hidden border-none shadow-xl bg-white/80 backdrop-blur-md">
-          {/* Cover - Full Gradient */}
-          <div className="h-48 md:h-64 bg-gradient-to-r from-blue-600 via-purple-500 to-orange-500 relative">
-            <div className="absolute inset-0 bg-black/10"></div>
-          </div>
+        {/* Header - Premium Redesign */}
+        <div className="mb-8 relative">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative">
+            {/* Background Pattern instead of Gradient */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+              <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            </div>
 
-          <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">
-            {/* Profile Image & Info */}
-            <div className="flex flex-col items-center md:flex-row md:items-end gap-3 md:gap-6 mb-4 md:mb-8">
-              <div className="relative group shrink-0">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <Avatar className="w-24 h-24 md:w-48 md:h-48 border-4 border-white shadow-2xl bg-white relative">
-                  <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} className="object-cover" />
-                  <AvatarFallback className="text-3xl md:text-5xl font-bold bg-gradient-to-br from-blue-100 to-orange-100 text-blue-900">
-                    {talent.firstName?.[0]}{talent.lastName?.[0]}
-                  </AvatarFallback>
-                </Avatar>
-                {talent.verified && (
-                  <div className="absolute bottom-2 right-2 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-lg" title={t('talent_profile.verified')}>
-                    <CheckCircle className="w-5 h-5" />
+            <div className="relative p-6 md:p-10 flex flex-col md:flex-row gap-8 items-center md:items-start z-10">
+
+              {/* Avatar Section */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full opacity-50 blur group-hover:opacity-75 transition duration-500"></div>
+                  <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 border-white shadow-xl bg-white relative">
+                    <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} className="object-cover" />
+                    <AvatarFallback className="text-4xl font-bold bg-gray-50 text-gray-900">
+                      {talent.firstName?.[0]}{talent.lastName?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  {talent.verified && (
+                    <div className="absolute bottom-1 right-1 bg-blue-600 text-white p-1.5 rounded-full border-4 border-white shadow-sm" title={t('talent_profile.verified')}>
+                      <CheckCircle className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Quick Social Stats (Mobile Only) */}
+                <div className="flex md:hidden gap-3 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4 text-blue-500" />
+                    <span className="font-bold">{formatFollowers(talent.followers)}</span>
                   </div>
-                )}
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    <span className="font-bold">{avgRating.toFixed(1)}</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex-1 md:mb-6 min-w-0 max-w-full w-full">
-                <div className="flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4">
-                  <div className="min-w-0 flex-1 text-center md:text-left">
-                    <div className="flex items-center justify-center md:justify-start gap-3 mb-1 flex-wrap">
-                      <h1 className="text-2xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 leading-tight">
-                        {talent.firstName} {talent.lastName}
-                      </h1>
-                    </div>
+              {/* Info Section */}
+              <div className="flex-1 text-center md:text-left min-w-0 w-full">
+                <div className="flex flex-col md:flex-row items-center md:items-start md:justify-between gap-4">
+                  <div>
+                    <h1 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight">
+                      {talent.firstName} {talent.lastName}
+                    </h1>
 
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-3 mb-6">
                       {talent.category && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200 px-3 py-1 text-sm border border-blue-200">
+                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1 text-sm border border-blue-100 rounded-full transition-colors">
                           {talent.category}
                         </Badge>
                       )}
                       {talent.title && (
-                        <span className="text-lg text-gray-600 font-medium border-l-2 border-gray-300 pl-3">
+                        <span className="text-lg text-gray-500 font-medium flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
                           {talent.title}
                         </span>
                       )}
                     </div>
 
-                    <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">{talent.bio}</p>
+                    <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl mx-auto md:mx-0">
+                      {talent.bio || t('talent_profile.no_bio')}
+                    </p>
+
+                    {/* Social Assets Row */}
+                    <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
+                      {talent.instagram && (
+                        <a href={`https://instagram.com/${talent.instagram.replace('@', '')}`} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors text-sm font-medium">
+                          <Instagram className="w-4 h-4" /> Instagram
+                        </a>
+                      )}
+                      {talent.tiktok && (
+                        <a href={`https://tiktok.com/${talent.tiktok.replace('@', '')}`} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                          <span className="font-bold text-[10px]">Tt</span> TikTok
+                        </a>
+                      )}
+                      {talent.linkedin && (
+                        <a href={`https://linkedin.com/in/${talent.linkedin}`} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                          <Linkedin className="w-4 h-4" /> LinkedIn
+                        </a>
+                      )}
+                      {talent.youtube && (
+                        <a href={talent.youtube} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                          <div className="w-4 h-4 bg-red-600 text-white rounded-[4px] flex items-center justify-center text-[6px]">▶</div> YouTube
+                        </a>
+                      )}
+                      {talent.web && (
+                        <a href={talent.web} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium">
+                          <div className="w-4 h-4 border border-current rounded-full"></div> Web
+                        </a>
+                      )}
+                    </div>
+
                   </div>
 
-                  <div className="flex flex-wrap gap-3 max-w-full mt-4 md:mt-0">
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto mt-4 md:mt-0">
                     {!isOwnProfile && currentUserRole === 'company' && (
                       <>
-                        <Button
-                          className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5"
-                          onClick={() => onNavigate('chat', { userId })}
-                          size="lg"
-                        >
-                          <MessageSquare className="w-5 h-5 mr-2" />
-                          <span className="hidden sm:inline">{t('talent_profile.send_message')}</span>
-                          <span className="sm:hidden">{t('talent_profile.message_short')}</span>
+                        <Button className="w-full sm:w-auto bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 shadow-sm" onClick={() => onNavigate('chat', { userId })}>
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          {t('talent_profile.send_message')}
                         </Button>
-                        <Button
-                          className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-0.5 border-none"
-                          onClick={() => onNavigate('create-project', {
-                            targetUserId: userId,
-                            targetUserName: `${talent.firstName} ${talent.lastName}`
-                          })}
-                          size="lg"
-                        >
-                          <Briefcase className="w-5 h-5 mr-2" />
-                          <span className="hidden sm:inline">{t('talent_profile.offer_collaboration')}</span>
-                          <span className="sm:hidden">{t('talent_profile.collaboration_short')}</span>
+                        <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20"
+                          onClick={() => onNavigate('create-project', { targetUserId: userId, targetUserName: `${talent.firstName} ${talent.lastName}` })}>
+                          <Briefcase className="w-4 h-4 mr-2" />
+                          {t('talent_profile.offer_collaboration')}
                         </Button>
                       </>
-                    )}
-                    {!isOwnProfile && currentUserRole === 'talent' && (
-                      <div className="px-4 py-2 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-500 italic">
-                        {t('talent_profile.cant_contact_talent')}
-                      </div>
                     )}
                     {isOwnProfile && (
-                      <>
-                        <Button
-                          onClick={() => onNavigate('talent-analytics')}
-                          className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
-                          size="lg"
-                        >
-                          <TrendingUp className="w-5 h-5 mr-2" />
-                          {t('talent_profile.analytics')}
+                      <div className="flex flex-wrap justify-center gap-2 w-full md:w-auto">
+                        <Button variant="outline" onClick={() => onNavigate('talent-analytics')}>
+                          <TrendingUp className="w-4 h-4 mr-2" /> {t('talent_profile.analytics')}
                         </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => onNavigate('settings')}
-                          className="border-gray-200 hover:bg-gray-50"
-                          size="lg"
-                        >
+                        <Button variant="outline" onClick={() => onNavigate('settings')}>
                           {t('talent_profile.edit_profile')}
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="hover:bg-blue-50 text-blue-600 rounded-full w-12 h-12"
-                          onClick={() => {
-                            navigator.share ? navigator.share({
-                              title: `${talent.firstName} ${talent.lastName} - Collabio`,
-                              url: window.location.href
-                            }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success(t('talent_profile.copy_link')));
-                          }}
-                        >
-                          <Share2 className="w-6 h-6" />
+                        <Button variant="ghost" size="icon" onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast.success(t('talent_profile.copy_link'));
+                        }}>
+                          <Share2 className="w-5 h-5" />
                         </Button>
-                      </>
-                    )}
-                    {!isOwnProfile && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-blue-50 text-blue-600 rounded-full w-12 h-12"
-                        onClick={() => {
-                          navigator.share ? navigator.share({
-                            title: `${talent.firstName} ${talent.lastName} - Collabio`,
-                            url: window.location.href
-                          }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success(t('talent_profile.copy_link')));
-                        }}
-                      >
-                        <Share2 className="w-6 h-6" />
-                      </Button>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Stats Grid - Premium Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.followers')}</p>
-                </div>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">{formatFollowers(talent.followers)}</p>
+            {/* Key Stats Row (Hidden on mobile as duplicate, shown on Desktop) */}
+            <div className="hidden md:grid grid-cols-4 border-t border-gray-100 bg-gray-50/50 divide-x divide-gray-100">
+              <div className="p-6 text-center">
+                <div className="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">{t('talent_profile.stats.followers')}</div>
+                <div className="text-3xl font-bold text-gray-900">{formatFollowers(talent.followers)}</div>
               </div>
-
-              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-green-100 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
-                    <Briefcase className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.projects')}</p>
-                </div>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">{completedCollabs}</p>
+              <div className="p-6 text-center">
+                <div className="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">{t('talent_profile.stats.projects')}</div>
+                <div className="text-3xl font-bold text-gray-900">{completedCollabs}</div>
               </div>
-
-              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                    <Star className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.rating')}</p>
+              <div className="p-6 text-center">
+                <div className="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">{t('talent_profile.stats.rating')}</div>
+                <div className="flex items-center justify-center gap-1 text-3xl font-bold text-gray-900">
+                  {avgRating.toFixed(1)} <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
                 </div>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">{avgRating.toFixed(1)}</p>
               </div>
-
-              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-orange-100 rounded-lg text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('talent_profile.stats.member_since')}</p>
-                </div>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {new Date(talent.createdAt).getFullYear()}
-                </p>
+              <div className="p-6 text-center">
+                <div className="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">{t('talent_profile.stats.member_since')}</div>
+                <div className="text-3xl font-bold text-gray-900">{new Date(talent.createdAt).getFullYear()}</div>
               </div>
-
-              {/* Celkové příjmy - pouze pro vlastníka profilu */}
-              {isOwnProfile && (
-                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg text-white col-span-2 md:col-span-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-white/20 rounded-lg">
-                      <TrendingUp className="w-5 h-5 text-white" />
-                    </div>
-                    <p className="text-xs md:text-sm font-medium opacity-90">{t('talent_profile.stats.total_earnings')}</p>
-                  </div>
-                  <p className="text-2xl md:text-3xl font-bold">{formatPrice(totalEarnings)}</p>
-                </div>
-              )}
             </div>
-          </CardContent>
-        </Card>
+
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
@@ -393,42 +362,39 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
 
             {/* Skills/Categories */}
             <Card className="border-none shadow-md">
-              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4 flex flex-row items-center justify-between">
                 <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-orange-500" />
                   {t('talent_profile.sections.skills')}
                 </h3>
+                {isOwnProfile && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-blue-600">
+                        <PenLine className="w-4 h-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Upravit dovednosti</DialogTitle>
+                      </DialogHeader>
+                      <EditSkillsForm userId={userId} currentSkills={talent.skills || []} onSuccess={() => window.location.reload()} />
+                    </DialogContent>
+                  </Dialog>
+                )}
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="space-y-5">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Content Creation</span>
-                      <span className="text-sm font-bold text-blue-600">95%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
-                    </div>
+                {talent.skills && talent.skills.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {talent.skills.map((skill, index) => (
+                      <Badge key={index} variant="secondary" className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
+                        {skill}
+                      </Badge>
+                    ))}
                   </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Social Media Marketing</span>
-                      <span className="text-sm font-bold text-orange-600">90%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Brand Collaboration</span>
-                      <span className="text-sm font-bold text-purple-600">88%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  <p className="text-gray-500 italic text-sm">Zatím žádné uvedené dovednosti. {isOwnProfile && "Přidejte je v editaci!"}</p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -746,6 +712,9 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
   );
 }
 
+
+// ... (Previous components remain the same until UpcomingEventsSection)
+
 // Component for Upcoming Events Section
 type UpcomingEventsSectionProps = {
   userId: string;
@@ -757,14 +726,27 @@ type UpcomingEventsSectionProps = {
 function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNavigate }: UpcomingEventsSectionProps) {
   const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get events for this talent
-  const userEvents = (mockEvents || []).filter(e => e.userId === userId && e.public);
+  const fetchEvents = async () => {
+    try {
+      const userEvents = await eventApi.getUserEvents(userId);
+      const publicEvents = userEvents.filter(e => isOwnProfile || e.public);
+      const upcoming = publicEvents
+        .filter(e => new Date(e.startDate) >= new Date(new Date().setHours(0, 0, 0, 0)))
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      setEvents(upcoming);
+    } catch (err) {
+      console.error("Failed to fetch events", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Sort by date (nearest first)
-  const upcomingEvents = userEvents
-    .filter(e => new Date(e.startDate) >= new Date())
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+  useEffect(() => {
+    fetchEvents();
+  }, [userId, isOwnProfile]);
 
   const formatEventDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -810,21 +792,24 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-none shadow-md">
+      <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-semibold">{t('talent_profile.sections.upcoming_events')}</h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-orange-500" />
+              {t('talent_profile.sections.upcoming_events')}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
               {isOwnProfile
-                ? t('talent_profile.sections.upcoming_desc_own')
-                : t('talent_profile.sections.upcoming_desc_other')}
+                ? "Správa vašich nadcházejících událostí"
+                : "Kam můžete přijít podpořit nebo navázat spolupráci"}
             </p>
           </div>
           {isOwnProfile && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-600 to-orange-500">
+                <Button className="bg-gradient-to-r from-blue-600 to-orange-500 shadow-md">
                   <Plus className="w-4 h-4 mr-2" />
                   {t('talent_profile.sections.add_event_btn')}
                 </Button>
@@ -833,98 +818,121 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
                 <DialogHeader>
                   <DialogTitle>{t('talent_profile.add_event_form.title')}</DialogTitle>
                 </DialogHeader>
-                <AddEventForm onClose={() => setIsDialogOpen(false)} />
+                <AddEventForm
+                  userId={userId}
+                  onClose={() => setIsDialogOpen(false)}
+                  onSuccess={() => {
+                    toast.success("Událost byla úspěšně vytvořena!");
+                    fetchEvents();
+                    setIsDialogOpen(false);
+                  }}
+                />
               </DialogContent>
             </Dialog>
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        {upcomingEvents.length === 0 ? (
-          <div className="text-center py-12">
-            <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">{t('talent_profile.sections.no_events')}</p>
+      <CardContent className="pt-6">
+        {loading ? (
+          <div className="text-center py-8"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500" /></div>
+        ) : events.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 font-medium mb-1">{t('talent_profile.sections.no_events')}</p>
             {isOwnProfile && (
               <p className="text-sm text-gray-400">
-                {t('talent_profile.sections.add_events_hint')}
+                Přidejte svou první událost a dejte o sobě vědět.
               </p>
             )}
           </div>
         ) : (
           <div className="space-y-6">
-            {upcomingEvents.map((event) => (
-              <div key={event.id} className="border rounded-xl p-6 hover:shadow-lg transition-shadow">
+            {events.map((event) => (
+              <div key={event.id} className="border border-gray-100 bg-white rounded-xl p-6 hover:shadow-xl transition-all duration-300 group">
                 {/* Event Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge className="bg-gradient-to-r from-blue-600 to-orange-500">
+                      <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-none">
                         {getEventTypeLabel(event.type)}
                       </Badge>
                       {event.tvBroadcast && (
-                        <Badge variant="outline" className="text-purple-600 border-purple-600">
+                        <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50">
                           <Tv className="w-3 h-3 mr-1" />
-                          {t('talent_profile.events.tv_broadcast')}
+                          TV Přenos
                         </Badge>
                       )}
                     </div>
-                    <h4 className="text-xl font-semibold mb-2">{event.title}</h4>
-                    <p className="text-gray-600 text-sm mb-3">{event.description}</p>
+                    <h4 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">{event.title}</h4>
+                    <p className="text-gray-600 text-sm mb-3 leading-relaxed">{event.description}</p>
                   </div>
+                  {isOwnProfile && (
+                    <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500"
+                      onClick={async () => {
+                        if (confirm("Opravdu smazat tuto událost?")) {
+                          await eventApi.deleteEvent(event.id);
+                          toast.success("Smazáno");
+                          fetchEvents();
+                        }
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
                 </div>
 
                 {/* Event Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Calendar className="w-4 h-4 text-blue-600" />
-                    <span>{formatEventDate(event.startDate)}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-sm bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Calendar className="w-4 h-4 text-blue-500" />
+                    <span className="font-medium">{formatEventDate(event.startDate)}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4 text-orange-600" />
-                    <span>{event.venue || event.location}</span>
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <MapPin className="w-4 h-4 text-orange-500" />
+                    <span className="font-medium">{event.venue || event.location} {event.city ? `, ${event.city}` : ''}</span>
                   </div>
                   {event.expectedAttendance && (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Eye className="w-4 h-4 text-green-600" />
-                      <span>{t('talent_profile.events.visitors', { count: event.expectedAttendance.toLocaleString('cs-CZ') })}</span>
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Users className="w-4 h-4 text-green-500" />
+                      <span>Očekáváno: <span className="font-bold">{parseInt(event.expectedAttendance as any).toLocaleString('cs-CZ')}</span> lidí</span>
                     </div>
                   )}
                   {event.streamingPlatform && (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Tv className="w-4 h-4 text-purple-600" />
-                      <span>{event.streamingPlatform}</span>
+                    <div className="flex items-center gap-3 text-gray-700">
+                      <Tv className="w-4 h-4 text-purple-500" />
+                      <span>Stream: <span className="font-medium">{event.streamingPlatform}</span></span>
                     </div>
                   )}
                 </div>
 
                 {/* Advertising Options */}
-                {event.advertisingOptions.length > 0 && (
-                  <div className="mt-4 pt-4 border-t">
-                    <h5 className="font-semibold mb-3 flex items-center gap-2">
+                {event.advertisingOptions && event.advertisingOptions.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <h5 className="font-bold text-gray-900 mb-3 flex items-center gap-2 text-sm uppercase tracking-wide">
                       <Tag className="w-4 h-4 text-blue-600" />
-                      {t('talent_profile.events.advertising_options')}
+                      Možnosti propagace
                     </h5>
                     <div className="grid gap-3">
                       {event.advertisingOptions.filter(opt => opt.available).map((option) => (
                         <div
                           key={option.id}
-                          className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-orange-50 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors"
+                          className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"
                         >
                           <div className="flex-1">
-                            <p className="font-medium text-sm">
+                            <p className="font-semibold text-sm text-gray-900">
                               {getAdvertisingTypeLabel(option.type)}
                             </p>
-                            <p className="text-xs text-gray-600 mt-1">
+                            <p className="text-xs text-gray-500 mt-0.5">
                               {option.description}
                             </p>
                           </div>
                           <div className="text-right ml-4">
                             {option.price ? (
-                              <p className="font-semibold text-blue-600">
+                              <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-100 font-bold">
                                 {formatPrice(option.price)}
-                              </p>
+                              </Badge>
                             ) : (
-                              <p className="text-sm text-gray-500">{t('talent_profile.events.price_negotiable')}</p>
+                              <span className="text-xs font-medium text-gray-500 italic">Dohodou</span>
                             )}
                           </div>
                         </div>
@@ -935,11 +943,11 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
                     {!isOwnProfile && currentUserRole === 'company' && (
                       <div className="mt-4 flex gap-2">
                         <Button
-                          className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500"
+                          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg shadow-blue-500/20"
                           onClick={() => onNavigate('create-project', { targetUserId: userId, targetUserName: event.title })}
                         >
                           <MessageSquare className="w-4 h-4 mr-2" />
-                          {t('talent_profile.sections.contact_for_collab')}
+                          Mám zájem o propagaci
                         </Button>
                       </div>
                     )}
@@ -955,8 +963,9 @@ function UpcomingEventsSection({ userId, isOwnProfile, currentUserRole, onNaviga
 }
 
 // Form for adding new event
-function AddEventForm({ onClose }: { onClose: () => void }) {
+function AddEventForm({ userId, onClose, onSuccess }: { userId: string, onClose: () => void, onSuccess: () => void }) {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -969,13 +978,34 @@ function AddEventForm({ onClose }: { onClose: () => void }) {
     expectedAttendance: '',
     tvBroadcast: false,
     streamingPlatform: '',
+    price_banner: '', // Simple price inputs for now
+    price_clothing: '',
+    price_social: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In real app, this would save to database
-    console.log('New event:', formData);
-    onClose();
+    setLoading(true);
+    try {
+      const adOptions: any[] = [];
+      if (formData.price_banner) adOptions.push({ id: Date.now().toString() + '1', type: 'banner', price: parseInt(formData.price_banner), available: true, description: 'Umístění loga/banneru na místě' });
+      if (formData.price_clothing) adOptions.push({ id: Date.now().toString() + '2', type: 'clothing', price: parseInt(formData.price_clothing), available: true, description: 'Logo na dresu/oblečení' });
+      if (formData.price_social) adOptions.push({ id: Date.now().toString() + '3', type: 'social_post', price: parseInt(formData.price_social), available: true, description: 'Promo post na soc. sítích' });
+
+      await eventApi.createEvent({
+        ...formData,
+        userId,
+        expectedAttendance: formData.expectedAttendance ? parseInt(formData.expectedAttendance) : 0,
+        public: true,
+        advertisingOptions: adOptions
+      } as any);
+      onSuccess();
+    } catch (e) {
+      console.error(e);
+      toast.error("Chyba při ukládání");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -983,145 +1013,88 @@ function AddEventForm({ onClose }: { onClose: () => void }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <Label htmlFor="title">{t('talent_profile.add_event_form.name_label')}</Label>
-          <Input
-            id="title"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.name_placeholder')}
-            required
-          />
+          <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
         </div>
 
         <div className="md:col-span-2">
           <Label htmlFor="description">{t('talent_profile.add_event_form.desc_label')}</Label>
-          <Textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.desc_placeholder')}
-            rows={3}
-            required
-          />
+          <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} required />
         </div>
 
         <div>
           <Label htmlFor="type">{t('talent_profile.add_event_form.type_label')}</Label>
           <Select value={formData.type} onValueChange={(value: any) => setFormData({ ...formData, type: value })}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="match">{t('talent_profile.events.types.match')}</SelectItem>
-              <SelectItem value="tournament">{t('talent_profile.events.types.tournament')}</SelectItem>
-              <SelectItem value="concert">{t('talent_profile.events.types.concert')}</SelectItem>
-              <SelectItem value="show">{t('talent_profile.events.types.show')}</SelectItem>
-              <SelectItem value="conference">{t('talent_profile.events.types.conference')}</SelectItem>
-              <SelectItem value="other">{t('talent_profile.events.types.other')}</SelectItem>
+              <SelectItem value="match">Zápas / Utkání</SelectItem>
+              <SelectItem value="tournament">Turnaj</SelectItem>
+              <SelectItem value="concert">Koncert / Vystoupení</SelectItem>
+              <SelectItem value="show">Show</SelectItem>
+              <SelectItem value="conference">Konference</SelectItem>
+              <SelectItem value="other">Jiné</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
           <Label htmlFor="expectedAttendance">{t('talent_profile.add_event_form.attendance_label')}</Label>
-          <Input
-            id="expectedAttendance"
-            type="number"
-            value={formData.expectedAttendance}
-            onChange={(e) => setFormData({ ...formData, expectedAttendance: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.attendance_placeholder')}
-          />
+          <Input id="expectedAttendance" type="number" value={formData.expectedAttendance} onChange={(e) => setFormData({ ...formData, expectedAttendance: e.target.value })} />
         </div>
 
         <div>
-          <Label htmlFor="startDate">{t('talent_profile.add_event_form.start_label')}</Label>
-          <Input
-            id="startDate"
-            type="datetime-local"
-            value={formData.startDate}
-            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-            required
-          />
+          <Label>Začátek</Label>
+          <Input type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required />
         </div>
-
-
-
         <div>
-          <Label htmlFor="endDate">{t('talent_profile.add_event_form.end_label')}</Label>
-          <Input
-            id="endDate"
-            type="datetime-local"
-            value={formData.endDate}
-            onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-          />
+          <Label>Konec (volitelné)</Label>
+          <Input type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} />
         </div>
 
         <div>
-          <Label htmlFor="city">{t('talent_profile.add_event_form.city_label')}</Label>
-          <Input
-            id="city"
-            value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.city_placeholder')}
-            required
-          />
+          <Label htmlFor="city">Město</Label>
+          <Input id="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} required />
         </div>
-
         <div>
-          <Label htmlFor="venue">{t('talent_profile.add_event_form.venue_label')}</Label>
-          <Input
-            id="venue"
-            value={formData.venue}
-            onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.venue_placeholder')}
-          />
+          <Label htmlFor="venue">Místo konání (Hala, Stadion...)</Label>
+          <Input id="venue" value={formData.venue} onChange={(e) => setFormData({ ...formData, venue: e.target.value })} />
         </div>
 
-        <div className="md:col-span-2">
-          <Label htmlFor="location">{t('talent_profile.add_event_form.address_label')}</Label>
-          <Input
-            id="location"
-            value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            placeholder={t('talent_profile.add_event_form.address_placeholder')}
-          />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="tvBroadcast"
-            checked={formData.tvBroadcast}
-            onCheckedChange={(checked) => setFormData({ ...formData, tvBroadcast: checked as boolean })}
-          />
-          <Label htmlFor="tvBroadcast" className="cursor-pointer">
-            {t('talent_profile.add_event_form.tv_label')}
-          </Label>
+        <div className="flex items-center space-x-2 md:col-span-2">
+          <Checkbox id="tvBroadcast" checked={formData.tvBroadcast} onCheckedChange={(c) => setFormData({ ...formData, tvBroadcast: c as boolean })} />
+          <Label htmlFor="tvBroadcast">Bude přenášeno v TV/Online?</Label>
         </div>
 
         {formData.tvBroadcast && (
-          <div>
-            <Label htmlFor="streamingPlatform">{t('talent_profile.add_event_form.platform_label')}</Label>
-            <Input
-              id="streamingPlatform"
-              value={formData.streamingPlatform}
-              onChange={(e) => setFormData({ ...formData, streamingPlatform: e.target.value })}
-              placeholder={t('talent_profile.add_event_form.platform_placeholder')}
-            />
+          <div className="md:col-span-2">
+            <Label>Platforma / TV Kanál</Label>
+            <Input value={formData.streamingPlatform} onChange={e => setFormData({ ...formData, streamingPlatform: e.target.value })} placeholder="Např. O2 TV, YouTube, Twitch" />
           </div>
         )}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-gray-700">
-          {t('talent_profile.add_event_form.tip')}
-        </p>
+      {/* Simple Ad Pricing */}
+      <div className="space-y-3 pt-4 border-t">
+        <Label className="font-bold">Orientační ceny reklamy (Nepovinné)</Label>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <Label className="text-xs">Banner/Plachta</Label>
+            <Input type="number" placeholder="Kč" value={formData.price_banner} onChange={e => setFormData({ ...formData, price_banner: e.target.value })} />
+          </div>
+          <div>
+            <Label className="text-xs">Logo na oblečení</Label>
+            <Input type="number" placeholder="Kč" value={formData.price_clothing} onChange={e => setFormData({ ...formData, price_clothing: e.target.value })} />
+          </div>
+          <div>
+            <Label className="text-xs">Social Post</Label>
+            <Input type="number" placeholder="Kč" value={formData.price_social} onChange={e => setFormData({ ...formData, price_social: e.target.value })} />
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={onClose}>
-          {t('talent_profile.add_event_form.cancel')}
-        </Button>
-        <Button type="submit" className="bg-gradient-to-r from-blue-600 to-orange-500">
-          {t('talent_profile.add_event_form.submit')}
+        <Button type="button" variant="outline" onClick={onClose}>Zrušit</Button>
+        <Button type="submit" className="bg-gradient-to-r from-blue-600 to-orange-500" disabled={loading}>
+          {loading ? <Loader2 className="animate-spin" /> : "Vytvořit událost"}
         </Button>
       </div>
     </form >
@@ -1159,26 +1132,17 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
       });
 
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error(t('talent_profile.portfolio_form.save_error'));
+      toast.error(t('talent_profile.portfolio_form.save_error') + ": " + (error.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
   };
 
-  // Check if we also need to import api.ts methods. It seems userApi is used, need to ensure storageApi is imported or available via api import.
-  // Looking at the file, imports are likely at the top. I'll need to check imports first.
-  // Actually, let's just update the function. I'll assume storageApi can be imported from '../utils/api'.
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 50 * 1024 * 1024) { // Increased limit to 50MB for videos
-        toast.error(t('talent_profile.portfolio_form.file_size_error'));
-        return;
-      }
-
       setLoading(true);
       try {
         const result = await storageApi.uploadAttachment(file);
@@ -1186,7 +1150,7 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
         toast.success(t('talent_profile.portfolio_form.upload_success'));
       } catch (error) {
         console.error('Upload error:', error);
-        toast.error(t('talent_profile.portfolio_form.upload_error'));
+        toast.error("Upload failed. Make sure you are logged in.");
       } finally {
         setLoading(false);
       }
@@ -1196,35 +1160,34 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label>{t('talent_profile.portfolio_form.type_label')}</Label>
+        <Label>Typ položky</Label>
         <Select value={type} onValueChange={setType}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="image">{t('talent_profile.portfolio_form.types.image')}</SelectItem>
-            <SelectItem value="video">{t('talent_profile.portfolio_form.types.video')}</SelectItem>
-            <SelectItem value="social">{t('talent_profile.portfolio_form.types.social')}</SelectItem>
-            <SelectItem value="project">{t('talent_profile.portfolio_form.types.project')}</SelectItem>
-            <SelectItem value="achievement">{t('talent_profile.portfolio_form.types.achievement')}</SelectItem>
+            <SelectItem value="image">Obrázek / Fotka</SelectItem>
+            <SelectItem value="video">Video</SelectItem>
+            <SelectItem value="social">Sociální sítě</SelectItem>
+            <SelectItem value="project">Projekt</SelectItem>
+            <SelectItem value="achievement">Úspěch / Ocenění</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label>{t('talent_profile.portfolio_form.title_label')}</Label>
-        <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder={type === 'achievement' ? t('talent_profile.portfolio_form.title_placeholder_achievement') : t('talent_profile.portfolio_form.title_placeholder')} />
+        <Label>Název</Label>
+        <Input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Např. Mistrovství ČR 2024" />
       </div>
 
       <div className="space-y-2">
-        <Label>{t('talent_profile.portfolio_form.desc_label')}</Label>
-        <Textarea required value={description} onChange={e => setDescription(e.target.value)} placeholder={t('talent_profile.portfolio_form.desc_placeholder')} />
+        <Label>Popis</Label>
+        <Textarea required value={description} onChange={e => setDescription(e.target.value)} placeholder="Krátký popis..." />
       </div>
 
       <div className="space-y-2">
-        <Label>{t('talent_profile.portfolio_form.image_label')}</Label>
+        <Label>Obrázek (URL nebo Upload)</Label>
         <div className="flex flex-col gap-3">
-          {/* Preview if available */}
           {imageUrl && (
             <div className="relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden border">
               <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -1254,12 +1217,12 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
                 accept="image/*"
                 onChange={handleFileChange}
               />
-              <Image className="w-6 h-6 text-gray-500" />
-              <span className="text-xs">{t('talent_profile.portfolio_form.upload_btn')}</span>
+              <Plus className="w-6 h-6 text-gray-500" />
+              <span className="text-xs">Nahrát</span>
             </Button>
 
             <div className="h-24 flex flex-col gap-2 p-3 border rounded-lg bg-gray-50 justify-center">
-              <span className="text-xs font-semibold mb-1">{t('talent_profile.portfolio_form.url_label')}</span>
+              <span className="text-xs font-semibold mb-1">Nebo vložte URL</span>
               <Input
                 value={imageUrl.startsWith('data:') ? '' : imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
@@ -1272,12 +1235,12 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
       </div>
 
       <div className="space-y-2">
-        <Label>{t('talent_profile.portfolio_form.link_label', { type: type === 'social' ? 'post' : 'projekt' })}</Label>
+        <Label>Odkaz (volitelné)</Label>
         <Input value={link} onChange={e => setLink(e.target.value)} placeholder="https://..." />
       </div>
 
       <Button type="submit" disabled={loading} className="w-full bg-blue-600">
-        {loading ? <Loader2 className="animate-spin w-4 h-4" /> : t('talent_profile.portfolio_form.submit_btn')}
+        {loading ? <Loader2 className="animate-spin w-4 h-4" /> : "Přidat do portfolia"}
       </Button>
     </form>
   );

@@ -609,6 +609,38 @@ export const aiApi = {
 };
 
 // ============================================================================
+// EVENT API
+// ============================================================================
+
+export const eventApi = {
+  createEvent: async (data: Partial<Event>) => {
+    const docRef = await addDoc(collection(db, 'events'), {
+      ...data,
+      advertisingOptions: data.advertisingOptions || [],
+      createdAt: new Date().toISOString()
+    });
+    const newDoc = await getDoc(docRef);
+    return { id: newDoc.id, ...newDoc.data() } as Event;
+  },
+
+  getAllEvents: async () => {
+    // In real app, filter by date >= today
+    const q = query(collection(db, 'events'), orderBy('startDate', 'asc'));
+    return getDocsData<Event>(q);
+  },
+
+  getUserEvents: async (userId: string) => {
+    const q = query(collection(db, 'events'), where('userId', '==', userId));
+    return getDocsData<Event>(q);
+  },
+
+  deleteEvent: async (eventId: string) => {
+    await deleteDoc(doc(db, 'events', eventId));
+    return { success: true };
+  }
+};
+
+// ============================================================================
 // HEALTH CHECK
 // ============================================================================
 
