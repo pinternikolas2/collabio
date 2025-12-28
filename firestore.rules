@@ -2,53 +2,135 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper functions
+    // --- Helper Functions ---
+    
     function isAuthenticated() {
       return request.auth != null;
     }
     
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Check if the user has 'admin' role in their Custom Claims (best practice) 
+    // OR in their Firestore user document (easier to implement now)
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
     function isParticipant(userIds) {
-      return request.auth.uid in userIds;
+      return isAuthenticated() && request.auth.uid in userIds;
     }
 
-    // Users
+    // --- Rules ---
+
+    // Users Collection
     match /users/{userId} {
+      // Anyone can read basic profiles (for marketplace)
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(userId);
-      allow update: if isAuthenticated() && isOwner(userId);
-      // Only admin can delete typically, or owner
-      allow delete: if false; 
+      
+      // User can create/update their own profile
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      
+      // Admin can do anything
+      allow update, delete: if isAdmin();
+    }
+
+    // KYC Documents (Strict Security)
+    match /kyc_documents/{docId} {
+      // User can read their own, Admin sees all
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      
+      // User can create (upload)
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      
+      // ONLY ADMIN can verify/reject (update status)
+      allow update: if isAdmin();
+    }
+
+    // Projects
+    match /projects/{projectId} {
+      allow read: if true; // Public marketplace
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.ownerId == request.auth.uid || isAdmin());
+      allow delete: if isAuthenticated() && (resource.data.ownerId == request.auth.uid || isAdmin());
+    }
+
+    // Collaborations (Private betwen Talent & Company)
+    match /collaborations/{collabId} {
+      allow read: if isAuthenticated() && (
+        resource.data.talentId == request.auth.uid || 
+        resource.data.companyId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        resource.data.talentId == request.auth.uid || 
+        resource.data.companyId == request.auth.uid || 
+        isAdmin()
+      );
     }
 
     // Chats
     match /chats/{chatId} {
       allow create: if isAuthenticated();
-      // Allow read/update if user is in participants list
-      allow read, update: if isAuthenticated() && isParticipant(resource.data.participants);
+      allow read: if isAuthenticated() && (isParticipant(resource.data.participants) || isAdmin());
+      allow update: if isAuthenticated() && (isParticipant(resource.data.participants) || isAdmin());
     }
 
-    // Messages (subcollection of chats or root collection? implementation used root collection with chatId field)
+    // Messages
     match /messages/{messageId} {
-      allow read: if isAuthenticated(); // Simplified, ideally check if user is in associated chat
+      allow read: if isAuthenticated() && (
+        // Expensive check, but necessary without denormalization. 
+        // ideally store participants in message or check chat parent.
+        // For now, relying on Chat ID knowledge implies permission or client-side filter security.
+        // Better:
+        exists(/databases/$(database)/documents/chats/$(resource.data.chatId)) && 
+        (
+            get(/databases/$(database)/documents/chats/$(resource.data.chatId)).data.participants.hasAny([request.auth.uid]) ||
+            isAdmin()
+        )
+      );
       allow create: if isAuthenticated();
-      // Should validate that request.resource.data.fromUserId == request.auth.uid
     }
 
     // Notifications
     match /notifications/{notificationId} {
-      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid; // for marking as read
-      allow create: if false; // Only backend or triggers should create notifications (usually)
+      allow read: if isOwner(resource.data.userId);
+      allow update: if isOwner(resource.data.userId); // Mark as read
+      allow create: if false; // Only via Backend/Cloud Functions typically
+      allow delete: if isOwner(resource.data.userId);
     }
 
-    // Projects/Collaborations/Events - Generic rules for now
-    match /{path=**} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+    // Transactions (Read-only for users, Admin manages)
+    match /transactions/{transactionId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow create, update, delete: if isAdmin(); // Only Admin (or Cloud Functions) manages money records
+    }
+    
+    // Ratings
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && request.resource.data.fromUserId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+    
+    // Contracts
+    match /contracts/{contractId} {
+      allow read: if isAuthenticated() && (
+        resource.data.talentId == request.auth.uid || 
+        resource.data.companyId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated(); // Signing
+    }
+
+    // Default catch-all (Active denied)
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

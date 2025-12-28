@@ -7,7 +7,7 @@ import { getFunctions } from "firebase/functions";
 
 // TODO: Doplňte údaje z Firebase Console -> Project Settings
 const firebaseConfig = {
-    apiKey: "AIzaSyAhNMfLxioGM-fipVwy4Ey-VpMJp9CX4lY",
+    apiKey: "AIzaSyAhNMfLxioGM-fipVwy4Ey-VpMjP9CX4lY",
     authDomain: "collabio-242eb.firebaseapp.com",
     projectId: "collabio-242eb",
     storageBucket: "collabio-242eb.firebasestorage.app",

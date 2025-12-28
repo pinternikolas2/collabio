@@ -9,7 +9,8 @@ import {
     addDoc,
     orderBy,
     limit,
-    Timestamp
+    Timestamp,
+    deleteDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Project, User, Collaboration } from '../types';
@@ -150,4 +151,19 @@ export const seedDatabase = async () => {
     }
 
     console.log("Database seed completed!");
+};
+
+export const clearDatabase = async () => {
+    console.log("Starting database cleanup...");
+    const collections = ['users', 'projects', 'collaborations', 'transactions', 'ratings', 'kyc_documents', 'events', 'contracts', 'notifications', 'messages', 'chats'];
+
+    for (const colName of collections) {
+        const q = query(collection(db, colName));
+        const snapshot = await getDocs(q);
+        const batchPromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(batchPromises);
+        console.log(`Cleared collection: ${colName}`);
+    }
+
+    console.log("Database cleanup completed!");
 };

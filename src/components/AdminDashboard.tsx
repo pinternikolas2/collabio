@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { seedDatabase } from '../services/firestore';
+import { seedDatabase, clearDatabase } from '../services/firestore';
 import { adminApi } from '../utils/api';
 import { User, Project, Collaboration, Transaction, KYCDocument } from '../types';
 import { toast } from 'sonner';
@@ -631,6 +631,36 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     }}
                   >
                     Naplnit databázi testovacími daty (Seed DB)
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="ml-4 border-red-200 text-red-600 hover:bg-red-50"
+                    onClick={async () => {
+                      if (confirm('POZOR: Opravdu chcete smazat VŠECHNA data z databáze? Tato akce je nevratná.')) {
+                        try {
+                          // Import clearDatabase dynamically or ensure it is imported at top
+                          // actually, we need to import it first. 
+                          // But wait, replace_file_content needs to be contiguous. 
+                          // I'll add the button here and update imports in a separate call or previous call.
+                          // It's better to update imports first. 
+                          // But I'm in the middle of this edit.
+                          // I'll assume I update imports in next step or previous.
+                          // Let's assume I already did or will do.
+                          // Wait, I cannot use a function that is not imported.
+                          // I'll write the button code here, and then update the import.
+                          // To be safe I will just use the imported name as if it exists.
+                          await clearDatabase();
+                          toast.success('Databáze byla úspěšně vymazána');
+                          loadDashboardData();
+                        } catch (e: any) {
+                          console.error(e);
+                          toast.error('Chyba při mazání databáze: ' + e.message);
+                        }
+                      }
+                    }}
+                  >
+                    Vymazat celou databázi (Clean DB)
                   </Button>
                 </div>
               </CardContent>
