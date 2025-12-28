@@ -28,8 +28,12 @@ type TalentProfileProps = {
   currentUserRole?: 'talent' | 'company' | 'admin' | null;
 };
 
+import { useAuth } from '../contexts/AuthContext';
+// ... (imports)
+
 export default function TalentProfile({ onNavigate, userId, isOwnProfile = false, currentUserRole = null }: TalentProfileProps) {
   const { t } = useTranslation();
+  const { user: authUser } = useAuth();
   const [talent, setTalent] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +43,16 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
       try {
         setLoading(true);
         setError(null);
+
+        // Optimization: Use auth context for own profile to avoid unnecessary fetch
+        // and validity for Test Users (who might not be in Firestore)
+        if (isOwnProfile && authUser && authUser.id === userId) {
+          console.log('[TalentProfile] Using auth context data');
+          setTalent(authUser);
+          setLoading(false);
+          return;
+        }
+
         console.log('[TalentProfile] Loading talent profile for userId:', userId);
         const userData = await userApi.getUser(userId);
         console.log('[TalentProfile] Loaded user data:', userData);
@@ -50,6 +64,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
           setTalent(userData);
         }
       } catch (err: any) {
+        // ... (error handling)
         console.error('[TalentProfile] Error loading talent:', err);
         const errorMessage = err?.message || t('common.unknown_error');
 
@@ -68,7 +83,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
     };
 
     loadTalent();
-  }, [userId]);
+  }, [userId, isOwnProfile, authUser]);
 
   if (loading) {
     return (

@@ -8,119 +8,199 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Progress } from './ui/progress';
-// import { mockRatings, mockCollaborations, mockProjects, mockUsers } from '../data/seedData';
+// Mock data imports removed
+import { User } from '../types';
+import { userApi } from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 
-// Real stats to be implemented
-const companyRatings: any[] = [];
-const avgRating = 0;
-const completedCollabs = 0;
-const activeProjects = 0;
-const totalSpent = 0;
-
-
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat('cs-CZ', {
-    style: 'currency',
-    currency: 'CZK',
-    minimumFractionDigits: 0,
-  }).format(price);
+type CompanyProfileProps = {
+  onNavigate: (page: string, data?: any) => void;
+  userId: string;
+  isOwnProfile?: boolean;
+  currentUserRole?: 'talent' | 'company' | 'admin' | null;
 };
 
-return (
-  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8 md:py-12 overflow-x-hidden w-full">
-    <div className="container mx-auto px-4 max-w-6xl w-full overflow-x-hidden">
-      {/* Header Card */}
-      <Card className="mb-8 max-w-full overflow-hidden border-none shadow-xl bg-white/80 backdrop-blur-md">
-        {/* Cover - Full Gradient */}
-        <div className="h-48 md:h-64 bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 relative">
-          <div className="absolute inset-0 bg-black/10"></div>
-        </div>
+export default function CompanyProfile({ onNavigate, userId, isOwnProfile = false, currentUserRole = null }: CompanyProfileProps) {
+  const { t } = useTranslation();
+  const { user: authUser } = useAuth();
+  const [company, setCompany] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-        <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">
-          {/* Profile Image & Info */}
-          <div className="flex flex-col md:flex-row md:items-end gap-6 mb-8">
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <Avatar className="w-32 h-32 md:w-48 md:h-48 border-4 border-white shadow-2xl rounded-2xl bg-white relative">
-                <AvatarImage src={company.profileImage} alt={company.companyName || `${company.firstName} ${company.lastName}`} className="object-cover rounded-2xl" />
-                <AvatarFallback className="text-5xl rounded-2xl bg-gradient-to-br from-orange-100 to-red-100 text-orange-900"><Building2 className="w-20 h-20" /></AvatarFallback>
-              </Avatar>
-              {company.verified && (
-                <div className="absolute bottom-2 right-2 bg-orange-600 text-white p-1.5 rounded-full border-4 border-white shadow-lg" title={t('company_profile.verified')}>
-                  <CheckCircle className="w-5 h-5" />
-                </div>
-              )}
-            </div>
+  useEffect(() => {
+    const loadCompany = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-            <div className="flex-1 md:mb-6 min-w-0 max-w-full overflow-x-hidden">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 max-w-full">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <h1 className="text-3xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
-                      {company.companyName || `${company.firstName} ${company.lastName}`}
-                    </h1>
+        if (isOwnProfile && authUser && authUser.id === userId) {
+          setCompany(authUser);
+          setLoading(false);
+          return;
+        }
+
+        console.log('[CompanyProfile] Loading company:', userId);
+        const userData = await userApi.getUser(userId);
+
+        if (userData.role !== 'company') {
+          setError('Tento profil není firemní.');
+          setCompany(null);
+        } else {
+          setCompany(userData);
+        }
+      } catch (err: any) {
+        console.error('[CompanyProfile] Error:', err);
+        setError(err.message || 'Chyba při načítání profilu');
+        setCompany(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCompany();
+  }, [userId, isOwnProfile, authUser]);
+
+  const companyRatings: any[] = [];
+  const avgRating = 0;
+  const completedCollabs = 0;
+  const activeProjects = 0;
+  const totalSpent = 0;
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('cs-CZ', {
+      style: 'currency',
+      currency: 'CZK',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error || !company) {
+    return (
+      <div className="min-h-screen flex items-center justify-center flex-col gap-4">
+        <p className="text-red-500 font-semibold">{error || 'Profil nenalezen'}</p>
+        <Button onClick={() => onNavigate('companies')}>Zpět na seznam</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8 md:py-12 overflow-x-hidden w-full">
+      <div className="container mx-auto px-4 max-w-6xl w-full overflow-x-hidden">
+        {/* Header Card */}
+        <Card className="mb-8 max-w-full overflow-hidden border-none shadow-xl bg-white/80 backdrop-blur-md">
+          {/* Cover - Full Gradient */}
+          <div className="h-48 md:h-64 bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 relative">
+            <div className="absolute inset-0 bg-black/10"></div>
+          </div>
+
+          <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">
+            {/* Profile Image & Info */}
+            <div className="flex flex-col md:flex-row md:items-end gap-6 mb-8">
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                <Avatar className="w-32 h-32 md:w-48 md:h-48 border-4 border-white shadow-2xl rounded-2xl bg-white relative">
+                  <AvatarImage src={company.profileImage} alt={company.companyName || `${company.firstName} ${company.lastName}`} className="object-cover rounded-2xl" />
+                  <AvatarFallback className="text-5xl rounded-2xl bg-gradient-to-br from-orange-100 to-red-100 text-orange-900"><Building2 className="w-20 h-20" /></AvatarFallback>
+                </Avatar>
+                {company.verified && (
+                  <div className="absolute bottom-2 right-2 bg-orange-600 text-white p-1.5 rounded-full border-4 border-white shadow-lg" title={t('company_profile.verified')}>
+                    <CheckCircle className="w-5 h-5" />
                   </div>
+                )}
+              </div>
 
-                  <div className="flex flex-wrap items-center gap-3 mb-4">
-                    {company.category && (
-                      <Badge variant="secondary" className="bg-orange-100 text-orange-800 hover:bg-orange-200 px-3 py-1 text-sm border border-orange-200">
-                        {company.category}
-                      </Badge>
-                    )}
-                  </div>
-
-                  <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">{company.bio}</p>
-                </div>
-
-                <div className="flex flex-wrap gap-3 max-w-full mt-4 md:mt-0">
-                  {!isOwnProfile && currentUserRole === 'talent' && (
-                    <>
-                      <Button
-                        className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-0.5"
-                        onClick={() => onNavigate('chat', { userId })}
-                        size="lg"
-                      >
-                        <MessageSquare className="w-5 h-5 mr-2" />
-                        <span className="hidden sm:inline">{t('company_profile.send_message')}</span>
-                        <span className="sm:hidden">{t('company_profile.message_short')}</span>
-                      </Button>
-                      <Button
-                        className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
-                        onClick={() => onNavigate('create-project', {
-                          targetUserId: userId,
-                          targetUserName: company.companyName
-                        })}
-                        size="lg"
-                      >
-                        <Briefcase className="w-5 h-5 mr-2" />
-                        <span className="hidden sm:inline">{t('company_profile.offer_collaboration')}</span>
-                        <span className="sm:hidden">{t('company_profile.collaboration_short')}</span>
-                      </Button>
-                    </>
-                  )}
-                  {!isOwnProfile && currentUserRole === 'company' && (
-                    <div className="px-4 py-2 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-500 italic">
-                      {t('company_profile.cant_contact_company')}
+              <div className="flex-1 md:mb-6 min-w-0 max-w-full overflow-x-hidden">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 max-w-full">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-3 mb-1 flex-wrap">
+                      <h1 className="text-3xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                        {company.companyName || `${company.firstName} ${company.lastName}`}
+                      </h1>
                     </div>
-                  )}
-                  {isOwnProfile && (
-                    <>
-                      <Button
-                        onClick={() => onNavigate('company-analytics')}
-                        className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
-                        size="lg"
-                      >
-                        <TrendingUp className="w-5 h-5 mr-2" />
-                        {t('company_profile.analytics')}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => onNavigate('settings')}
-                        className="border-gray-200 hover:bg-gray-50"
-                        size="lg"
-                      >
-                        {t('company_profile.edit_profile')}
-                      </Button>
+
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      {company.category && (
+                        <Badge variant="secondary" className="bg-orange-100 text-orange-800 hover:bg-orange-200 px-3 py-1 text-sm border border-orange-200">
+                          {company.category}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">{company.bio}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 max-w-full mt-4 md:mt-0">
+                    {!isOwnProfile && currentUserRole === 'talent' && (
+                      <>
+                        <Button
+                          className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-0.5"
+                          onClick={() => onNavigate('chat', { userId })}
+                          size="lg"
+                        >
+                          <MessageSquare className="w-5 h-5 mr-2" />
+                          <span className="hidden sm:inline">{t('company_profile.send_message')}</span>
+                          <span className="sm:hidden">{t('company_profile.message_short')}</span>
+                        </Button>
+                        <Button
+                          className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
+                          onClick={() => onNavigate('create-project', {
+                            targetUserId: userId,
+                            targetUserName: company.companyName
+                          })}
+                          size="lg"
+                        >
+                          <Briefcase className="w-5 h-5 mr-2" />
+                          <span className="hidden sm:inline">{t('company_profile.offer_collaboration')}</span>
+                          <span className="sm:hidden">{t('company_profile.collaboration_short')}</span>
+                        </Button>
+                      </>
+                    )}
+                    {!isOwnProfile && currentUserRole === 'company' && (
+                      <div className="px-4 py-2 bg-gray-100 rounded-lg border border-gray-200 text-sm text-gray-500 italic">
+                        {t('company_profile.cant_contact_company')}
+                      </div>
+                    )}
+                    {isOwnProfile && (
+                      <>
+                        <Button
+                          onClick={() => onNavigate('company-analytics')}
+                          className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 shadow-sm"
+                          size="lg"
+                        >
+                          <TrendingUp className="w-5 h-5 mr-2" />
+                          {t('company_profile.analytics')}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => onNavigate('settings')}
+                          className="border-gray-200 hover:bg-gray-50"
+                          size="lg"
+                        >
+                          {t('company_profile.edit_profile')}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="hover:bg-orange-50 text-orange-600 rounded-full w-12 h-12"
+                          onClick={() => {
+                            navigator.share ? navigator.share({
+                              title: `${company.companyName} - Collabio`,
+                              url: window.location.href
+                            }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
+                          }}
+                        >
+                          <Share2 className="w-6 h-6" />
+                        </Button>
+                      </>
+                    )}
+                    {!isOwnProfile && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -134,302 +214,287 @@ return (
                       >
                         <Share2 className="w-6 h-6" />
                       </Button>
-                    </>
-                  )}
-                  {!isOwnProfile && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="hover:bg-orange-50 text-orange-600 rounded-full w-12 h-12"
-                      onClick={() => {
-                        navigator.share ? navigator.share({
-                          title: `${company.companyName} - Collabio`,
-                          url: window.location.href
-                        }).catch(() => { }) : (navigator.clipboard.writeText(window.location.href), toast.success('Odkaz zkopírován'));
-                      }}
-                    >
-                      <Share2 className="w-6 h-6" />
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Stats Grid - Premium Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-100 rounded-lg text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
-                  <Briefcase className="w-5 h-5" />
-                </div>
-                <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.active_projects')}</p>
-              </div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">{activeProjects}</p>
-            </div>
-
-            <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-100 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
-                  <CheckCircle className="w-5 h-5" />
-                </div>
-                <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.completed')}</p>
-              </div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">{completedCollabs}</p>
-            </div>
-
-            <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                  <Star className="w-5 h-5" />
-                </div>
-                <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.rating')}</p>
-              </div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">{avgRating.toFixed(1)}</p>
-            </div>
-
-            <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.member_since')}</p>
-              </div>
-              <p className="text-2xl md:text-3xl font-bold text-gray-900">
-                {new Date(company.createdAt).getFullYear()}
-              </p>
-            </div>
-
-            {/* Celkové výdaje - pouze pro vlastníka profilu */}
-            {isOwnProfile && (
-              <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg text-white col-span-2 md:col-span-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 bg-white/20 rounded-lg">
-                    <TrendingUp className="w-5 h-5 text-white" />
-                  </div>
-                  <p className="text-xs md:text-sm font-medium opacity-90">{t('company_profile.stats.total_spent')}</p>
-                </div>
-                <p className="text-2xl md:text-3xl font-bold">{formatPrice(totalSpent)}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column */}
-        <div className="space-y-6">
-          {/* Social Media */}
-          <Card className="border-none shadow-md overflow-hidden">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-blue-500" />
-                {t('company_profile.sections.social_media')}
-              </h3>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-6">
-              {company.instagram && (
-                <a
-                  href={`https://instagram.com/${company.instagram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-pink-600">
-                    <Instagram className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">Instagram</p>
-                    <p className="text-xs text-gray-500">{company.instagram}</p>
-                  </div>
-                </a>
-              )}
-              {company.linkedin && (
-                <a
-                  href={`https://linkedin.com/company/${company.linkedin}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-transparent border border-blue-100/50 hover:border-blue-200 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-blue-700">
-                    <Linkedin className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">LinkedIn</p>
-                    <p className="text-xs text-gray-600">{company.linkedin}</p>
-                  </div>
-                </a>
-              )}
-              {!company.instagram && !company.linkedin && (
-                <p className="text-sm text-gray-500 text-center py-4">
-                  {t('company_profile.sections.no_socials')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Industry Focus */}
-          <Card className="border-none shadow-md">
-            <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-orange-500" />
-                {t('company_profile.sections.industry_focus')}
-              </h3>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-5">
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Brand Awareness</span>
-                    <span className="text-sm font-bold text-blue-600">95%</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Content Marketing</span>
-                    <span className="text-sm font-bold text-orange-600">90%</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">Influencer Marketing</span>
-                    <span className="text-sm font-bold text-purple-600">88%</span>
-                  </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <Tabs defaultValue="projects" className="w-full">
-              <div className="border-b border-gray-100 px-6 pt-6">
-                <TabsList className="w-full justify-start h-auto p-1 bg-gray-50/50 rounded-xl gap-1 mb-6 inline-flex">
-                  <TabsTrigger
-                    value="projects"
-                    className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
-                  >
-                    {t('company_profile.tabs.projects')}
-                    <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjects}</Badge>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="reviews"
-                    className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-yellow-600 data-[state=active]:shadow-sm font-medium transition-all"
-                  >
-                    {t('company_profile.tabs.reviews')}
-                    <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 border-none">{companyRatings.length}</Badge>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="collaborations"
-                    className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm font-medium transition-all"
-                  >
-                    {t('company_profile.tabs.collaborations')}
-                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-none">{completedCollabs}</Badge>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              {/* Projects Tab */}
-              <TabsContent value="projects" className="p-0 m-0">
-                <Card>
-                  <CardContent className="p-6 space-y-4">
-                    {/* Projects list - real implementation needed */}
-                    {true && (
-                      <p className="text-center text-gray-500 py-8">
-                        {t('company_profile.projects.none')}
-                      </p>
                     )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              {/* Reviews Tab */}
-              <TabsContent value="reviews">
-                <Card>
-                  <CardContent className="p-6 space-y-6">
-                    {/* Rating Summary */}
-                    <div className="flex items-center gap-6 pb-6 border-b">
-                      <div className="text-center">
-                        <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
-                        <div className="flex gap-1 mb-2">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                                }`}
-                            />
-                          ))}
-                        </div>
-                        <p className="text-sm text-gray-600">{t('company_profile.reviews.count', { count: companyRatings.length })}</p>
-                      </div>
+            {/* Stats Grid - Premium Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-orange-100 rounded-lg text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.active_projects')}</p>
+                </div>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{activeProjects}</p>
+              </div>
 
-                      <div className="flex-1 space-y-2">
-                        {[5, 4, 3, 2, 1].map((rating) => {
-                          const count = companyRatings.filter((r) => r.rating === rating).length;
-                          const percentage = companyRatings.length > 0 ? (count / companyRatings.length) * 100 : 0;
-                          return (
-                            <div key={rating} className="flex items-center gap-2">
-                              <span className="text-sm w-8">{rating} ⭐</span>
-                              <Progress value={percentage} className="flex-1" />
-                              <span className="text-sm text-gray-600 w-8">{count}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-100 rounded-lg text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.completed')}</p>
+                </div>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{completedCollabs}</p>
+              </div>
+
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-yellow-100 rounded-lg text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                    <Star className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.rating')}</p>
+                </div>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{avgRating.toFixed(1)}</p>
+              </div>
+
+              <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-100 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.member_since')}</p>
+                </div>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">
+                  {new Date(company.createdAt).getFullYear()}
+                </p>
+              </div>
+
+              {/* Celkové výdaje - pouze pro vlastníka profilu */}
+              {isOwnProfile && (
+                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-4 md:p-6 rounded-2xl shadow-lg text-white col-span-2 md:col-span-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 bg-white/20 rounded-lg">
+                      <TrendingUp className="w-5 h-5 text-white" />
                     </div>
+                    <p className="text-xs md:text-sm font-medium opacity-90">{t('company_profile.stats.total_spent')}</p>
+                  </div>
+                  <p className="text-2xl md:text-3xl font-bold">{formatPrice(totalSpent)}</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-                    {/* Individual Reviews */}
-                    <div className="space-y-4">
-                      {companyRatings.map((rating) => (
-                        <div key={rating.id} className="border-b pb-4 last:border-0">
-                          {/* Review Content */}
-                        </div>
-                      ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Social Media */}
+            <Card className="border-none shadow-md overflow-hidden">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-blue-500" />
+                  {t('company_profile.sections.social_media')}
+                </h3>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                {company.instagram && (
+                  <a
+                    href={`https://instagram.com/${company.instagram.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-pink-600">
+                      <Instagram className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">Instagram</p>
+                      <p className="text-xs text-gray-500">{company.instagram}</p>
+                    </div>
+                  </a>
+                )}
+                {company.linkedin && (
+                  <a
+                    href={`https://linkedin.com/company/${company.linkedin}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-transparent border border-blue-100/50 hover:border-blue-200 transition-all group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-blue-700">
+                      <Linkedin className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">LinkedIn</p>
+                      <p className="text-xs text-gray-600">{company.linkedin}</p>
+                    </div>
+                  </a>
+                )}
+                {!company.instagram && !company.linkedin && (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    {t('company_profile.sections.no_socials')}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
-                      {companyRatings.length === 0 && (
+            {/* Industry Focus */}
+            <Card className="border-none shadow-md">
+              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-orange-500" />
+                  {t('company_profile.sections.industry_focus')}
+                </h3>
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-5">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Brand Awareness</span>
+                      <span className="text-sm font-bold text-blue-600">95%</span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Content Marketing</span>
+                      <span className="text-sm font-bold text-orange-600">90%</span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm font-medium text-gray-700">Influencer Marketing</span>
+                      <span className="text-sm font-bold text-purple-600">88%</span>
+                    </div>
+                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <Tabs defaultValue="projects" className="w-full">
+                <div className="border-b border-gray-100 px-6 pt-6">
+                  <TabsList className="w-full justify-start h-auto p-1 bg-gray-50/50 rounded-xl gap-1 mb-6 inline-flex">
+                    <TabsTrigger
+                      value="projects"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('company_profile.tabs.projects')}
+                      <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjects}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="reviews"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-yellow-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('company_profile.tabs.reviews')}
+                      <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 border-none">{companyRatings.length}</Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="collaborations"
+                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm font-medium transition-all"
+                    >
+                      {t('company_profile.tabs.collaborations')}
+                      <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-none">{completedCollabs}</Badge>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {/* Projects Tab */}
+                <TabsContent value="projects" className="p-0 m-0">
+                  <Card>
+                    <CardContent className="p-6 space-y-4">
+                      {/* Projects list - real implementation needed */}
+                      {true && (
                         <p className="text-center text-gray-500 py-8">
-                          {t('company_profile.reviews.none')}
+                          {t('company_profile.projects.none')}
                         </p>
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
 
-              {/* Collaborations Tab */}
-              <TabsContent value="collaborations">
-                <Card>
-                  <CardContent className="p-6 space-y-4">
-                    {/* Empty collaborations list for now */}
-                    {[]
-                      .map((collab: any) => (
-                        null
-                      ))}
+                {/* Reviews Tab */}
+                <TabsContent value="reviews">
+                  <Card>
+                    <CardContent className="p-6 space-y-6">
+                      {/* Rating Summary */}
+                      <div className="flex items-center gap-6 pb-6 border-b">
+                        <div className="text-center">
+                          <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
+                          <div className="flex gap-1 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                          <p className="text-sm text-gray-600">{t('company_profile.reviews.count', { count: companyRatings.length })}</p>
+                        </div>
 
-                    {completedCollabs === 0 && (
-                      <p className="text-center text-gray-500 py-8">
-                        {t('company_profile.collaborations.none')}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                        <div className="flex-1 space-y-2">
+                          {[5, 4, 3, 2, 1].map((rating) => {
+                            const count = companyRatings.filter((r) => r.rating === rating).length;
+                            const percentage = companyRatings.length > 0 ? (count / companyRatings.length) * 100 : 0;
+                            return (
+                              <div key={rating} className="flex items-center gap-2">
+                                <span className="text-sm w-8">{rating} ⭐</span>
+                                <Progress value={percentage} className="flex-1" />
+                                <span className="text-sm text-gray-600 w-8">{count}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Individual Reviews */}
+                      <div className="space-y-4">
+                        {companyRatings.map((rating) => (
+                          <div key={rating.id} className="border-b pb-4 last:border-0">
+                            {/* Review Content */}
+                          </div>
+                        ))}
+
+                        {companyRatings.length === 0 && (
+                          <p className="text-center text-gray-500 py-8">
+                            {t('company_profile.reviews.none')}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Collaborations Tab */}
+                <TabsContent value="collaborations">
+                  <Card>
+                    <CardContent className="p-6 space-y-4">
+                      {/* Empty collaborations list for now */}
+                      {[]
+                        .map((collab: any) => (
+                          null
+                        ))}
+
+                      {completedCollabs === 0 && (
+                        <p className="text-center text-gray-500 py-8">
+                          {t('company_profile.collaborations.none')}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+}
 }
