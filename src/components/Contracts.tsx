@@ -6,7 +6,11 @@ import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Separator } from './ui/separator';
-import { mockContracts, mockUsers, mockProjects } from '../data/seedData';
+// import { mockContracts, mockUsers, mockProjects } from '../data/seedData';
+import { mockUsers, mockProjects } from '../data/seedData'; // Keep users/projects for helper functions if needed, but we'll return empty contracts so helpers won't be called on them. 
+// Actually, helpers use mockUsers directly, so I should keep mockUsers imported IF I was using it, but userContracts is empty.
+// To be safe, I'll comment out the import and locally define helpers to return null/undefined.
+
 import { Contract } from '../types';
 import { toast } from 'sonner';
 
@@ -20,9 +24,9 @@ export default function Contracts({ userId, onNavigate }: ContractsProps) {
   const [showPreview, setShowPreview] = useState(false);
 
   // Filter contracts for current user
-  const userContracts = mockContracts.filter(
+  const userContracts: Contract[] = []; /* mockContracts.filter(
     contract => contract.talentId === userId || contract.companyId === userId
-  );
+  ); */
 
   const getOtherParty = (contract: Contract) => {
     const otherPartyId = contract.talentId === userId ? contract.companyId : contract.talentId;

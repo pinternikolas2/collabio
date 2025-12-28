@@ -14,7 +14,10 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
-import { mockRatings, mockCollaborations, mockProjects, mockEvents } from '../data/seedData';
+// import { mockRatings, mockCollaborations, mockProjects, mockEvents } from '../data/seedData'; 
+// Use real data or empty arrays
+// Mock data imports removed
+
 import { Event, AdvertisingOptionType, User } from '../types';
 import { userApi, storageApi, eventApi } from '../utils/api';
 
@@ -102,18 +105,14 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
     );
   }
 
-  const talentRatings = mockRatings.filter((r) => r.toUserId === userId);
-  const avgRating = talentRatings.length > 0
-    ? talentRatings.reduce((sum, r) => sum + r.rating, 0) / talentRatings.length
-    : 0;
+  /* REMOVED MOCK DATA */
+  /* Real implementation will come from backend, for now showing 0 to reflect empty DB state */
+  const talentRatings: any[] = [];
+  const avgRating = 0;
+  const completedCollabs = 0;
+  const totalWarnings = 0;
+  /* Total earnings also 0 */
 
-  const completedCollabs = mockCollaborations.filter(
-    (c) => c.talentId === userId && c.status === 'completed'
-  ).length;
-
-  const totalEarnings = mockCollaborations
-    .filter((c) => c.talentId === userId && c.status === 'completed' && c.escrowReleased)
-    .reduce((sum, c) => sum + c.price, 0);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('cs-CZ', {
@@ -667,33 +666,12 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                 <TabsContent value="collaborations">
                   <Card>
                     <CardContent className="p-6 space-y-4">
-                      {mockCollaborations
-                        .filter((c) => c.talentId === userId && c.status === 'completed')
-                        .map((collab) => {
-                          const project = mockProjects.find((p) => p.id === collab.projectId);
-                          const company = mockUsers.find((u) => u.id === collab.companyId);
-                          return (
-                            <div
-                              key={collab.id}
-                              className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                            >
-                              <Avatar className="w-12 h-12">
-                                <AvatarImage src={company?.profileImage} />
-                                <AvatarFallback>{company?.firstName[0]}</AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <p className="font-semibold">{project?.title}</p>
-                                <p className="text-sm text-gray-600">
-                                  {company?.firstName} {company?.lastName}
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-semibold">{formatPrice(collab.price)}</p>
-                                <Badge className="bg-green-100 text-green-800">{t('talent_profile.projects.completed')}</Badge>
-                              </div>
-                            </div>
-                          );
+                      {/* Real collaborations will be fetched here. For now empty. */}
+                      {[]
+                        .map((collab: any) => {
+                          return null;
                         })}
+
 
                       {completedCollabs === 0 && (
                         <p className="text-center text-gray-500 py-8">

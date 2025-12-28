@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { seedDatabase, clearDatabase } from '../services/firestore';
+import { clearDatabase } from '../services/firestore';
 import { adminApi } from '../utils/api';
 import { User, Project, Collaboration, Transaction, KYCDocument } from '../types';
 import { toast } from 'sonner';
@@ -615,23 +615,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <p className="text-sm text-gray-500 mb-4">
                     Tyto akce jsou nevratné. Buďte opatrní.
                   </p>
-                  <Button
-                    variant="destructive"
-                    onClick={async () => {
-                      if (confirm('Opravdu chcete přepsat databázi testovacími daty?')) {
-                        try {
-                          await seedDatabase();
-                          toast.success('Databáze byla úspěšně naplněna testovacími daty');
-                          loadDashboardData(); // Reload data after seeding
-                        } catch (e: any) {
-                          console.error(e);
-                          toast.error('Chyba při plnění databáze: ' + e.message);
-                        }
-                      }
-                    }}
-                  >
-                    Naplnit databázi testovacími daty (Seed DB)
-                  </Button>
+                  {/* Seed mock data button removed */}
 
                   <Button
                     variant="outline"

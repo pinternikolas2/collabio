@@ -4,7 +4,7 @@ import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { mockTransactions, mockUsers } from '../data/seedData';
+// import { mockTransactions, mockUsers } from '../data/seedData';
 import { Transaction } from '../types';
 import { calculateTotalFees, getFeeBreakdown, FEE_TIERS } from '../utils/fees';
 
@@ -15,7 +15,7 @@ type FinanceProps = {
 };
 
 export default function Finance({ onNavigate, userId, userRole }: FinanceProps) {
-  const userTransactions = mockTransactions.filter((t) => t.userId === userId);
+  const userTransactions: Transaction[] = []; // mockTransactions.filter((t) => t.userId === userId);
 
   const totalIncome = userTransactions
     .filter((t) => t.type === 'income' && t.status === 'completed')
@@ -376,10 +376,10 @@ export default function Finance({ onNavigate, userId, userRole }: FinanceProps) 
                         <div
                           key={tier.name}
                           className={`p-4 border-2 rounded-lg ${index === 0
-                              ? 'border-orange-200 bg-orange-50'
-                              : index === 1
-                                ? 'border-blue-200 bg-blue-50'
-                                : 'border-green-200 bg-green-50'
+                            ? 'border-orange-200 bg-orange-50'
+                            : index === 1
+                              ? 'border-blue-200 bg-blue-50'
+                              : 'border-green-200 bg-green-50'
                             }`}
                         >
                           <div className="flex items-center justify-between mb-2">

@@ -6,9 +6,9 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Alert, AlertDescription } from './ui/alert';
-import { mockKYCDocuments, mockUsers } from '../data/seedData';
-import { VerificationStatus } from '../types';
-import { kycApi } from '../utils/api';
+// import { mockKYCDocuments, mockUsers } from '../data/seedData';
+import { User, KYCDocument } from '../types';
+import { kycApi, userApi } from '../utils/api';
 import { toast } from 'sonner';
 
 type KYCVerificationProps = {
@@ -18,13 +18,40 @@ type KYCVerificationProps = {
 };
 
 export default function KYCVerification({ userId, userRole, onNavigate }: KYCVerificationProps) {
-  const user = mockUsers.find(u => u.id === userId);
-  const userDocuments = mockKYCDocuments.filter(doc => doc.userId === userId);
+  const [user, setUser] = useState<User | null>(null);
+  const [userDocuments, setUserDocuments] = useState<KYCDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // const user = mockUsers.find(u => u.id === userId);
+  // const userDocuments = mockKYCDocuments.filter(doc => doc.userId === userId);
 
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [ico, setIco] = useState(user?.ico || '');
-  const [companyName, setCompanyName] = useState(user?.companyName || '');
+  const [ico, setIco] = useState('');
+  const [companyName, setCompanyName] = useState('');
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const userData = await userApi.getUser(userId);
+        setUser(userData);
+        if (userData) {
+          setIco(userData.ico || '');
+          setCompanyName(userData.companyName || '');
+        }
+
+        const docs = await kycApi.getDocuments(userId);
+        setUserDocuments(docs);
+      } catch (error) {
+        console.error('Failed to load KYC data:', error);
+        toast.error('Nepodařilo se načíst data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [userId]);
 
   const getStatusBadge = (status: VerificationStatus) => {
     switch (status) {
@@ -106,6 +133,10 @@ export default function KYCVerification({ userId, userRole, onNavigate }: KYCVer
         description: 'Váš dokument byl úspěšně nahrán a čeká na schválení administrátorem.'
       });
       setSelectedFile(null);
+
+      // Reload docs
+      const docs = await kycApi.getDocuments(userId);
+      setUserDocuments(docs);
 
       // Navigate back to profile after successful upload
       setTimeout(() => {

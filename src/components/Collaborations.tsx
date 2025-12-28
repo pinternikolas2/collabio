@@ -6,7 +6,8 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Progress } from './ui/progress';
-import { mockCollaborations, mockUsers, mockProjects } from '../data/seedData';
+// import { mockCollaborations, mockUsers, mockProjects } from '../data/seedData';
+import { mockUsers, mockProjects } from '../data/seedData'; // Placeholder if needed by other logic, but we'll nullify helpers.
 import { CollaborationStatus } from '../types';
 
 type CollaborationsProps = {
@@ -17,9 +18,9 @@ type CollaborationsProps = {
 export default function Collaborations({ onNavigate, userId }: CollaborationsProps) {
   const [activeTab, setActiveTab] = useState<string>('active');
 
-  const userCollaborations = mockCollaborations.filter(
+  const userCollaborations: any[] = []; /* mockCollaborations.filter(
     (collab) => collab.talentId === userId || collab.companyId === userId
-  );
+  ); */
 
   const getOtherUser = (collab: any) => {
     const otherUserId = collab.talentId === userId ? collab.companyId : collab.talentId;

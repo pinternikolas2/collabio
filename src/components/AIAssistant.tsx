@@ -27,7 +27,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { UserRole } from '../types';
-import { mockUsers, mockProjects } from '../data/seedData';
+import { userApi } from '../utils/api';
 
 interface Message {
   id: string;
@@ -53,8 +53,26 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [userName, setUserName] = useState<string>('uživateli');
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (userId) {
+        try {
+          const user = await userApi.getUser(userId);
+          if (user) {
+            setUserName(user.firstName || user.companyName || 'uživateli');
+          }
+        } catch (error) {
+          console.error('Failed to fetch user name', error);
+        }
+      }
+    };
+    fetchUserName();
+  }, [userId]);
 
   // Keyboard shortcut: Ctrl + /
   useEffect(() => {
@@ -133,12 +151,9 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
         suggestions: welcomeMessage.suggestions
       }]);
     }
-  }, [isOpen, activeMode]);
+  }, [isOpen, activeMode, userName]); // Added userName dependency
 
   const getWelcomeMessage = () => {
-    const currentUser = userId ? mockUsers.find(u => u.id === userId) : null;
-    const userName = currentUser?.name || 'uživateli';
-
     switch (activeMode) {
       case 'talent':
         return {
@@ -164,7 +179,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
 
       default:
         return {
-          text: `Vítejte na Collabiu! 💬\n\nJsem váš AI asistent připravený odpovědět na otázky o platformě, vysvětlit, jak funguje propojení talentů a firem, nebo poradit s čímkoliv ohledně spolupráce.\n\nJak vám mohu pomoci?`,
+          text: `Vítejte na Collabio! 💬\n\nJsem váš AI asistent připravený odpovědět na otázky o platformě, vysvětlit, jak funguje propojení talentů a firem, nebo poradit s čímkoliv ohledně spolupráce.\n\nJak vám mohu pomoci?`,
           suggestions: [
             'Jak funguje Collabio?',
             'Jak se registrovat?',
@@ -175,173 +190,8 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
     }
   };
 
-  const getAIResponse = async (userMessage: string): Promise<{ text: string; suggestions?: string[] }> => {
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+  // Removed getAIResponse mock function
 
-    const lowerMessage = userMessage.toLowerCase();
-    const currentUser = userId ? mockUsers.find(u => u.id === userId) : null;
-
-    // Talent-specific responses
-    if (activeMode === 'talent') {
-      if (lowerMessage.includes('profil') || lowerMessage.includes('optimalizovat')) {
-        return {
-          text: `Skvělá otázka! 📸\n\nZde jsou tipy pro optimalizaci vašeho profilu:\n\n✅ **Profesionální fotografie** - Kvalitní profilová fotka zvyšuje šanci na spolupráci o 60%\n\n✅ **Kompletní bio** - Popište svou specializaci, úspěchy a hodnoty\n\n✅ **Portfolio** - Nahrajte 5-10 nejlepších ukázek vaší práce\n\n✅ **Sociální sítě** - Propojte Instagram, TikTok, YouTube\n\n✅ **Ceník** - Nastavte jasné ceny za různé typy spolupráce\n\n✅ **KYC ověření** - ${currentUser?.verificationStatus === 'verified' ? '✓ Váš účet je ověřený!' : 'Dokončete ověření totožnosti'}\n\nChcete, abych vás provedl nastavením některé z těchto částí?`,
-          suggestions: [
-            'Jak nastavit ceník?',
-            'Jaké fotky nahrát?',
-            'Pomoc s popisem bio',
-            'Co je KYC ověření?'
-          ]
-        };
-      }
-
-      if (lowerMessage.includes('projekt') || lowerMessage.includes('najdi') || lowerMessage.includes('spolupráce')) {
-        const relevantProjects = mockProjects.filter(p => p.status === 'active').slice(0, 3);
-        return {
-          text: `Našel jsem pro vás ${relevantProjects.length} zajímavé projekty! 🎯\n\n${relevantProjects.map((p, i) =>
-            `${i + 1}. **${p.title}**\n   Rozpočet: ${p.budget?.toLocaleString('cs-CZ')} Kč\n   Kategorie: ${p.category}\n   ${p.targetRole === 'talent' ? '✓ Hledá talent jako vy!' : ''}`
-          ).join('\n\n')}\n\nChcete zobrazit detail některého projektu?`,
-          suggestions: relevantProjects.map(p => `Detail: ${p.title}`)
-        };
-      }
-
-      if (lowerMessage.includes('kyc') || lowerMessage.includes('ověření')) {
-        return {
-          text: `KYC (Know Your Customer) je proces ověření totožnosti 🛡️\n\n**Proč je důležité:**\n• Ochrana před podvody\n• Buduje důvěru u firem\n• Umožňuje přijímat platby\n• Zvyšuje šanci na spolupráci o 80%\n\n**Co potřebujete:**\n${currentUser?.role === 'talent' ? '• Občanský průkaz nebo pas\n• Čitelný sken/foto (PDF, JPG)\n• Schválení trvá 1-2 dny' : ''}\n\n${currentUser?.verificationStatus === 'verified' ? '✅ **Váš účet je již ověřený!**' : '⚠️ **Váš účet není ověřený** - Doporučuji dokončit nyní'}`,
-          suggestions: currentUser?.verificationStatus !== 'verified' ?
-            ['Přejít na ověření', 'Co se stane, když neověřím?'] :
-            ['Jak zvýšit důvěryhodnost?', 'Tipy na získání spolupráce']
-        };
-      }
-
-      if (lowerMessage.includes('odpověď') || lowerMessage.includes('nabídka')) {
-        return {
-          text: `Rád vám pomohu s profesionální odpovědí! ✍️\n\n**Struktura dobré odpovědi:**\n\n1. **Pozdrav a představení**\n   "Dobrý den, děkuji za nabídku..."\n\n2. **Zájem a reference**\n   "Mám zkušenosti s podobnými projekty..."\n\n3. **Konkrétní návrh**\n   "Navrhuji následující řešení..."\n\n4. **Termíny a cena**\n   "Realizace do X dnů za Y Kč"\n\n5. **Výzva k jednání**\n   "Rád si s vámi domluvu detaily..."\n\n**Příklad:**\n"Dobrý den,\nděkuji za nabídku spolupráce! Vaš projekt mě zaujal, protože... [důvod]. Mám zkušenosti s [reference]. Navrhuji [řešení] s realizací do [termín] za [cena] Kč. Rád si domluvíme detaily.\n\nS pozdravem,\n[Vaše jméno]"\n\nChcete, abych vám pomohl napsat konkrétní odpověď?`,
-          suggestions: [
-            'Generuj odpověď na nabídku',
-            'Jak vyjednávat cenu?',
-            'Co napsat po první zprávě?'
-          ]
-        };
-      }
-
-      if (lowerMessage.includes('výplata') || lowerMessage.includes('platba') || lowerMessage.includes('stripe')) {
-        return {
-          text: `Výplaty fungují bezpečně přes Stripe Connect 💰\n\n**Jak to funguje:**\n\n1️⃣ Firma zaplatí do **escrow** (úschova)\n2️⃣ Vy dokončíte projekt\n3️⃣ Firma schválí dokončení\n4️⃣ Peníze se automaticky převedou na váš účet\n\n**Ochrana:**\n• Peníze jsou drženy bezpečně\n• Vypláceno až po schválení\n• Collabio strhne poplatek ${getCurrentFeePercentage()}%\n• V případě sporu řeší admin\n\n**Výplata trvá:** 2-5 pracovních dnů\n\n**Potřebujete:**\n• Ověřený účet (KYC)\n• Bankovní účet v ČR\n• Stripe Connect napojení`,
-          suggestions: [
-            'Jak nastavit Stripe?',
-            'Kolik si Collabio účtuje?',
-            'Co když firma neschválí?'
-          ]
-        };
-      }
-    }
-
-    // Company-specific responses
-    if (activeMode === 'company') {
-      if (lowerMessage.includes('talent') || lowerMessage.includes('najdi') || lowerMessage.includes('doporuč')) {
-        const talents = mockUsers.filter(u => u.role === 'talent' && u.verificationStatus === 'verified').slice(0, 3);
-        return {
-          text: `Našel jsem ${talents.length} ověřené talenty pro vás! 🌟\n\n${talents.map((t, i) =>
-            `${i + 1}. **${t.name}**\n   Kategorie: ${t.category || 'Diverse'}\n   Rating: ${'⭐'.repeat(Math.floor(t.rating || 5))}\n   ${t.stats?.completedProjects || 0} dokončených projektů`
-          ).join('\n\n')}\n\nVšichni jsou KYC ověření a připraveni ke spolupráci. Chcete zobrazit detail některého talentu?`,
-          suggestions: talents.map(t => `Zobraz profil: ${t.name}`)
-        };
-      }
-
-      if (lowerMessage.includes('escrow') || lowerMessage.includes('platba') || lowerMessage.includes('bezpečnost')) {
-        return {
-          text: `Escrow systém chrání obě strany 🛡️\n\n**Jak funguje pro firmy:**\n\n1️⃣ **Vytvoříte projekt** s rozpočtem\n2️⃣ **Domluvíte spolupráci** s talentem\n3️⃣ **Zaplatíte do escrow** - peníze jsou drženy bezpečně\n4️⃣ **Talent plní projekt**\n5️⃣ **Vy schválíte dokončení** nebo požádáte o revizi\n6️⃣ **Po schválení** se peníze převedou talentovi\n\n**Vaše výhody:**\n✅ Platíte až po dokončení\n✅ Možnost revizí\n✅ Ochrana před podvody\n✅ V případě sporu řeší admin\n✅ Platba přes bezpečný Stripe\n\n**Poplatky:**\n• Marketplace projekty: ${getCurrentFeePercentage()}%\n• Přímé nabídky: nižší poplatek\n• Žádné skryté poplatky`,
-          suggestions: [
-            'Co když jsem nespokojen?',
-            'Jak požádat o revizi?',
-            'Spočítej poplatek pro projekt'
-          ]
-        };
-      }
-
-      if (lowerMessage.includes('projekt') || lowerMessage.includes('vytvořit') || lowerMessage.includes('kampaň')) {
-        return {
-          text: `Pomohu vám vytvořit úspěšný projekt! 📋\n\n**Struktura efektivního projektu:**\n\n1. **Název** - Jasný a atraktivní\n   ❌ "Hledám influencera"\n   ✅ "Instagram kampaň pro fitness značku"\n\n2. **Popis** - Detailní brief\n   • Co potřebujete\n   • Jaký je cíl\n   • Co očekáváte\n\n3. **Rozpočet** - Realistický\n   • Instagram post: 5-15k Kč\n   • Video kampaň: 20-50k Kč\n   • Long-term: 50-200k Kč/měs\n\n4. **Požadavky**\n   • Minimální follower count\n   • Kategorie (sport, beauty, tech...)\n   • Lokace\n\n5. **Termíny** - Jasné deadline\n\nChcete, abych vám pomohl vytvořit projekt krok za krokem?`,
-          suggestions: [
-            'Vytvoř projekt se mnou',
-            'Jaký rozpočet nastavit?',
-            'Jak vybrat správného talentu?',
-            'Ukázka projektu'
-          ]
-        };
-      }
-
-      if (lowerMessage.includes('roi') || lowerMessage.includes('výsledek') || lowerMessage.includes('spočít')) {
-        return {
-          text: `Spočítám vám ROI kampaně! 📊\n\n**Kalkulačka ROI:**\n\nVstupní data (příklad):\n• Investice: 50,000 Kč\n• Dosah: 100,000 zobrazení\n• Engagement: 5% (5,000 interakcí)\n• Konverze: 2% (100 zákazníků)\n• Průměrný nákup: 1,000 Kč\n\n**Výpočet:**\n• Tržby: 100 × 1,000 = 100,000 Kč\n• Zisk: 100,000 - 50,000 = 50,000 Kč\n• ROI: (50,000 / 50,000) × 100 = **100%**\n\n**Doporučení:**\n✅ ROI > 100% = Excelentní\n✅ ROI > 50% = Velmi dobrý\n⚠️ ROI < 20% = Optimalizujte\n\nChcete spočítat ROI pro váš konkrétní projekt?`,
-          suggestions: [
-            'Zadej vlastní čísla',
-            'Jaký je průměrný ROI?',
-            'Jak zvýšit ROI?'
-          ]
-        };
-      }
-    }
-
-    // General responses
-    if (lowerMessage.includes('funguje') || lowerMessage.includes('jak') && lowerMessage.includes('collabio')) {
-      return {
-        text: `Collabio je platforma pro propojení talentů a firem! 🤝\n\n**Pro Talenty:**\n🌟 Vytvořte profil a portfolio\n🌟 Nabídněte své služby\n🌟 Aplikujte na projekty\n🌟 Komunikujte s firmami\n🌟 Přijímejte platby bezpečně\n\n**Pro Firmy:**\n🏢 Hledejte talenty podle kritérií\n🏢 Vytvářejte projekty\n🏢 Platba do escrow (ochrana)\n🏢 Sledujte výsledky\n🏢 Hodnoťte spolupráce\n\n**Bezpečnost:**\n🛡️ KYC ověření totožnosti\n🛡️ Escrow platby přes Stripe\n🛡️ Šifrovaná komunikace\n🛡️ GDPR compliant\n\nChcete vědět víc o něčem konkrétním?`,
-        suggestions: [
-          'Jak se registrovat?',
-          'Kolik to stojí?',
-          'Je to bezpečné?',
-          'Jaké jsou poplatky?'
-        ]
-      };
-    }
-
-    if (lowerMessage.includes('poplatek') || lowerMessage.includes('cena') || lowerMessage.includes('kolik')) {
-      return {
-        text: `Transparentní poplatky Collabio 💰\n\n**Progresivní sazba (marketplace projekty):**\n\n| Hodnota projektu | Poplatek |\n|------------------|----------|\n| 0 - 50,000 Kč    | 20%      |\n| 50 - 200,000 Kč  | 15%      |\n| 200,000+ Kč      | 7%       |\n\n**Přímé nabídky:**\n• Nižší poplatky (7-15%)\n• Rychlejší vyřízení\n\n**Bez skrytých poplatků:**\n✅ Registrace ZDARMA\n✅ Procházení marketplace ZDARMA\n✅ Komunikace ZDARMA\n✅ Poplatek jen při úspěšné spolupráci\n\n**Příklad výpočtu (Projekt 100,000 Kč):**\n1. 20% z prvních 50,000 Kč = 10,000 Kč\n2. 15% ze zbylých 50,000 Kč = 7,500 Kč\n\n• **Celkový poplatek:** 17,500 Kč\n• **Talent obdrží:** 82,500 Kč`,
-        suggestions: [
-          'Spočítej poplatek pro projekt',
-          'Proč progresivní sazba?',
-          'Jak ušetřit na poplatcích?'
-        ]
-      };
-    }
-
-    if (lowerMessage.includes('registrace') || lowerMessage.includes('registrovat') || lowerMessage.includes('účet')) {
-      return {
-        text: `Registrace je jednoduchá! 📝\n\n**Krok za krokem:**\n\n1️⃣ **Základní registrace**\n   • Email a heslo\n   • Výběr role (Talent / Firma)\n   • Potvrzení emailu\n\n2️⃣ **Vytvoření profilu**\n   • Základní informace\n   • Profilová fotka\n   • Bio a popis\n\n3️⃣ **KYC Ověření** ⚠️ DŮLEŽITÉ\n   • Talent: Občanský průkaz\n   • Firma: IČO + Výpis z OR\n   • Schválení: 1-2 dny\n\n4️⃣ **Dokončení**\n   • Portfolio (pro talenty)\n   • Propojení plateb (Stripe)\n   • Nastavení preferencí\n\n✅ **Po ověření můžete:**\n• Aplikovat na projekty\n• Vytvářet projekty\n• Komunikovat s ostatními\n• Přijímat/posílat platby\n\nChcete začít registraci?`,
-        suggestions: [
-          'Přejít na registraci',
-          'Co je to KYC?',
-          'Jak dlouho trvá schválení?'
-        ]
-      };
-    }
-
-    if (lowerMessage.includes('bezpečn') || lowerMessage.includes('důvěr') || lowerMessage.includes('podvod')) {
-      return {
-        text: `Bezpečnost je naše priorita! 🔒\n\n**Ochranná opatření:**\n\n🛡️ **KYC Ověření**\n• Všichni uživatelé ověřeni\n• Kontrola dokladů adminy\n• Ochrana před falešnými profily\n\n💰 **Escrow Platby**\n• Peníze drženy bezpečně\n• Vyplaceno až po dokončení\n• Ochrana pro obě strany\n\n🔐 **Technická bezpečnost**\n• SSL šifrování\n• GDPR compliant\n• Pravidelné audity\n• 2FA autentizace\n\n⚖️ **Řešení sporů**\n• Admin mediace\n• Důkazní materiály\n• Spravedlivé rozhodování\n\n📧 **Komunikace**\n• Pouze přes platformu\n• Žádné osobní kontakty viditelné\n• Chat + video hovory\n\n**Statistiky:**\n✅ 99.8% spokojených uživatelů\n✅ 0.2% sporů\n✅ 100% vyřešených případů`,
-        suggestions: [
-          'Co dělat při podezření?',
-          'Jak nahlásit problém?',
-          'Pravidla platformy'
-        ]
-      };
-    }
-
-    // Default response with suggestions
-    return {
-      text: `Omlouvám se, nerozumím přesně vaší otázce. 🤔\n\nMohu vám pomoci s:\n\n${activeMode === 'talent' ?
-        '• Optimalizací profilu\n• Hledáním projektů\n• Profesionální komunikací\n• KYC ověřením\n• Výplatami' :
-        activeMode === 'company' ?
-          '• Hledáním talentů\n• Vytvořením projektu\n• Escrow platbami\n• Výpočtem ROI\n• Marketingovými strategiemi' :
-          '• Vysvětlením jak Collabio funguje\n• Informacemi o poplatcích\n• Registrací\n• Bezpečností\n• Obecnými dotazy'
-        }\n\nZkuste přeformulovat otázku nebo vyberte z nabídky:`,
-      suggestions: getWelcomeMessage().suggestions
-    };
-  };
 
   const getCurrentFeePercentage = () => {
     // Simplified fee calculation

@@ -18,7 +18,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { userApi, projectApi, eventApi } from '../utils/api'; // Assuming you have projectApi or similar
 import { User, Project, Event } from '../types';
 import CreateEventRequest from './CreateEventRequest'; // Will create next
-import { mockEvents, mockProjects, mockUsers } from '../data/seedData'; // Fallback / mock data
+// import { mockEvents, mockProjects, mockUsers } from '../data/seedData'; // Removed mock data fallback
+
 
 // Helper to check if a project is an "Event Demand" (poptávka po talentu na akci)
 const isEventDemand = (p: Project) => p.category === 'event_demand';
