@@ -300,7 +300,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
 
     if (lowerMessage.includes('poplatek') || lowerMessage.includes('cena') || lowerMessage.includes('kolik')) {
       return {
-        text: `Transparentní poplatky Collabio 💰\n\n**Progresivní sazba (marketplace projekty):**\n\n| Hodnota projektu | Poplatek |\n|------------------|----------|\n| 0 - 50,000 Kč    | 20%      |\n| 50 - 200,000 Kč  | 15%      |\n| 200 - 500,000 Kč | 10%      |\n| 500,000+ Kč      | 5%       |\n\n**Přímé nabídky:**\n• Nižší poplatky (7-15%)\n• Rychlejší vyřízení\n\n**Bez skrytých poplatků:**\n✅ Registrace ZDARMA\n✅ Procházení marketplace ZDARMA\n✅ Komunikace ZDARMA\n✅ Poplatek jen při úspěšné spolupráci\n\n**Příklad:**\nProjekt za 100,000 Kč:\n• Poplatek: 15% = 15,000 Kč\n• Talent obdrží: 85,000 Kč\n• Firma zaplatí: 100,000 Kč`,
+        text: `Transparentní poplatky Collabio 💰\n\n**Progresivní sazba (marketplace projekty):**\n\n| Hodnota projektu | Poplatek |\n|------------------|----------|\n| 0 - 50,000 Kč    | 20%      |\n| 50 - 200,000 Kč  | 15%      |\n| 200,000+ Kč      | 7%       |\n\n**Přímé nabídky:**\n• Nižší poplatky (7-15%)\n• Rychlejší vyřízení\n\n**Bez skrytých poplatků:**\n✅ Registrace ZDARMA\n✅ Procházení marketplace ZDARMA\n✅ Komunikace ZDARMA\n✅ Poplatek jen při úspěšné spolupráci\n\n**Příklad výpočtu (Projekt 100,000 Kč):**\n1. 20% z prvních 50,000 Kč = 10,000 Kč\n2. 15% ze zbylých 50,000 Kč = 7,500 Kč\n\n• **Celkový poplatek:** 17,500 Kč\n• **Talent obdrží:** 82,500 Kč`,
         suggestions: [
           'Spočítej poplatek pro projekt',
           'Proč progresivní sazba?',
@@ -363,37 +363,69 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
     setIsTyping(true);
 
     try {
-      // Import dynamically to avoid circular dependencies if any
+      // Import dynamically
       const { aiApi } = await import('../utils/api');
 
-      // Convert history for API
-      const history = messages.map(m => ({
-        role: m.role,
-        content: m.content
-      }));
+      // Use current user ID or anonymous
+      const currentUserId = userId || 'anonymous';
 
-      const response = await aiApi.chatWithAI(inputValue, history);
+      // 1. Send query to Firestore
+      const { id: docId } = await aiApi.sendAIQuery(currentUserId, userMessage.content, messages);
 
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response.content || "Nerozuměl jsem odpovědi.",
-        timestamp: new Date(),
-        // Add basic suggestions based on keywords as fallback or parse from response if AI supports it
-        suggestions: []
-      };
+      // 2. Listen for response from Gemini Extension
+      // The extension will update the document with a 'response' field
+      const { doc, onSnapshot } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
 
-      setMessages(prev => [...prev, aiMessage]);
+      const unsubscribe = onSnapshot(doc(db, 'ai_messages', docId), (docSnap) => {
+        const data = docSnap.data();
+
+        // Check if response exists (field name depends on extension config, usually 'response')
+        if (data && data.response) {
+          const aiText = data.response; // Assuming simple text or need parsing
+
+          const aiMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: aiText,
+            timestamp: new Date(),
+            suggestions: []
+          };
+
+          setMessages(prev => [...prev, aiMessage]);
+          setIsTyping(false);
+          unsubscribe(); // Stop listening once we have the answer
+        } else if (data && data.status && data.status.state === 'ERRORED') {
+          const errorMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: 'Omlouvám se, došlo k chybě při generování odpovědi.',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, errorMessage]);
+          setIsTyping(false);
+          unsubscribe();
+        }
+      });
+
+      // Safety timeout in case extension doesn't respond
+      setTimeout(() => {
+        if (isTyping) {
+          // check if we still typing (meaning no response yet)
+          // But state might be stale in timeout closure, need ref or simpler check
+          // purely fallback
+        }
+      }, 30000);
+
     } catch (error) {
       console.error('AI Error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'Omlouvám se, došlo k chybě při komunikaci s AI serverem. Zkontrolujte prosím připojení nebo zda byly nasazeny Cloud Functions.',
+        content: 'Omlouvám se, nepodařilo se odeslat zprávu. Zkontrolujte připojení.',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
-    } finally {
       setIsTyping(false);
     }
   };

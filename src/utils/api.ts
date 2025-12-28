@@ -576,18 +576,31 @@ export const storageApi = {
 };
 
 // ============================================================================
-// AI API
+// AI API - Firestore Triggered (Gemini Extension)
 // ============================================================================
 
-import { functions } from '../config/firebase';
-import { httpsCallable } from 'firebase/functions';
-
 export const aiApi = {
-  chatWithAI: async (message: string, history: any[] = []) => {
+  /**
+   * Sends a message to the AI by creating a document in Firestore.
+   * The 'Build Chatbot with Gemini' extension listens to this collection
+   * and updates the document with the response.
+   */
+  sendAIQuery: async (userId: string, message: string, history: any[] = []) => {
     try {
-      const chatFunction = httpsCallable(functions, 'chatWithAI');
-      const result = await chatFunction({ message, history });
-      return result.data as { role: string, content: string };
+      // Create a document in a collection monitored by the Extension
+      // Recommended path: users/{uid}/discussions/{discussionId}/messages
+      // Or simple flat collection: ai_messages
+
+      const docData = {
+        userId,
+        prompt: message, // 'prompt' field as required by the extension default
+        history, // Optional: if extension supports history context
+        createdAt: new Date().toISOString(),
+        status: { state: 'PROCESSING' } // Extension updates this
+      };
+
+      const docRef = await addDoc(collection(db, 'ai_messages'), docData);
+      return { id: docRef.id };
     } catch (error) {
       console.error("AI API Error:", error);
       throw error;

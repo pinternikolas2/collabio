@@ -153,17 +153,75 @@ export const seedDatabase = async () => {
     console.log("Database seed completed!");
 };
 
-export const clearDatabase = async () => {
+export const clearDatabase = async (excludeIds: string[] = []) => {
     console.log("Starting database cleanup...");
     const collections = ['users', 'projects', 'collaborations', 'transactions', 'ratings', 'kyc_documents', 'events', 'contracts', 'notifications', 'messages', 'chats'];
 
     for (const colName of collections) {
         const q = query(collection(db, colName));
         const snapshot = await getDocs(q);
-        const batchPromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+
+        const batchPromises = snapshot.docs.map(doc => {
+            if (colName === 'users' && excludeIds.includes(doc.id)) {
+                console.log(`Skipping deletion of safe user: ${doc.id}`);
+                return Promise.resolve();
+            }
+            return deleteDoc(doc.ref)
+        });
+
         await Promise.all(batchPromises);
         console.log(`Cleared collection: ${colName}`);
     }
 
     console.log("Database cleanup completed!");
+};
+
+export const createAdminProfile = async (userId: string, email: string) => {
+    try {
+        const adminData: User = {
+            id: userId,
+            email: email,
+            role: 'admin',
+            firstName: 'Admin',
+            lastName: 'User',
+            verified: true,
+            emailVerified: true,
+            verificationStatus: 'verified',
+            profileImage: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
+            createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, 'users', userId), adminData);
+        console.log("Admin profile created successfully");
+        return adminData;
+    } catch (error) {
+        console.error("Error creating admin profile:", error);
+        throw error;
+    }
+};
+
+export const createAdminProfile = async (userId: string, email: string) => {
+    try {
+        const adminData: User = {
+            id: userId,
+            email: email,
+            role: 'admin',
+            firstName: 'Admin',
+            lastName: 'User',
+            verified: true,
+            emailVerified: true,
+            verificationStatus: 'verified',
+            profileImage: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
+            createdAt: new Date().toISOString(),
+            lastLogin: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, 'users', userId), adminData);
+        console.log("Admin profile created successfully");
+        return adminData;
+    } catch (error) {
+        console.error("Error creating admin profile:", error);
+        throw error;
+    }
 };

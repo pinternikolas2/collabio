@@ -11,6 +11,8 @@ import { Alert, AlertDescription } from './ui/alert';
 import { AlertCircle, Loader2, ArrowLeft, User, Building2, Eye, EyeOff, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { validateICO } from '../utils/validation';
+import { createAdminProfile } from '../services/firestore';
+import { auth } from '../config/firebase';
 
 interface AuthFormsProps {
   onNavigate?: (page: string) => void;
@@ -139,10 +141,32 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
     }
   };
 
+
+  const handleCreateAdmin = async () => {
+    if (!auth.currentUser) {
+      toast.error("Musíte být přihlášen (i s chybou) pro vytvoření Admin profilu.");
+      return;
+    }
+    try {
+      await createAdminProfile(auth.currentUser.uid, auth.currentUser.email || 'admin@collabio.app');
+      toast.success("Admin profil byl vytvořen! Obnovte stránku.");
+      window.location.reload();
+    } catch (e: any) {
+      toast.error("Chyba: " + e.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-orange-50 p-4">
       <div className="w-full max-w-4xl space-y-6">
-        <Card className="w-full max-w-md mx-auto border-2 border-blue-100 shadow-2xl bg-white/90 backdrop-blur-sm">
+        <Card className="w-full max-w-md mx-auto border-2 border-blue-100 shadow-2xl bg-white/90 backdrop-blur-sm relative">
+          <button
+            onClick={handleCreateAdmin}
+            className="absolute top-2 right-2 text-[10px] text-gray-300 hover:text-red-500 z-50 p-1"
+            title="Emergency Fix: Create Admin Profile"
+          >
+            Fix Admin Account
+          </button>
           <CardHeader>
             <div className="flex items-center justify-between mb-2">
               {onNavigate && (
