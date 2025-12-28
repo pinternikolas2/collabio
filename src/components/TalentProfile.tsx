@@ -142,12 +142,12 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
 
           <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">
             {/* Profile Image & Info */}
-            <div className="flex flex-col items-center md:flex-row md:items-end gap-4 md:gap-6 mb-8">
+            <div className="flex flex-col items-center md:flex-row md:items-end gap-3 md:gap-6 mb-4 md:mb-8">
               <div className="relative group shrink-0">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <Avatar className="w-32 h-32 md:w-48 md:h-48 border-4 border-white shadow-2xl bg-white relative">
+                <Avatar className="w-24 h-24 md:w-48 md:h-48 border-4 border-white shadow-2xl bg-white relative">
                   <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} className="object-cover" />
-                  <AvatarFallback className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-blue-100 to-orange-100 text-blue-900">
+                  <AvatarFallback className="text-3xl md:text-5xl font-bold bg-gradient-to-br from-blue-100 to-orange-100 text-blue-900">
                     {talent.firstName?.[0]}{talent.lastName?.[0]}
                   </AvatarFallback>
                 </Avatar>
@@ -162,7 +162,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                 <div className="flex flex-col items-center md:items-start md:flex-row md:justify-between gap-4">
                   <div className="min-w-0 flex-1 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-3 mb-1 flex-wrap">
-                      <h1 className="text-3xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                      <h1 className="text-2xl md:text-5xl font-bold break-words bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 leading-tight">
                         {talent.firstName} {talent.lastName}
                       </h1>
                     </div>
