@@ -497,4 +497,4 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
     </div>
   );
 }
-}
+
