@@ -29,6 +29,7 @@ import KYCVerification from './components/KYCVerification';
 import NotFound from './components/NotFound';
 import { AboutPage, ContactPage, FAQPage, TermsPage, GDPRPage, CookiesPage } from './components/InfoPages';
 import AdminCleanup from './components/AdminCleanup'; // New import
+import DebugDB from './components/DebugDB';
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { Button } from './components/ui/button';
@@ -491,6 +492,8 @@ function AppContent() {
         return <GDPRPage onNavigate={handleNavigate} />;
       case 'admin-cleanup': // New route
         return <AdminCleanup />;
+      case 'debug':
+        return <DebugDB />;
       case 'not-found':
         return <NotFound onNavigate={handleNavigate} />;
 
