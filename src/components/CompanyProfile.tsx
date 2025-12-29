@@ -59,11 +59,38 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
     loadCompany();
   }, [userId, isOwnProfile, authUser]);
 
-  const companyRatings: any[] = [];
-  const avgRating = 0;
-  const completedCollabs = 0;
-  const activeProjects = 0;
+  /* Real implementation will come from backend */
+  const [companyProjects, setCompanyProjects] = useState<any[]>([]);
+  const [companyRatings, setCompanyRatings] = useState<any[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const completedCollabs = 0; // TODO: Implement collaboration fetching
+  const [activeProjectsCount, setActiveProjectsCount] = useState(0);
   const totalSpent = 0;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) return;
+      try {
+        const api = await import('../utils/api');
+
+        // Fetch Projects
+        const projects = await api.userApi.getUserProjects(userId);
+        setCompanyProjects(projects);
+        setActiveProjectsCount(projects.length); // Ideally filter by status 'active' when available
+
+        // Fetch Ratings
+        const ratings = await api.ratingApi.getUserRatings(userId);
+        setCompanyRatings(ratings);
+        if (ratings.length > 0) {
+          const sum = ratings.reduce((acc: number, r: any) => acc + r.rating, 0);
+          setAvgRating(sum / ratings.length);
+        }
+      } catch (e) {
+        console.error("Failed to load company data", e);
+      }
+    };
+    fetchData();
+  }, [userId]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('cs-CZ', {
@@ -229,7 +256,7 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
                   </div>
                   <p className="text-xs md:text-sm text-gray-500 font-medium uppercase tracking-wide">{t('company_profile.stats.active_projects')}</p>
                 </div>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900">{activeProjects}</p>
+                <p className="text-2xl md:text-3xl font-bold text-gray-900">{activeProjectsCount}</p>
               </div>
 
               <div className="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-shadow group">
@@ -385,7 +412,7 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
                       className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
                     >
                       {t('company_profile.tabs.projects')}
-                      <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjects}</Badge>
+                      <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjectsCount}</Badge>
                     </TabsTrigger>
                     <TabsTrigger
                       value="reviews"
@@ -409,7 +436,20 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
                   <Card>
                     <CardContent className="p-6 space-y-4">
                       {/* Projects list - real implementation needed */}
-                      {true && (
+                      {companyProjects.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {companyProjects.map((project) => (
+                            <div key={project.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer bg-white" onClick={() => onNavigate('project-detail', { projectId: project.id })}>
+                              <h4 className="font-semibold text-lg mb-1">{project.title}</h4>
+                              <p className="text-sm text-gray-500 line-clamp-2 mb-3">{project.description}</p>
+                              <div className="flex justify-between items-center">
+                                <Badge variant="outline">{project.category}</Badge>
+                                <span className="font-bold text-blue-600">{formatPrice(project.price)}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
                         <p className="text-center text-gray-500 py-8">
                           {t('company_profile.projects.none')}
                         </p>

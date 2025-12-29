@@ -25,48 +25,21 @@ interface CompanyAnalyticsProps {
 }
 
 // Mock data
+// Initial empty state for analytics
 const mockAnalytics: AnalyticsType = {
   userId: '6',
-  totalBudgetSpent: 2500000,
-  activeCampaigns: 5,
-  completedCampaigns: 18,
-  averageEngagementRate: 6.8,
-  averageCompletionTime: 12,
-  totalReach: 8500000,
-  averageROI: 165,
-  topPerformingTalents: [
-    {
-      userId: '1',
-      name: 'Jan Novák',
-      engagementRate: 8.5,
-      totalReach: 1250000,
-      totalSpent: 350000,
-    },
-    {
-      userId: '2',
-      name: 'Marie Svobodová',
-      engagementRate: 7.2,
-      totalReach: 890000,
-      totalSpent: 280000,
-    },
-    {
-      userId: '3',
-      name: 'Petr Dvořák',
-      engagementRate: 6.9,
-      totalReach: 750000,
-      totalSpent: 220000,
-    },
-  ],
+  totalBudgetSpent: 0,
+  activeCampaigns: 0,
+  completedCampaigns: 0,
+  averageEngagementRate: 0,
+  averageCompletionTime: 0,
+  totalReach: 0,
+  averageROI: 0,
+  topPerformingTalents: [],
 };
 
-const campaignPerformanceData = [
-  { month: 'Led', budget: 180000, reach: 650000, roi: 145 },
-  { month: 'Úno', budget: 220000, reach: 780000, roi: 152 },
-  { month: 'Bře', budget: 195000, reach: 720000, roi: 168 },
-  { month: 'Dub', budget: 250000, reach: 890000, roi: 175 },
-  { month: 'Kvě', budget: 210000, reach: 810000, roi: 163 },
-  { month: 'Čer', budget: 280000, reach: 950000, roi: 171 },
-];
+// Mock data removed
+const campaignPerformanceData: any[] = [];
 
 export default function CompanyAnalytics({ userId, onNavigate }: CompanyAnalyticsProps) {
   const analytics = mockAnalytics;
@@ -208,15 +181,17 @@ export default function CompanyAnalytics({ userId, onNavigate }: CompanyAnalytic
               <div className="bg-blue-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-600">Průměrný rozpočet</p>
                 <p className="text-lg font-bold text-blue-600">
-                  {(campaignPerformanceData.reduce((acc, d) => acc + d.budget, 0) /
-                    campaignPerformanceData.length / 1000).toFixed(0)}K Kč
+                  {campaignPerformanceData.length > 0
+                    ? (campaignPerformanceData.reduce((acc, d) => acc + d.budget, 0) / campaignPerformanceData.length / 1000).toFixed(0) + 'K Kč'
+                    : '0 Kč'}
                 </p>
               </div>
               <div className="bg-green-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-600">Průměrný ROI</p>
                 <p className="text-lg font-bold text-green-600">
-                  +{(campaignPerformanceData.reduce((acc, d) => acc + d.roi, 0) /
-                    campaignPerformanceData.length).toFixed(0)}%
+                  +{campaignPerformanceData.length > 0
+                    ? (campaignPerformanceData.reduce((acc, d) => acc + d.roi, 0) / campaignPerformanceData.length).toFixed(0)
+                    : '0'}%
                 </p>
               </div>
             </div>
@@ -267,7 +242,9 @@ export default function CompanyAnalytics({ userId, onNavigate }: CompanyAnalytic
                     Cena za dosah 1M
                   </span>
                   <span className="text-2xl font-bold text-green-600">
-                    {(analytics.totalBudgetSpent / (analytics.totalReach / 1000000) / 1000).toFixed(0)}K Kč
+                    {analytics.totalReach > 0
+                      ? (analytics.totalBudgetSpent / (analytics.totalReach / 1000000) / 1000).toFixed(0)
+                      : '0'}K Kč
                   </span>
                 </div>
                 <p className="text-xs text-gray-500">
@@ -350,7 +327,7 @@ export default function CompanyAnalytics({ userId, onNavigate }: CompanyAnalytic
                     <div>
                       <p className="text-xs text-gray-600">CPM</p>
                       <p className="font-semibold text-purple-600">
-                        {(talent.totalSpent / (talent.totalReach / 1000)).toFixed(0)} Kč
+                        {talent.totalReach > 0 ? (talent.totalSpent / (talent.totalReach / 1000)).toFixed(0) : 0} Kč
                       </p>
                     </div>
                   </div>

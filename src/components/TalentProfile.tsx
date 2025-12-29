@@ -120,13 +120,28 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
     );
   }
 
-  /* REMOVED MOCK DATA */
   /* Real implementation will come from backend, for now showing 0 to reflect empty DB state */
-  const talentRatings: any[] = [];
-  const avgRating = 0;
-  const completedCollabs = 0;
+  const [talentRatings, setTalentRatings] = useState<any[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const completedCollabs = 0; // TODO: Implement collaboration fetching
   const totalWarnings = 0;
-  /* Total earnings also 0 */
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      if (!userId) return;
+      try {
+        const ratings = await import('../utils/api').then(m => m.ratingApi.getUserRatings(userId));
+        setTalentRatings(ratings);
+        if (ratings.length > 0) {
+          const sum = ratings.reduce((acc: number, r: any) => acc + r.rating, 0);
+          setAvgRating(sum / ratings.length);
+        }
+      } catch (e) {
+        console.error("Failed to load ratings", e);
+      }
+    };
+    fetchRatings();
+  }, [userId]);
 
 
   const formatPrice = (price: number) => {

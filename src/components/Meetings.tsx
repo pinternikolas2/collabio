@@ -13,61 +13,8 @@ type MeetingsProps = {
   userId: string;
 };
 
-// Mock meetings data
-const mockMeetings = [
-  {
-    id: '1',
-    title: 'Projednání spolupráce na kampani',
-    type: 'video',
-    date: '2025-10-22',
-    time: '14:00',
-    duration: 60,
-    status: 'upcoming',
-    participants: [
-      { id: '6', name: 'SportGear', image: 'https://api.dicebear.com/7.x/initials/svg?seed=SportGear' },
-    ],
-    agenda: '1. Představení projektu\n2. Diskuse o podmínkách\n3. Timeline',
-  },
-  {
-    id: '2',
-    title: 'Telefonát - budget a harmonogram',
-    type: 'phone',
-    date: '2025-10-25',
-    time: '10:30',
-    duration: 30,
-    status: 'upcoming',
-    participants: [
-      { id: '7', name: 'TechBrand CZ', image: 'https://api.dicebear.com/7.x/initials/svg?seed=TechBrand' },
-    ],
-    agenda: 'Rychlé probrání financí a timeline',
-  },
-  {
-    id: '3',
-    title: 'Follow-up call - postprodukce',
-    type: 'video',
-    date: '2025-10-20',
-    time: '16:00',
-    duration: 30,
-    status: 'completed',
-    participants: [
-      { id: '8', name: 'Fashion House', image: 'https://api.dicebear.com/7.x/initials/svg?seed=Fashion' },
-    ],
-    agenda: 'Kontrola výsledků a další kroky',
-  },
-  {
-    id: '4',
-    title: 'Úvodní videohovor - nová kampaň',
-    type: 'video',
-    date: '2025-10-18',
-    time: '09:00',
-    duration: 45,
-    status: 'cancelled',
-    participants: [
-      { id: '9', name: 'BeautyBrand', image: 'https://api.dicebear.com/7.x/initials/svg?seed=Beauty' },
-    ],
-    agenda: null,
-  },
-];
+// Mock data removed. In a real application, data would be fetched from the API.
+const mockMeetings: any[] = [];
 
 export default function Meetings({ onNavigate, userId }: MeetingsProps) {
   const [searchTerm, setSearchTerm] = useState('');

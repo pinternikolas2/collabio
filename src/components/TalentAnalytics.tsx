@@ -24,53 +24,24 @@ interface TalentAnalyticsProps {
 }
 
 // Mock data
+// Initial empty state for analytics
 const mockAnalytics: AnalyticsType = {
   userId: '1',
-  totalCollaborations: 23,
-  completedCollaborations: 21,
-  averageRating: 4.8,
-  totalReach: 2500000,
-  averageEngagementRate: 7.5,
-  totalEarnings: 850000,
-  averageCPM: 340,
-  topCategories: ['Sport', 'Lifestyle', 'Fashion'],
-  badges: [
-    {
-      id: 'b1',
-      name: 'Top Performer',
-      description: '20+ úspěšných spoluprací',
-      icon: '🏆',
-      earnedAt: '2024-12-01',
-    },
-    {
-      id: 'b2',
-      name: 'Trusted Talent',
-      description: '95%+ spokojenost klientů',
-      icon: '⭐',
-      earnedAt: '2024-11-15',
-    },
-    {
-      id: 'b3',
-      name: 'Rising Star',
-      description: '+50% růst followersů',
-      icon: '🌟',
-      earnedAt: '2024-10-20',
-    },
-  ],
-  followersGrowth: [
-    { date: '2024-07', count: 45000, platform: 'instagram' as const },
-    { date: '2024-08', count: 52000, platform: 'instagram' as const },
-    { date: '2024-09', count: 61000, platform: 'instagram' as const },
-    { date: '2024-10', count: 72000, platform: 'instagram' as const },
-    { date: '2024-11', count: 85000, platform: 'instagram' as const },
-    { date: '2024-12', count: 98000, platform: 'instagram' as const },
-    { date: '2025-01', count: 115000, platform: 'instagram' as const },
-  ],
+  totalCollaborations: 0,
+  completedCollaborations: 0,
+  averageRating: 0,
+  totalReach: 0,
+  averageEngagementRate: 0,
+  totalEarnings: 0,
+  averageCPM: 0,
+  topCategories: [],
+  badges: [],
+  followersGrowth: [],
 };
 
 export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsProps) {
   const analytics = mockAnalytics;
-  const completionRate = (analytics.completedCollaborations / analytics.totalCollaborations) * 100;
+  const completionRate = analytics.totalCollaborations > 0 ? (analytics.completedCollaborations / analytics.totalCollaborations) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-12 px-4">
@@ -85,7 +56,7 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
             <ArrowLeft className="w-4 h-4 mr-2" />
             Zpět na profil
           </Button>
-          
+
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent mb-2">
             📊 Analytika profilu
           </h1>
@@ -129,7 +100,7 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
             <p className="text-2xl font-bold">{(analytics.totalReach / 1000000).toFixed(1)}M</p>
             <p className="text-xs text-gray-500 mt-1">Napříč {analytics.totalCollaborations} spoluprací</p>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-600">Průměrný ER</p>
@@ -138,7 +109,7 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
             <p className="text-2xl font-bold text-green-600">{analytics.averageEngagementRate.toFixed(1)}%</p>
             <p className="text-xs text-gray-500 mt-1">Engagement Rate</p>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-600">Hodnocení</p>
@@ -150,18 +121,17 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(analytics.averageRating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
-                    }`}
+                    className={`w-4 h-4 ${i < Math.floor(analytics.averageRating)
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
+                      }`}
                   />
                 ))}
               </div>
             </div>
             <p className="text-xs text-gray-500 mt-1">Spokojenost klientů</p>
           </Card>
-          
+
           <Card className="p-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm text-gray-600">Celkový výdělek</p>
@@ -179,44 +149,44 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
               <TrendingUp className="w-5 h-5 text-blue-600" />
               Růst sledujících (Instagram)
             </h2>
-            
+
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={analytics.followersGrowth}>
                 <defs>
                   <linearGradient id="colorFollowers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="date" stroke="#6b7280" />
                 <YAxis stroke="#6b7280" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#fff',
                     border: '1px solid #e5e7eb',
                     borderRadius: '8px'
                   }}
                 />
-                <Area 
-                  type="monotone" 
-                  dataKey="count" 
-                  stroke="#3b82f6" 
-                  fillOpacity={1} 
-                  fill="url(#colorFollowers)" 
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#3b82f6"
+                  fillOpacity={1}
+                  fill="url(#colorFollowers)"
                 />
               </AreaChart>
             </ResponsiveContainer>
-            
+
             <div className="mt-4 bg-blue-50 p-4 rounded-lg">
               <p className="text-sm font-semibold text-blue-900">
-                +{((analytics.followersGrowth[analytics.followersGrowth.length - 1].count - 
-                   analytics.followersGrowth[0].count) / 1000).toFixed(1)}K sledujících
+                +{((analytics.followersGrowth[analytics.followersGrowth.length - 1].count -
+                  analytics.followersGrowth[0].count) / 1000).toFixed(1)}K sledujících
               </p>
               <p className="text-xs text-blue-700">
                 Růst za posledních 7 měsíců (+
-                {(((analytics.followersGrowth[analytics.followersGrowth.length - 1].count - 
-                   analytics.followersGrowth[0].count) / analytics.followersGrowth[0].count) * 100).toFixed(1)}%)
+                {(((analytics.followersGrowth[analytics.followersGrowth.length - 1].count -
+                  analytics.followersGrowth[0].count) / analytics.followersGrowth[0].count) * 100).toFixed(1)}%)
               </p>
             </div>
           </Card>
@@ -227,7 +197,7 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
               <BarChart3 className="w-5 h-5 text-purple-600" />
               Statistiky výkonu
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -235,7 +205,7 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
                   <span className="font-semibold">{completionRate.toFixed(0)}%</span>
                 </div>
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-to-r from-green-500 to-green-600"
                     style={{ width: `${completionRate}%` }}
                   />
@@ -244,15 +214,15 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
                   {analytics.completedCollaborations} z {analytics.totalCollaborations} spoluprací
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div className="bg-purple-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">Průměrná cena za dosah</p>
                 <p className="text-2xl font-bold text-purple-600">{analytics.averageCPM} Kč</p>
                 <p className="text-xs text-gray-500 mt-1">CPM (Cost per 1000 impressions)</p>
               </div>
-              
+
               <div className="bg-blue-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">Průměrný výdělek na projekt</p>
                 <p className="text-2xl font-bold text-blue-600">
@@ -272,18 +242,17 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
             <Target className="w-5 h-5 text-orange-600" />
             Nejúspěšnější kategorie
           </h2>
-          
+
           <div className="flex flex-wrap gap-3">
             {analytics.topCategories.map((category, index) => (
-              <Badge 
+              <Badge
                 key={category}
-                className={`px-4 py-2 text-sm ${
-                  index === 0 
-                    ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' 
-                    : index === 1
+                className={`px-4 py-2 text-sm ${index === 0
+                  ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+                  : index === 1
                     ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-900'
                     : 'bg-gradient-to-r from-orange-300 to-orange-400 text-gray-900'
-                }`}
+                  }`}
               >
                 {index === 0 && '🥇'} {index === 1 && '🥈'} {index === 2 && '🥉'} {category}
               </Badge>
@@ -297,8 +266,8 @@ export default function TalentAnalytics({ userId, onNavigate }: TalentAnalyticsP
           <p className="mb-6 text-blue-50">
             Využijte našeho AI poradce pro personalizovaná doporučení, jak zvýšit engagement a výdělek
           </p>
-          <Button 
-            onClick={() => {/* AI assistant would open */}}
+          <Button
+            onClick={() => {/* AI assistant would open */ }}
             className="bg-white text-blue-600 hover:bg-gray-100"
             size="lg"
           >

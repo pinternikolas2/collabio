@@ -1,17 +1,24 @@
+const mockAdmin = {
+    initializeApp: () => console.log('Mock initializeApp called'),
+    firestore: () => ({
+        collection: () => ({}),
+        FieldValue: { serverTimestamp: () => 'mockTimestamp', increment: () => 1 }
+    })
+};
+
+// Mock require
+const Module = require('module');
+const originalRequire = Module.prototype.require;
+Module.prototype.require = function (path) {
+    if (path === 'firebase-admin') return mockAdmin;
+    return originalRequire.apply(this, arguments);
+};
+
 try {
-    console.log("Loading firebase-functions...");
-    const functions = require("firebase-functions");
-    console.log("Loaded firebase-functions");
-
-    console.log("Loading firebase-admin...");
-    const admin = require("firebase-admin");
-    console.log("Loaded firebase-admin");
-
-    console.log("Initializing app...");
-    admin.initializeApp();
-    console.log("Initialized app");
-
-    console.log("Success");
-} catch (e) {
-    console.error("Error:", e);
+    const functions = require('./index.js');
+    console.log('Successfully loaded functions/index.js');
+    console.log('Exported functions:', Object.keys(functions));
+} catch (error) {
+    console.error('Error loading functions/index.js:', error);
+    process.exit(1);
 }
