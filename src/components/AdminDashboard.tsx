@@ -508,7 +508,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                       <p className="text-2xl font-bold">{formatPrice(totalRevenue)}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">{t('admin.transactions.stats.fees')}</p>
+                      <p className="text-sm text-gray-600">Poplatky platformy</p>
                       <p className="text-2xl font-bold text-green-600">{formatPrice(platformFees)}</p>
                     </div>
                     <div>

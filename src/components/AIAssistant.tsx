@@ -24,7 +24,8 @@ import {
   Zap,
   Target,
   Award,
-  RefreshCw
+  RefreshCw,
+  Bot
 } from 'lucide-react';
 import { UserRole } from '../types';
 import { userApi } from '../utils/api';
@@ -367,7 +368,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
 
             {/* AI Icon with gradient */}
             <div className="relative z-10">
-              <Sparkles className="w-6 h-6 md:w-7 md:h-7 drop-shadow-glow" />
+              <Bot className="w-6 h-6 md:w-7 md:h-7 drop-shadow-glow" />
             </div>
 
             {/* Notification badge */}
@@ -390,7 +391,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
 
             <div className="flex items-center gap-3 relative z-10">
               <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur border border-white/30 flex items-center justify-center shadow-lg animate-ai-icon-float">
-                <Sparkles className="w-7 h-7 drop-shadow-lg" />
+                <Bot className="w-7 h-7 drop-shadow-lg" />
               </div>
               <div>
                 <h2 className="font-semibold flex items-center gap-2">
@@ -493,7 +494,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
                   <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
                     <div className="relative mb-6">
                       <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500 flex items-center justify-center shadow-2xl animate-ai-icon-float">
-                        <Sparkles className="w-10 h-10 text-white drop-shadow-lg" />
+                        <Bot className="w-10 h-10 text-white drop-shadow-lg" />
                       </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center shadow-lg animate-bounce">
                         <span className="text-sm">✨</span>
@@ -567,7 +568,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
                       {message.role === 'assistant' && (
                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-purple-200">
                           <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-orange-500 flex items-center justify-center">
-                            <Sparkles className="w-3.5 h-3.5 text-white" />
+                            <Bot className="w-3.5 h-3.5 text-white" />
                           </div>
                           <span className="text-xs font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-orange-600 bg-clip-text text-transparent">AI Poradce</span>
                           <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">AI</span>
@@ -607,7 +608,7 @@ export default function AIAssistant({ userId, userRole, onNavigate }: AIAssistan
                     <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-orange-50 border border-purple-200 rounded-2xl px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-3">
                         <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-orange-500 flex items-center justify-center animate-ai-icon-float">
-                          <Sparkles className="w-3.5 h-3.5 text-white" />
+                          <Bot className="w-3.5 h-3.5 text-white" />
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="flex gap-1">
