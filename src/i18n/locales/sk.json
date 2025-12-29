@@ -141,6 +141,7 @@
     "auth": {
         "title": "Collabio",
         "subtitle": "Platforma na prepojenie talentov a firiem",
+        "forgot_password": "Zabudnuté heslo?",
         "back": "Späť",
         "tabs": {
             "signin": "Prihlásenie",

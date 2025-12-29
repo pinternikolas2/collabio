@@ -170,6 +170,7 @@
     "auth": {
         "title": "Collabio",
         "subtitle": "Platforma pro propojení talentů a firem",
+        "forgot_password": "Zapomenuté heslo?",
         "back": "Zpět",
         "tabs": {
             "signin": "Přihlášení",

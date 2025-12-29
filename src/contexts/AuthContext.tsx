@@ -174,6 +174,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
+      setUser(null); // Explicitly clear state to ensure UI updates, especially for mock users
     } catch (error: any) {
       throw error;
     }
