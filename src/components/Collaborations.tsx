@@ -7,8 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Progress } from './ui/progress';
 // import { mockCollaborations, mockUsers, mockProjects } from '../data/seedData';
-import { mockUsers, mockProjects } from '../data/seedData'; // Placeholder if needed by other logic, but we'll nullify helpers.
-import { CollaborationStatus } from '../types';
+// Mock data imports removed
+import { CollaborationStatus, User, Project } from '../types';
 
 type CollaborationsProps = {
   onNavigate: (page: string, data?: any) => void;
@@ -22,13 +22,12 @@ export default function Collaborations({ onNavigate, userId }: CollaborationsPro
     (collab) => collab.talentId === userId || collab.companyId === userId
   ); */
 
-  const getOtherUser = (collab: any) => {
-    const otherUserId = collab.talentId === userId ? collab.companyId : collab.talentId;
-    return mockUsers.find((u) => u.id === otherUserId);
+  const getOtherUser = (collab: any): User | null => {
+    return null; // Mock data removed
   };
 
-  const getProject = (collab: any) => {
-    return mockProjects.find((p) => p.id === collab.projectId);
+  const getProject = (collab: any): Project | null => {
+    return null; // Mock data removed
   };
 
   const getStatusColor = (status: CollaborationStatus) => {

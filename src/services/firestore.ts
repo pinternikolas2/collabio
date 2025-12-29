@@ -81,67 +81,6 @@ export const createProject = async (projectData: Omit<Project, 'id'>): Promise<s
 // Seed data removed as requested.
 
 export const clearDatabase = async (excludeIds: string[] = []) => {
-    console.log("Clearing database...");
-    // Only keeping clear functionality if needed for admin to wipe non-admin users
-    // Implementation of clearDatabase continues below...
-    /* Implementation omitted for brevity in search replacement, waiting for confirm */
-
-        console.log(`Seeded user: ${id}`);
-    }
-
-    // Seed Projects
-    for (const project of mockProjects) {
-        const { id, ...projectData } = project;
-        await setDoc(doc(db, 'projects', id), projectData);
-        console.log(`Seeded project: ${id}`);
-    }
-
-    // Seed Collaborations
-    for (const collab of mockCollaborations) {
-        const { id, ...collabData } = collab;
-        await setDoc(doc(db, 'collaborations', id), collabData);
-        console.log(`Seeded collaboration: ${id}`);
-    }
-
-    // Seed Transactions
-    for (const trans of mockTransactions) {
-        const { id, ...transData } = trans;
-        await setDoc(doc(db, 'transactions', id), transData);
-        console.log(`Seeded transaction: ${id}`);
-    }
-
-    // Seed Ratings
-    for (const rating of mockRatings) {
-        const { id, ...ratingData } = rating;
-        await setDoc(doc(db, 'ratings', id), ratingData);
-        console.log(`Seeded rating: ${id}`);
-    }
-
-    // Seed KYC Documents
-    for (const kyc of mockKYCDocuments) {
-        const { id, ...kycData } = kyc;
-        await setDoc(doc(db, 'kyc_documents', id), kycData);
-        console.log(`Seeded KYC: ${id}`);
-    }
-
-    // Seed Events
-    for (const event of mockEvents) {
-        const { id, ...eventData } = event;
-        await setDoc(doc(db, 'events', id), eventData);
-        console.log(`Seeded event: ${id}`);
-    }
-
-    // Seed Contracts
-    for (const contract of mockContracts) {
-        const { id, ...contractData } = contract;
-        await setDoc(doc(db, 'contracts', id), contractData);
-        console.log(`Seeded contract: ${id}`);
-    }
-
-    console.log("Database seed completed!");
-};
-
-export const clearDatabase = async (excludeIds: string[] = []) => {
     console.log("Starting database cleanup...");
     const collections = ['users', 'projects', 'collaborations', 'transactions', 'ratings', 'kyc_documents', 'events', 'contracts', 'notifications', 'messages', 'chats'];
 
@@ -154,7 +93,7 @@ export const clearDatabase = async (excludeIds: string[] = []) => {
                 console.log(`Skipping deletion of safe user: ${doc.id}`);
                 return Promise.resolve();
             }
-            return deleteDoc(doc.ref)
+            return deleteDoc(doc.ref);
         });
 
         await Promise.all(batchPromises);
@@ -188,5 +127,3 @@ export const createAdminProfile = async (userId: string, email: string) => {
         throw error;
     }
 };
-
-

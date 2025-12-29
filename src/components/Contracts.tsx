@@ -7,11 +7,9 @@ import { ScrollArea } from './ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Separator } from './ui/separator';
 // import { mockContracts, mockUsers, mockProjects } from '../data/seedData';
-import { mockUsers, mockProjects } from '../data/seedData'; // Keep users/projects for helper functions if needed, but we'll return empty contracts so helpers won't be called on them. 
-// Actually, helpers use mockUsers directly, so I should keep mockUsers imported IF I was using it, but userContracts is empty.
-// To be safe, I'll comment out the import and locally define helpers to return null/undefined.
+// Mock data imports removed
 
-import { Contract } from '../types';
+import { Contract, User, Project } from '../types';
 import { toast } from 'sonner';
 
 type ContractsProps = {
@@ -28,13 +26,12 @@ export default function Contracts({ userId, onNavigate }: ContractsProps) {
     contract => contract.talentId === userId || contract.companyId === userId
   ); */
 
-  const getOtherParty = (contract: Contract) => {
-    const otherPartyId = contract.talentId === userId ? contract.companyId : contract.talentId;
-    return mockUsers.find(user => user.id === otherPartyId);
+  const getOtherParty = (contract: Contract): User | null => {
+    return null; // Mock data removed
   };
 
-  const getProject = (contract: Contract) => {
-    return mockProjects.find(project => project.id === contract.projectId);
+  const getProject = (contract: Contract): Project | null => {
+    return null; // Mock data removed
   };
 
   const getStatusBadge = (status: Contract['status']) => {
@@ -66,7 +63,7 @@ export default function Contracts({ userId, onNavigate }: ContractsProps) {
   };
 
   const handleDownloadPDF = (contract: Contract) => {
-    // In production, this would generate actual PDF using jspdf or similar
+    // pending verification, this would generate actual PDF using jspdf or similar
     // For now, we'll create a simple text version
     const otherParty = getOtherParty(contract);
     const project = getProject(contract);
@@ -80,19 +77,19 @@ SMLOUVA O SPOLUPRÁCI
 SMLUVNÍ STRANY:
 
 Talent:
-${mockUsers.find(u => u.id === contract.talentId)?.firstName} ${mockUsers.find(u => u.id === contract.talentId)?.lastName}
-${mockUsers.find(u => u.id === contract.talentId)?.email}
+${otherParty?.firstName || 'Jméno Talenta'} ${otherParty?.lastName || ''}
+${otherParty?.email || 'email@email.cz'}
 
 Firma:
-${mockUsers.find(u => u.id === contract.companyId)?.firstName} ${mockUsers.find(u => u.id === contract.companyId)?.lastName}
-${mockUsers.find(u => u.id === contract.companyId)?.email}
+${'Firma s.r.o.'}
+${'email@firma.cz'}
 
 ════════════════════════════════════════════════════════════════
 
 PŘEDMĚT SMLOUVY:
 ${contract.projectDescription}
 
-Název projektu: ${project?.title}
+Název projektu: ${project?.title || 'Projekt'}
 
 ════════════════════════════════════════════════════════════════
 
