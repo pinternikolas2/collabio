@@ -80,7 +80,7 @@ export default function AdminCleanup() {
                                 👑 Nastavit mě jako Admina (Debug)
                             </Button>
                         </div>
-                    )}>
+                    )}
                 </CardContent>
             </Card>
         </div>
