@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Briefcase, DollarSign, TrendingUp, Download, Settings, Shield, Loader2 } from 'lucide-react';
+import { Users, Briefcase, DollarSign, TrendingUp, Download, Settings, Shield, Loader2, MessageCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
@@ -29,6 +29,10 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [kycDocuments, setKycDocuments] = useState<KYCDocument[]>([]);
 
+  // Settings State
+  const [minProjectPrice, setMinProjectPrice] = useState('5000');
+  const [escrowReleaseDays, setEscrowReleaseDays] = useState('30');
+
   useEffect(() => {
     loadDashboardData();
   }, []);
@@ -48,12 +52,39 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
       setProjects(projectsData);
       setCollaborations(collabsData);
       setTransactions(transData);
-      setKycDocuments(kycData); // If we want all, we'd need getAllKYC method, but let's stick to what we have or improve api.ts
+      setKycDocuments(kycData);
+
+      // Load Settings
+      const settings = await adminApi.getPlatformSettings();
+      if (settings) {
+        setMinProjectPrice(settings.minProjectPrice?.toString() || '5000');
+        setEscrowReleaseDays(settings.escrowReleaseDays?.toString() || '30');
+      }
+
     } catch (error) {
       console.error('Error loading admin data:', error);
       toast.error('Nepodařilo se načíst data dashboardu');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMessageUser = (user: User) => {
+    onNavigate('chat-with-user', {
+      targetUserId: user.id,
+      targetUserName: `${user.firstName} ${user.lastName}`
+    });
+  };
+
+  const handleSaveSettings = async () => {
+    try {
+      await adminApi.updatePlatformSettings({
+        minProjectPrice: parseInt(minProjectPrice),
+        escrowReleaseDays: parseInt(escrowReleaseDays)
+      });
+      toast.success('Nastavení platformy bylo uloženo');
+    } catch (e: any) {
+      toast.error('Chyba při ukládání: ' + e.message);
     }
   };
 
@@ -235,9 +266,14 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm">
-                            {t('admin.users.detail')}
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleMessageUser(user)}>
+                              <MessageCircle className="w-4 h-4 text-blue-600" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              {t('admin.users.detail')}
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -575,7 +611,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                     <li>15 % (20 001 - 100 000 Kč)</li>
                     <li>7 % (nad 100 000 Kč)</li>
                   </ul>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-green-600 mt-2">
                     Tyto poplatky jsou nyní pevně nastaveny v kódu a vypočítávají se automaticky.
                   </p>
                 </div>
@@ -585,7 +621,8 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <Input
                     id="min-project-price"
                     type="number"
-                    defaultValue="5000"
+                    value={minProjectPrice}
+                    onChange={(e) => setMinProjectPrice(e.target.value)}
                     className="max-w-xs"
                   />
                 </div>
@@ -595,7 +632,8 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                   <Input
                     id="escrow-release-days"
                     type="number"
-                    defaultValue="30"
+                    value={escrowReleaseDays}
+                    onChange={(e) => setEscrowReleaseDays(e.target.value)}
                     className="max-w-xs"
                   />
                   <p className="text-sm text-gray-500 mt-1">
@@ -604,7 +642,10 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                 </div>
 
                 <div className="pt-4">
-                  <Button className="bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600">
+                  <Button
+                    onClick={handleSaveSettings}
+                    className="bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
+                  >
                     <Settings className="w-4 h-4 mr-2" />
                     {t('admin.settings.save')}
                   </Button>

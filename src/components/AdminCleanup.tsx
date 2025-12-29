@@ -72,13 +72,6 @@ export default function AdminCleanup() {
                             <p className="text-sm text-red-600 font-medium mb-2">
                                 Data může mazat pouze Admin. Vy jste momentálně "{user.role}".
                             </p>
-                            <Button
-                                variant="outline"
-                                className="w-full border-red-300 text-red-700 hover:bg-red-100"
-                                onClick={makeMeAdmin}
-                            >
-                                👑 Nastavit mě jako Admina (Debug)
-                            </Button>
                         </div>
                     )}
                 </CardContent>

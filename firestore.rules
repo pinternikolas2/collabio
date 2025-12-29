@@ -30,9 +30,13 @@ service cloud.firestore {
       // Anyone can read basic profiles (for marketplace)
       allow read: if true;
       
-      // User can create/update their own profile
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
+      // User can create/update their own profile (but CANNOT change role/verified status)
+      allow create: if isOwner(userId) && request.resource.data.role == 'talent'; // Default to talent on create
+      allow update: if isOwner(userId) && (
+        request.resource.data.role == resource.data.role && 
+        request.resource.data.verified == resource.data.verified &&
+        (!request.resource.data.keys().hasAny(['featured']))
+      );
       
       // Admin can do anything
       allow update, delete: if isAdmin();

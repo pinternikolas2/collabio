@@ -537,6 +537,21 @@ export const adminApi = {
     await deleteDoc(doc(db, 'users', userId));
     return { success: true };
   },
+
+  getPlatformSettings: async () => {
+    const docRef = doc(db, 'config', 'platform');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+    return { minProjectPrice: 5000, escrowReleaseDays: 30 }; // Defaults
+  },
+
+  updatePlatformSettings: async (settings: any) => {
+    const docRef = doc(db, 'config', 'platform');
+    await setDoc(docRef, settings, { merge: true });
+    return settings;
+  },
 };
 
 // ============================================================================

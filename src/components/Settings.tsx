@@ -185,8 +185,10 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
   }
 
   const categories = currentUser.role === 'talent'
-    ? ['Sportovec', 'Umělec', 'Influencer'] // Updated categories as requested
-    : ['Sport & Outdoor', 'Technologie', 'Beauty & Lifestyle', 'Fashion', 'Food & Beverage', 'Automotive', 'Finance'];
+    ? ['Sportovec', 'Umělec', 'Influencer']
+    : currentUser.role === 'company'
+      ? ['Sport & Outdoor', 'Technologie', 'Beauty & Lifestyle', 'Fashion', 'Food & Beverage', 'Automotive', 'Finance']
+      : ['Management', 'Support', 'Development']; // Admin Categories
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8">
@@ -194,13 +196,15 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <Button
-              variant="ghost"
-              onClick={() => onNavigate('my-profile')}
-              className="mb-4"
-            >
-              ← {t('settings.back_profile')}
-            </Button>
+            {currentUser.role !== 'admin' && (
+              <Button
+                variant="ghost"
+                onClick={() => onNavigate('my-profile')}
+                className="mb-4"
+              >
+                ← {t('settings.back_profile')}
+              </Button>
+            )}
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
               {t('settings.title')}
             </h1>
