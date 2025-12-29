@@ -28,6 +28,7 @@ import CookieConsent from './components/CookieConsent';
 import KYCVerification from './components/KYCVerification';
 import NotFound from './components/NotFound';
 import { AboutPage, ContactPage, FAQPage, TermsPage, GDPRPage, CookiesPage } from './components/InfoPages';
+import AdminCleanup from './components/AdminCleanup'; // New import
 import { Toaster } from './components/ui/sonner';
 import { toast } from 'sonner';
 import { Button } from './components/ui/button';
@@ -158,7 +159,7 @@ function AppContent() {
       'collaborations', 'finance', 'my-profile',
       'chat', 'video-call', 'schedule-meeting', 'contracts', 'meetings',
       'admin', 'notifications', 'settings', 'create-project', 'edit-project', 'kyc-verification',
-      'talent-analytics', 'company-analytics', 'project-detail'
+      'talent-analytics', 'company-analytics', 'project-detail', 'admin-cleanup'
     ];
 
     if (!authLoading && !user && protectedPages.includes(currentPage)) {
@@ -486,6 +487,10 @@ function AppContent() {
           <LandingPage onNavigate={handleNavigate} isLoggedIn={false} />
         );
 
+      case 'privacy':
+        return <GDPRPage onNavigate={handleNavigate} />;
+      case 'admin-cleanup': // New route
+        return <AdminCleanup />;
       case 'not-found':
         return <NotFound onNavigate={handleNavigate} />;
 

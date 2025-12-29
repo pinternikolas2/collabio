@@ -162,9 +162,9 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                 <div className="relative group">
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-orange-600 rounded-full opacity-50 blur group-hover:opacity-75 transition duration-500"></div>
                   <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 border-white shadow-xl bg-white relative">
-                    <AvatarImage src={talent.profileImage} alt={`${talent.firstName} ${talent.lastName}`} className="object-cover" />
+                    <AvatarImage src={talent.profileImage} alt={`${talent.firstName || ''} ${talent.lastName || ''}`} className="object-cover" />
                     <AvatarFallback className="text-4xl font-bold bg-gray-50 text-gray-900">
-                      {talent.firstName?.[0]}{talent.lastName?.[0]}
+                      {talent.firstName?.[0] || '?'}{talent.lastName?.[0] || '?'}
                     </AvatarFallback>
                   </Avatar>
                   {talent.verified && (
@@ -216,13 +216,13 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                     {/* Social Assets Row */}
                     <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
                       {talent.instagram && (
-                        <a href={`https://instagram.com/${talent.instagram.replace('@', '')}`} target="_blank" rel="noreferrer"
+                        <a href={`https://instagram.com/${talent.instagram?.replace('@', '')}`} target="_blank" rel="noreferrer"
                           className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 text-pink-700 rounded-lg hover:bg-pink-100 transition-colors text-sm font-medium">
                           <Instagram className="w-4 h-4" /> Instagram
                         </a>
                       )}
                       {talent.tiktok && (
-                        <a href={`https://tiktok.com/${talent.tiktok.replace('@', '')}`} target="_blank" rel="noreferrer"
+                        <a href={`https://tiktok.com/${talent.tiktok?.replace('@', '')}`} target="_blank" rel="noreferrer"
                           className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
                           <span className="font-bold text-[10px]">Tt</span> TikTok
                         </a>
@@ -324,7 +324,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
               <CardContent className="space-y-4 pt-6">
                 {talent.instagram && (
                   <a
-                    href={`https://instagram.com/${talent.instagram.replace('@', '')}`}
+                    href={`https://instagram.com/${talent.instagram?.replace('@', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
@@ -341,7 +341,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                 )}
                 {talent.tiktok && (
                   <a
-                    href={`https://tiktok.com/${talent.tiktok.replace('@', '')}`}
+                    href={`https://tiktok.com/${talent.tiktok?.replace('@', '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-gray-100 to-transparent border border-gray-200/50 hover:border-gray-300 transition-all group"
@@ -634,7 +634,10 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                       {/* Individual Reviews */}
                       <div className="space-y-4">
                         {talentRatings.map((rating) => {
-                          const reviewer = mockUsers.find((u) => u.id === rating.fromUserId);
+                          // const reviewer = mockUsers.find((u) => u.id === rating.fromUserId);
+                          // Placeholder for reviewer lookup when real ratings are implemented
+                          const reviewer = { firstName: 'User', lastName: '', profileImage: undefined };
+
                           return (
                             <div key={rating.id} className="border-b pb-4 last:border-0">
                               <div className="flex items-start gap-3 mb-2">

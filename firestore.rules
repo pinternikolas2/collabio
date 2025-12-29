@@ -28,7 +28,7 @@ service cloud.firestore {
     // Users Collection
     match /users/{userId} {
       // Anyone can read basic profiles (for marketplace)
-      allow read: if isAuthenticated();
+      allow read: if true;
       
       // User can create/update their own profile
       allow create: if isOwner(userId);

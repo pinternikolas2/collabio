@@ -346,11 +346,11 @@ Tato smlouva je právně závazným dokumentem podle českého práva.
                       <CardContent className="p-4">
                         <p className="text-sm text-gray-600 mb-2">Talent</p>
                         <p className="font-medium">
-                          {mockUsers.find(u => u.id === selectedContract.talentId)?.firstName}{' '}
-                          {mockUsers.find(u => u.id === selectedContract.talentId)?.lastName}
+                          {getOtherParty(selectedContract)?.firstName || 'Jméno'}{' '}
+                          {getOtherParty(selectedContract)?.lastName || 'Příjmení'}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {mockUsers.find(u => u.id === selectedContract.talentId)?.email}
+                          {getOtherParty(selectedContract)?.email || 'email@example.com'}
                         </p>
                       </CardContent>
                     </Card>
@@ -358,11 +358,10 @@ Tato smlouva je právně závazným dokumentem podle českého práva.
                       <CardContent className="p-4">
                         <p className="text-sm text-gray-600 mb-2">Firma</p>
                         <p className="font-medium">
-                          {mockUsers.find(u => u.id === selectedContract.companyId)?.firstName}{' '}
-                          {mockUsers.find(u => u.id === selectedContract.companyId)?.lastName}
+                          {'Firma s.r.o.'}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {mockUsers.find(u => u.id === selectedContract.companyId)?.email}
+                          {'email@firma.cz'}
                         </p>
                       </CardContent>
                     </Card>
