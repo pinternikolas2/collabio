@@ -285,9 +285,23 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
+                            {/* Verification Toggle Button */}
+                            <Button
+                              size="sm"
+                              variant={user.verified ? "outline" : "default"}
+                              className={user.verified ? "border-green-600 text-green-700 hover:bg-green-50" : "bg-green-600 hover:bg-green-700 text-white"}
+                              onClick={() => handleSetVerified(user.id, user.verified)}
+                            >
+                              <Shield className="w-4 h-4 mr-1" />
+                              {user.verified ? 'Zrušit' : 'Ověřit'}
+                            </Button>
+
+                            {/* Message Button */}
                             <Button variant="ghost" size="sm" onClick={() => handleMessageUser(user)}>
                               <MessageCircle className="w-4 h-4 text-blue-600" />
                             </Button>
+
+                            {/* Detail Button */}
                             <Button variant="ghost" size="sm">
                               {t('admin.users.detail')}
                             </Button>
