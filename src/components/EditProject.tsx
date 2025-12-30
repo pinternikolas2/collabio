@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Briefcase, DollarSign, X, Sparkles, Loader2 } from 'lucide-react';
+import { Briefcase, DollarSign, X, Sparkles, Loader2, Image, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardDescription } from './ui/card';
 import { Button } from './ui/button';
@@ -9,7 +9,9 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { projectApi } from '../utils/api';
+import { toast } from 'sonner';
+import { projectApi, storageApi } from '../utils/api';
+import { Project } from '../types';
 import { Project } from '../types';
 
 type EditProjectProps = {
@@ -30,6 +32,10 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
   const [skills, setSkills] = useState<string[]>([]);
   const [currentSkill, setCurrentSkill] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Image Upload State
+  const [images, setImages] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const categories = [
     'Sport',
@@ -62,6 +68,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
       setBudget(projectData.price?.toString() || '');
       setDuration(projectData.duration || '');
       setSkills(projectData.tags || []);
+      setImages(projectData.images || []);
     } catch (error) {
       console.error('Error loading project:', error);
       toast.error(t('project.form.load_error'), {
@@ -84,6 +91,34 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
     setSkills(skills.filter((s) => s !== skill));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Soubor je příliš velký (max 5MB)');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const result = await storageApi.uploadAttachment(file);
+      setImages([...images, result.url]);
+      toast.success('Obrázek nahrán');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Chyba při nahrávání obrázku');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -103,6 +138,7 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
         price: parseFloat(budget),
         duration: duration || '',
         tags: skills,
+        images: images,
       });
 
       toast.success(t('project.form.update_success'), {
@@ -315,43 +351,81 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                 </div>
               )}
             </CardContent>
-          </Card>
+          </CardContent>
+        </Card>
 
-          {/* Submit Buttons */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onNavigate('project-detail', { projectId })}
-                  className="flex-1"
-                  disabled={submitting}
-                >
-                  {t('common.cancel')}
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
-                  disabled={submitting}
-                >
-                  {submitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      {t('project.form.saving')}
-                    </>
-                  ) : (
-                    <>
-                      <Briefcase className="w-5 h-5 mr-2" />
-                      {t('common.save_changes')}
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </form>
-      </div>
+        {/* Media / Images */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-xl font-semibold">Galerie a přílohy</h3>
+            <CardDescription>
+              Přidejte obrázky pro zatraktivnění vaší nabídky (max 5MB)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {images.map((img, idx) => (
+                <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                  <img src={img} alt={`Project ${idx + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <label className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group">
+                {uploadingImage ? (
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                ) : (
+                  <>
+                    <Image className="w-8 h-8 text-gray-400 mb-2 group-hover:text-blue-500" />
+                    <span className="text-sm text-gray-500 group-hover:text-blue-600 font-medium">Nahrát</span>
+                  </>
+                )}
+                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
+              </label>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Submit Buttons */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onNavigate('project-detail', { projectId })}
+                className="flex-1"
+                disabled={submitting}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    {t('project.form.saving')}
+                  </>
+                ) : (
+                  <>
+                    <Briefcase className="w-5 h-5 mr-2" />
+                    {t('common.save_changes')}
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </form>
     </div>
+    </div >
   );
 }

@@ -324,8 +324,8 @@ export const chatApi = {
   subscribeToChats: (userId: string, callback: (chats: any[]) => void) => {
     const q = query(
       collection(db, 'chats'),
-      where('participants', 'array-contains', userId),
-      orderBy('updatedAt', 'desc')
+      where('participants', 'array-contains', userId)
+      // orderBy('updatedAt', 'desc') // Removed to avoid missing index error
     );
 
     return onSnapshot(q, async (snapshot) => {
@@ -356,7 +356,18 @@ export const chatApi = {
         };
       }));
 
+      // Client-side sort
+      chats.sort((a, b) => {
+        const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+        const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+        return dateB - dateA;
+      });
+
       callback(chats);
+    }, (error) => {
+      console.error("Error subscribing to chats:", error);
+      // Callback with empty list to stop loading spinner
+      callback([]);
     });
   },
 

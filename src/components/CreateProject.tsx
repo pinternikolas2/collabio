@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Briefcase, DollarSign, Calendar, Users, FileText, Image, X, Sparkles, Loader2, ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { Briefcase, DollarSign, Calendar, Users, FileText, Image, X, Sparkles, Loader2, ArrowLeft, ArrowRight, Check, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardDescription } from './ui/card';
 import { Button } from './ui/button';
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { UserRole, ProjectType, PaymentType, Milestone } from '../types';
-import { projectApi } from '../utils/api';
+import { projectApi, storageApi } from '../utils/api';
 import ProjectTypeSelector from './ProjectTypeSelector';
 import MilestoneManager from './MilestoneManager';
 
@@ -49,6 +49,10 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
   const [skills, setSkills] = useState<string[]>([]);
   const [currentSkill, setCurrentSkill] = useState('');
   const [deliverables, setDeliverables] = useState('');
+
+  // Image Upload State
+  const [images, setImages] = useState<string[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Step 3: Milestones (optional)
   const [milestones, setMilestones] = useState<Milestone[]>([]);
@@ -103,6 +107,34 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
 
   const handleRemoveRequirement = (req: string) => {
     setRequirements(requirements.filter((r) => r !== req));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Soubor je příliš velký (max 5MB)');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const result = await storageApi.uploadAttachment(file);
+      setImages([...images, result.url]);
+      toast.success('Obrázek nahrán');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Chyba při nahrávání obrázku');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
   };
 
   const validateStep = (step: number): boolean => {
@@ -173,6 +205,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
 
     try {
       // Prepare project data
+      // Prepare project data
       const projectData = {
         title,
         description,
@@ -190,7 +223,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
         followersMin: followersMin ? parseInt(followersMin) : 0,
         tags: skills,
         deliverables: deliverables || '',
-        images: [],
+        images: images,
         available: true,
         targetUserId: targetUserId || null,
         targetUserName: targetUserName || null,
@@ -468,6 +501,43 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                 ))}
               </div>
             )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Media / Images */}
+      <Card>
+        <CardHeader>
+          <h3 className="text-xl font-semibold">Galerie a přílohy</h3>
+          <CardDescription>
+            Přidejte obrázky pro zatraktivnění vaší nabídky (max 5MB)
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {images.map((img, idx) => (
+              <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                <img src={img} alt={`Project ${idx + 1}`} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(idx)}
+                  className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <label className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group">
+              {uploadingImage ? (
+                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+              ) : (
+                <>
+                  <Image className="w-8 h-8 text-gray-400 mb-2 group-hover:text-blue-500" />
+                  <span className="text-sm text-gray-500 group-hover:text-blue-600 font-medium">Nahrát</span>
+                </>
+              )}
+              <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
+            </label>
           </div>
         </CardContent>
       </Card>
