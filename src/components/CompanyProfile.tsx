@@ -307,232 +307,278 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column */}
-          <div className="space-y-6">
-            {/* Social Media */}
-            <Card className="border-none shadow-md overflow-hidden">
-              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-blue-500" />
-                  {t('company_profile.sections.social_media')}
-                </h3>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
-                {company.instagram && (
-                  <a
-                    href={`https://instagram.com/${company.instagram.replace('@', '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-pink-600">
-                      <Instagram className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">Instagram</p>
-                      <p className="text-xs text-gray-500">{company.instagram}</p>
-                    </div>
-                  </a>
-                )}
-                {company.linkedin && (
-                  <a
-                    href={`https://linkedin.com/company/${company.linkedin}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-transparent border border-blue-100/50 hover:border-blue-200 transition-all group"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-blue-700">
-                      <Linkedin className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">LinkedIn</p>
-                      <p className="text-xs text-gray-600">{company.linkedin}</p>
-                    </div>
-                  </a>
-                )}
-                {!company.instagram && !company.linkedin && (
-                  <p className="text-sm text-gray-500 text-center py-4">
-                    {t('company_profile.sections.no_socials')}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+        {/* Main Tabs: Opportunities & About */}
+        <Tabs defaultValue="opportunities" className="mt-8 w-full">
+          <TabsList className="mb-6 grid w-full md:w-auto grid-cols-2">
+            <TabsTrigger value="opportunities" className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4" /> Naše příležitosti
+            </TabsTrigger>
+            <TabsTrigger value="about" className="flex items-center gap-2">
+              <Building2 className="w-4 h-4" /> O nás
+            </TabsTrigger>
+          </TabsList>
 
-            {/* Industry Focus */}
-            <Card className="border-none shadow-md">
-              <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
-                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-orange-500" />
-                  {t('company_profile.sections.industry_focus')}
-                </h3>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-5">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Brand Awareness</span>
-                      <span className="text-sm font-bold text-blue-600">95%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Content Marketing</span>
-                      <span className="text-sm font-bold text-orange-600">90%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700">Influencer Marketing</span>
-                      <span className="text-sm font-bold text-purple-600">88%</span>
-                    </div>
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <Tabs defaultValue="projects" className="w-full">
-                <div className="border-b border-gray-100 px-6 pt-6">
-                  <TabsList className="w-full justify-start h-auto p-1 bg-gray-50/50 rounded-xl gap-1 mb-6 inline-flex">
-                    <TabsTrigger
-                      value="projects"
-                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
-                    >
-                      {t('company_profile.tabs.projects')}
-                      <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjectsCount}</Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="reviews"
-                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-yellow-600 data-[state=active]:shadow-sm font-medium transition-all"
-                    >
-                      {t('company_profile.tabs.reviews')}
-                      <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 border-none">{companyRatings.length}</Badge>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="collaborations"
-                      className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm font-medium transition-all"
-                    >
-                      {t('company_profile.tabs.collaborations')}
-                      <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-none">{completedCollabs}</Badge>
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-
-                {/* Projects Tab */}
-                <TabsContent value="projects" className="p-0 m-0">
-                  <Card>
-                    <CardContent className="p-6 space-y-4">
-                      {/* Projects list - real implementation needed */}
-                      {companyProjects.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {companyProjects.map((project) => (
-                            <div key={project.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer bg-white" onClick={() => onNavigate('project-detail', { projectId: project.id })}>
-                              <h4 className="font-semibold text-lg mb-1">{project.title}</h4>
-                              <p className="text-sm text-gray-500 line-clamp-2 mb-3">{project.description}</p>
-                              <div className="flex justify-between items-center">
-                                <Badge variant="outline">{project.category}</Badge>
-                                <span className="font-bold text-blue-600">{formatPrice(project.price)}</span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-center text-gray-500 py-8">
-                          {t('company_profile.projects.none')}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                {/* Reviews Tab */}
-                <TabsContent value="reviews">
-                  <Card>
-                    <CardContent className="p-6 space-y-6">
-                      {/* Rating Summary */}
-                      <div className="flex items-center gap-6 pb-6 border-b">
-                        <div className="text-center">
-                          <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
-                          <div className="flex gap-1 mb-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <Star
-                                key={star}
-                                className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                                  }`}
-                              />
-                            ))}
-                          </div>
-                          <p className="text-sm text-gray-600">{t('company_profile.reviews.count', { count: companyRatings.length })}</p>
-                        </div>
-
-                        <div className="flex-1 space-y-2">
-                          {[5, 4, 3, 2, 1].map((rating) => {
-                            const count = companyRatings.filter((r) => r.rating === rating).length;
-                            const percentage = companyRatings.length > 0 ? (count / companyRatings.length) * 100 : 0;
-                            return (
-                              <div key={rating} className="flex items-center gap-2">
-                                <span className="text-sm w-8">{rating} ⭐</span>
-                                <Progress value={percentage} className="flex-1" />
-                                <span className="text-sm text-gray-600 w-8">{count}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
+          <TabsContent value="opportunities" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {companyProjects && companyProjects.filter(p => !p.closed).length > 0 ? (
+                companyProjects.filter(p => !p.closed).map((project: any) => (
+                  <Card key={project.id} className="hover:shadow-md transition-all cursor-pointer group border-l-4 border-l-blue-500" onClick={() => onNavigate('project-detail', { projectId: project.id })}>
+                    <CardContent className="p-5">
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700">{project.type === 'direct' ? 'Přímá nabídka' : 'Poptávka'}</Badge>
+                        {(project.price || project.budget) && <span className="font-bold text-green-600">{formatPrice(project.price || project.budget)}</span>}
                       </div>
-
-                      {/* Individual Reviews */}
-                      <div className="space-y-4">
-                        {companyRatings.map((rating) => (
-                          <div key={rating.id} className="border-b pb-4 last:border-0">
-                            {/* Review Content */}
-                          </div>
-                        ))}
-
-                        {companyRatings.length === 0 && (
-                          <p className="text-center text-gray-500 py-8">
-                            {t('company_profile.reviews.none')}
-                          </p>
-                        )}
+                      <h3 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">{project.title}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-3 mb-4">{project.description}</p>
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(project.createdAt).toLocaleDateString()}
                       </div>
                     </CardContent>
                   </Card>
-                </TabsContent>
-
-                {/* Collaborations Tab */}
-                <TabsContent value="collaborations">
-                  <Card>
-                    <CardContent className="p-6 space-y-4">
-                      {/* Empty collaborations list for now */}
-                      {[]
-                        .map((collab: any) => (
-                          null
-                        ))}
-
-                      {completedCollabs === 0 && (
-                        <p className="text-center text-gray-500 py-8">
-                          {t('company_profile.collaborations.none')}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12 bg-white rounded-xl border border-dashed border-gray-200">
+                  <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Žádné aktivní příležitosti</h3>
+                  <p className="text-gray-500 mb-6">Tato firma momentálně nemá vypsané žádné veřejné poptávky.</p>
+                  {isOwnProfile && (
+                    <Button onClick={() => onNavigate('create-project')}>Vytvořit poptávku</Button>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="about" className="mt-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Column */}
+              <div className="space-y-6">
+                {/* Social Media */}
+                <Card className="border-none shadow-md overflow-hidden">
+                  <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                      <Share2 className="w-5 h-5 text-blue-500" />
+                      {t('company_profile.sections.social_media')}
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="space-y-4 pt-6">
+                    {company.instagram && (
+                      <a
+                        href={`https://instagram.com/${company.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-transparent border border-pink-100/50 hover:border-pink-200 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-pink-600">
+                          <Instagram className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">Instagram</p>
+                          <p className="text-xs text-gray-500">{company.instagram}</p>
+                        </div>
+                      </a>
+                    )}
+                    {company.linkedin && (
+                      <a
+                        href={`https://linkedin.com/company/${company.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-transparent border border-blue-100/50 hover:border-blue-200 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform text-blue-700">
+                          <Linkedin className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">LinkedIn</p>
+                          <p className="text-xs text-gray-600">{company.linkedin}</p>
+                        </div>
+                      </a>
+                    )}
+                    {!company.instagram && !company.linkedin && (
+                      <p className="text-sm text-gray-500 text-center py-4">
+                        {t('company_profile.sections.no_socials')}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Industry Focus */}
+                <Card className="border-none shadow-md">
+                  <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-orange-500" />
+                      {t('company_profile.sections.industry_focus')}
+                    </h3>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <div className="space-y-5">
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-700">Brand Awareness</span>
+                          <span className="text-sm font-bold text-blue-600">95%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 w-[95%] rounded-full"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-700">Content Marketing</span>
+                          <span className="text-sm font-bold text-orange-600">90%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-orange-500 to-orange-400 w-[90%] rounded-full"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm font-medium text-gray-700">Influencer Marketing</span>
+                          <span className="text-sm font-bold text-purple-600">88%</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-purple-500 to-purple-400 w-[88%] rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right Column */}
+              <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                  <Tabs defaultValue="projects" className="w-full">
+                    <div className="border-b border-gray-100 px-6 pt-6">
+                      <TabsList className="w-full justify-start h-auto p-1 bg-gray-50/50 rounded-xl gap-1 mb-6 inline-flex">
+                        <TabsTrigger
+                          value="projects"
+                          className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm font-medium transition-all"
+                        >
+                          {t('company_profile.tabs.projects')}
+                          <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-800 border-none">{activeProjectsCount}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="reviews"
+                          className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-yellow-600 data-[state=active]:shadow-sm font-medium transition-all"
+                        >
+                          {t('company_profile.tabs.reviews')}
+                          <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 border-none">{companyRatings.length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="collaborations"
+                          className="rounded-lg px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-sm font-medium transition-all"
+                        >
+                          {t('company_profile.tabs.collaborations')}
+                          <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 border-none">{completedCollabs}</Badge>
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
+
+                    {/* Projects Tab */}
+                    <TabsContent value="projects" className="p-0 m-0">
+                      <Card>
+                        <CardContent className="p-6 space-y-4">
+                          {/* Projects list - real implementation needed */}
+                          {companyProjects.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {companyProjects.map((project) => (
+                                <div key={project.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer bg-white" onClick={() => onNavigate('project-detail', { projectId: project.id })}>
+                                  <h4 className="font-semibold text-lg mb-1">{project.title}</h4>
+                                  <p className="text-sm text-gray-500 line-clamp-2 mb-3">{project.description}</p>
+                                  <div className="flex justify-between items-center">
+                                    <Badge variant="outline">{project.category}</Badge>
+                                    <span className="font-bold text-blue-600">{formatPrice(project.price)}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-center text-gray-500 py-8">
+                              {t('company_profile.projects.none')}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </TabsContent>
+
+                    {/* Reviews Tab */}
+                    <TabsContent value="reviews">
+                      <Card>
+                        <CardContent className="p-6 space-y-6">
+                          {/* Rating Summary */}
+                          <div className="flex items-center gap-6 pb-6 border-b">
+                            <div className="text-center">
+                              <div className="text-5xl font-bold mb-2">{avgRating.toFixed(1)}</div>
+                              <div className="flex gap-1 mb-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={`w-5 h-5 ${star <= avgRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                      }`}
+                                  />
+                                ))}
+                              </div>
+                              <p className="text-sm text-gray-600">{t('company_profile.reviews.count', { count: companyRatings.length })}</p>
+                            </div>
+
+                            <div className="flex-1 space-y-2">
+                              {[5, 4, 3, 2, 1].map((rating) => {
+                                const count = companyRatings.filter((r) => r.rating === rating).length;
+                                const percentage = companyRatings.length > 0 ? (count / companyRatings.length) * 100 : 0;
+                                return (
+                                  <div key={rating} className="flex items-center gap-2">
+                                    <span className="text-sm w-8">{rating} ⭐</span>
+                                    <Progress value={percentage} className="flex-1" />
+                                    <span className="text-sm text-gray-600 w-8">{count}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+
+                          {/* Individual Reviews */}
+                          <div className="space-y-4">
+                            {companyRatings.map((rating) => (
+                              <div key={rating.id} className="border-b pb-4 last:border-0">
+                                {/* Review Content */}
+                              </div>
+                            ))}
+
+                            {companyRatings.length === 0 && (
+                              <p className="text-center text-gray-500 py-8">
+                                {t('company_profile.reviews.none')}
+                              </p>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </TabsContent>
+
+                    {/* Collaborations Tab */}
+                    <TabsContent value="collaborations">
+                      <Card>
+                        <CardContent className="p-6 space-y-4">
+                          {/* Empty collaborations list for now */}
+                          {[]
+                            .map((collab: any) => (
+                              null
+                            ))}
+
+                          {completedCollabs === 0 && (
+                            <p className="text-center text-gray-500 py-8">
+                              {t('company_profile.collaborations.none')}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

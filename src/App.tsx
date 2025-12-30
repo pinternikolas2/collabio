@@ -219,12 +219,33 @@ function AppContent() {
       case 'landing':
         return <LandingPage onNavigate={handleNavigate} isLoggedIn={isLoggedIn} />;
 
+      case 'leads':
+        return (
+          <Marketplace
+            onNavigate={handleNavigate}
+            isLoggedIn={isLoggedIn}
+            userRole={userRole}
+            initialMode="leads"
+          />
+        );
+
+      case 'packages':
+        return (
+          <Marketplace
+            onNavigate={handleNavigate}
+            isLoggedIn={isLoggedIn}
+            userRole={userRole}
+            initialMode="packages"
+          />
+        );
+
       case 'marketplace':
         return (
           <Marketplace
             onNavigate={handleNavigate}
             isLoggedIn={isLoggedIn}
             userRole={userRole}
+            initialMode="all"
           />
         );
 

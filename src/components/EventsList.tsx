@@ -16,8 +16,9 @@ import {
 } from './ui/dialog';
 import { useAuth } from '../contexts/AuthContext';
 import { userApi, projectApi, eventApi } from '../utils/api'; // Assuming you have projectApi or similar
-import { User, Project, Event } from '../types';
+import { User, Project, Event, AdvertisingOption } from '../types';
 import CreateEventRequest from './CreateEventRequest'; // Will create next
+import { formatCurrency } from '../utils/formatting';
 // import { mockEvents, mockProjects, mockUsers } from '../data/seedData'; // Removed mock data fallback
 
 
@@ -35,6 +36,7 @@ type UnifiedEvent = {
     location?: string;
     originalData: Event | Project;
     ownerId: string;
+    inventory?: AdvertisingOption[];
 };
 
 export default function EventsList({ onNavigate }: { onNavigate: (page: string, data?: any) => void }) {
@@ -43,6 +45,7 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState<'all' | 'talent_offer' | 'company_demand'>('all');
     const [events, setEvents] = useState<UnifiedEvent[]>([]);
+    const [selectedEvent, setSelectedEvent] = useState<UnifiedEvent | null>(null);
     const [loading, setLoading] = useState(true);
 
     // Load Data
@@ -71,6 +74,7 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                         description: e.description,
                         imageUrl: owner?.profileImage,
                         location: e.location, // Event has 'location' field
+                        inventory: e.advertisingOptions || [],
                         originalData: e,
                         ownerId: e.userId
                     };
@@ -255,7 +259,7 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                                     return;
                                 }
                                 if (event.type === 'talent_offer') {
-                                    onNavigate('talent-profile', { userId: event.ownerId });
+                                    setSelectedEvent(event);
                                 } else {
                                     onNavigate('company-profile', { userId: event.ownerId });
                                 }
@@ -363,6 +367,144 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                         </div>
                     )}
                 </div>
+
+                {/* Event Detail Modal (Sales Module) */}
+                <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
+                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                                <Sparkles className="w-6 h-6 text-orange-500" />
+                                {selectedEvent?.title}
+                            </DialogTitle>
+                        </DialogHeader>
+
+                        {selectedEvent && (
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
+                                {/* Left Column: Info */}
+                                <div className="lg:col-span-2 space-y-6">
+                                    <div className="relative h-64 rounded-xl overflow-hidden shadow-md">
+                                        <img
+                                            src={selectedEvent.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'}
+                                            alt={selectedEvent.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Calendar className="w-5 h-5" />
+                                                <span className="font-semibold">{new Date(selectedEvent.date).toLocaleDateString()}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <MapPin className="w-5 h-5" />
+                                                <span>{selectedEvent.location || 'Online'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-2">Popis události</h3>
+                                        <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+                                            {selectedEvent.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Inventory Section */}
+                                    <div>
+                                        <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+                                            <Briefcase className="w-5 h-5 text-blue-600" />
+                                            Dostupné reklamní plochy (Inventář)
+                                        </h3>
+
+                                        {selectedEvent.inventory && selectedEvent.inventory.length > 0 ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {selectedEvent.inventory.filter(i => i.available).map((option) => (
+                                                    <Card key={option.id} className="border-2 border-transparent hover:border-blue-100 transition-all shadow-sm hover:shadow-md">
+                                                        <CardContent className="p-4">
+                                                            <div className="flex justify-between items-start mb-2">
+                                                                <Badge variant="outline" className="bg-blue-50 text-blue-700 capitalize">
+                                                                    {option.type === 'social_post' ? 'Social Post' : option.type}
+                                                                </Badge>
+                                                                {option.price && (
+                                                                    <span className="font-bold text-lg text-green-600">
+                                                                        {formatCurrency(option.price, 'CZK')}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-sm text-gray-600 mb-4 h-10 line-clamp-2">
+                                                                {option.description}
+                                                            </p>
+                                                            <Button
+                                                                className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white shadow-md"
+                                                                onClick={() => {
+                                                                    setSelectedEvent(null);
+                                                                    onNavigate('checkout', {
+                                                                        eventId: selectedEvent.id,
+                                                                        optionId: option.id,
+                                                                        price: option.price,
+                                                                        description: option.description
+                                                                    });
+                                                                }}
+                                                            >
+                                                                Koupit / Rezervovat
+                                                            </Button>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                                <p className="text-gray-500">Pro tuto událost zatím nejsou vypsány specifické reklamní balíčky.</p>
+                                                <Button variant="link" onClick={() => onNavigate('talent-profile', { userId: selectedEvent.ownerId })}>
+                                                    Kontaktovat organizátora
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Right Column: Talent Info */}
+                                <div className="space-y-6">
+                                    <Card>
+                                        <CardContent className="p-6 text-center">
+                                            <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-blue-50">
+                                                <AvatarImage src={selectedEvent.imageUrl} />
+                                                <AvatarFallback>{selectedEvent.subtitle[0]}</AvatarFallback>
+                                            </Avatar>
+                                            <h3 className="font-bold text-xl mb-1">{selectedEvent.subtitle}</h3>
+                                            <p className="text-sm text-gray-500 mb-4">Organizátor / Talent</p>
+                                            <Button variant="outline" className="w-full" onClick={() => onNavigate('talent-profile', { userId: selectedEvent.ownerId })}>
+                                                Zobrazit profil
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+
+                                    {/* Stats (Mock for now, or from event data) */}
+                                    <Card className="bg-gradient-to-br from-orange-50 to-white border-orange-100">
+                                        <CardContent className="p-6">
+                                            <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                                <Trophy className="w-4 h-4 text-orange-500" />
+                                                Očekávaný dosah
+                                            </h4>
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center border-b border-orange-100 pb-2">
+                                                    <span className="text-sm text-gray-600">Návštěvnost</span>
+                                                    <span className="font-bold text-lg">---</span>
+                                                </div>
+                                                <div className="flex justify-between items-center border-b border-orange-100 pb-2">
+                                                    <span className="text-sm text-gray-600">TV Přenos</span>
+                                                    <span className="font-bold text-lg text-green-600">---</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-gray-600">Stream</span>
+                                                    <span className="font-bold text-lg">---</span>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );

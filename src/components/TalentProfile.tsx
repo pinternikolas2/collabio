@@ -359,269 +359,309 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
           </div>
         </div>
 
-        {/* Quick Deals Section - Bleskové nabídky */}
-        {talent.quickDeals && talent.quickDeals.length > 0 && talent.quickDeals.some(deal => deal.active) && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center">
-                    <DollarSign className="w-6 h-6 text-white" />
+        {/* Main Profile Tabs */}
+        <Tabs defaultValue="packages" className="mb-12 w-full">
+          <TabsList className="w-full md:w-auto grid grid-cols-3 mb-8">
+            <TabsTrigger value="packages" className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4" /> Balíčky
+            </TabsTrigger>
+            <TabsTrigger value="events" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" /> Události
+            </TabsTrigger>
+            <TabsTrigger value="track-record" className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" /> Úspěchy
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="packages" className="mt-0">
+            {/* Quick Deals Section - Bleskové nabídky */}
+            {talent.quickDeals && talent.quickDeals.length > 0 && talent.quickDeals.some(deal => deal.active) ? (
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center">
+                        <DollarSign className="w-6 h-6 text-white" />
+                      </div>
+                      Bleskové nabídky
+                    </h2>
+                    <p className="text-gray-600 mt-1">Okamžitě dostupné služby s fixní cenou</p>
                   </div>
-                  Bleskové nabídky
-                </h2>
-                <p className="text-gray-600 mt-1">Okamžitě dostupné služby s fixní cenou</p>
-              </div>
-            </div>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {talent.quickDeals.filter(deal => deal.active).map((deal) => (
-                <Card key={deal.id} className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden">
-                  {deal.imageUrl && (
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={deal.imageUrl}
-                        alt={deal.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute top-3 right-3">
-                        <Badge className="bg-gradient-to-r from-blue-600 to-orange-500 text-white">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {deal.deliveryDays} dní
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                      {deal.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {deal.description}
-                    </p>
-
-                    {/* Price - Dominantní zobrazení */}
-                    <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl border border-blue-100">
-                      <div className="text-sm text-gray-600 mb-1">Cena</div>
-                      <div className="text-3xl font-bold text-blue-600">
-                        {formatPrice(deal.price)}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Včetně DPH • Escrow ochrana
-                      </div>
-                    </div>
-
-                    {/* Co je zahrnuto */}
-                    {deal.includes && deal.includes.length > 0 && (
-                      <div className="mb-4">
-                        <div className="text-sm font-semibold text-gray-700 mb-2">Co je zahrnuto:</div>
-                        <ul className="space-y-1">
-                          {deal.includes.slice(0, 3).map((item, idx) => (
-                            <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        {deal.includes.length > 3 && (
-                          <p className="text-xs text-gray-500 mt-1">+ {deal.includes.length - 3} dalších</p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Buy Now Button */}
-                    <Button
-                      className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-semibold h-12 text-lg shadow-lg hover:shadow-xl transition-all"
-                      onClick={() => {
-                        // Create a temporary project for this quick deal
-                        const quickDealProject = {
-                          id: `quick-deal-${deal.id}`,
-                          title: deal.title,
-                          description: deal.description,
-                          price: deal.price,
-                          type: 'direct',
-                          deliveryTimeDays: deal.deliveryDays,
-                          ownerId: userId,
-                        };
-                        onNavigate('checkout', { projectId: quickDealProject.id, quickDeal: deal });
-                      }}
-                    >
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      Koupit nyní
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Track Record Section - Dynamic based on role */}
-        {(talent.sportsStats || talent.artistWorks || talent.influencerCampaigns) && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </div>
-                  {talent.category === 'Sportovec' ? 'Sportovní statistiky' : talent.category === 'Umělec' ? 'Portfolio děl' : 'Top kampaně'}
-                </h2>
-                <p className="text-gray-600 mt-1">
-                  {talent.category === 'Sportovec' ? 'Aktuální forma a nadcházející události' : talent.category === 'Umělec' ? 'Nejlepší díla a projekty' : 'Nejúspěšnější spolupráce'}
-                </p>
-              </div>
-            </div>
-
-            {/* Sports Stats - Pro sportovce */}
-            {talent.sportsStats && talent.category === 'Sportovec' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Bilance */}
-                <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-gray-900">Bilance sezóny</h3>
-                      <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center">
-                        <Star className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <div className="text-2xl font-bold text-green-600">{talent.sportsStats.wins || 0}</div>
-                        <div className="text-xs text-gray-600">Výhry</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-gray-600">{talent.sportsStats.draws || 0}</div>
-                        <div className="text-xs text-gray-600">Remízy</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-red-600">{talent.sportsStats.losses || 0}</div>
-                        <div className="text-xs text-gray-600">Prohry</div>
-                      </div>
-                    </div>
-                    {(talent.sportsStats.goals || talent.sportsStats.assists) && (
-                      <div className="mt-4 pt-4 border-t border-green-200 flex justify-around">
-                        {talent.sportsStats.goals && (
-                          <div className="text-center">
-                            <div className="text-xl font-bold text-gray-900">{talent.sportsStats.goals}</div>
-                            <div className="text-xs text-gray-600">Góly</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {talent.quickDeals.filter(deal => deal.active).map((deal) => (
+                    <Card key={deal.id} className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200 overflow-hidden">
+                      {deal.imageUrl && (
+                        <div className="relative h-48 overflow-hidden">
+                          <img
+                            src={deal.imageUrl}
+                            alt={deal.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute top-3 right-3">
+                            <Badge className="bg-gradient-to-r from-blue-600 to-orange-500 text-white">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {deal.deliveryDays} dní
+                            </Badge>
                           </div>
-                        )}
-                        {talent.sportsStats.assists && (
-                          <div className="text-center">
-                            <div className="text-xl font-bold text-gray-900">{talent.sportsStats.assists}</div>
-                            <div className="text-xs text-gray-600">Asistence</div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Aktuální tým */}
-                {talent.sportsStats.currentTeam && (
-                  <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-gray-900">Aktuální tým</h3>
-                        <Users className="w-10 h-10 text-blue-600" />
-                      </div>
-                      <div className="text-2xl font-bold text-blue-600 mb-2">{talent.sportsStats.currentTeam}</div>
-                      {talent.sportsStats.position && (
-                        <div className="text-sm text-gray-600">Pozice: {talent.sportsStats.position}</div>
+                        </div>
                       )}
-                    </CardContent>
-                  </Card>
-                )}
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                          {deal.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {deal.description}
+                        </p>
 
-                {/* Nadcházející zápas */}
-                {talent.sportsStats.upcomingMatch && (
-                  <Card className="border-2 border-orange-100 bg-gradient-to-br from-orange-50 to-white">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-bold text-gray-900">Nadcházející zápas</h3>
-                        <Calendar className="w-10 h-10 text-orange-600" />
-                      </div>
-                      <div className="text-lg font-bold text-gray-900 mb-2">vs {talent.sportsStats.upcomingMatch.opponent}</div>
-                      <div className="text-sm text-gray-600 flex items-center gap-2 mb-1">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(talent.sportsStats.upcomingMatch.date).toLocaleDateString('cs-CZ')}
-                      </div>
-                      <div className="text-sm text-gray-600 flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        {talent.sportsStats.upcomingMatch.location}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            )}
-
-            {/* Artist Works - Pro umělce */}
-            {talent.artistWorks && talent.category === 'Umělec' && (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {talent.artistWorks.filter(work => work.featured).slice(0, 8).map((work) => (
-                  <Card key={work.id} className="group overflow-hidden hover:shadow-xl transition-all">
-                    <div className="relative aspect-square overflow-hidden">
-                      <img
-                        src={work.imageUrl}
-                        alt={work.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                          <h4 className="font-bold text-sm mb-1">{work.title}</h4>
-                          <p className="text-xs opacity-90">{work.category}</p>
-                          {work.year && <p className="text-xs opacity-75">{work.year}</p>}
+                        {/* Price - Dominantní zobrazení */}
+                        <div className="mb-4 p-4 bg-gradient-to-br from-blue-50 to-orange-50 rounded-xl border border-blue-100">
+                          <div className="text-sm text-gray-600 mb-1">Cena</div>
+                          <div className="text-3xl font-bold text-blue-600">
+                            {formatPrice(deal.price)}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Včetně DPH • Escrow ochrana
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+
+                        {/* Co je zahrnuto */}
+                        {deal.includes && deal.includes.length > 0 && (
+                          <div className="mb-4">
+                            <div className="text-sm font-semibold text-gray-700 mb-2">Co je zahrnuto:</div>
+                            <ul className="space-y-1">
+                              {deal.includes.slice(0, 3).map((item, idx) => (
+                                <li key={idx} className="text-sm text-gray-600 flex items-start gap-2">
+                                  <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            {deal.includes.length > 3 && (
+                              <p className="text-xs text-gray-500 mt-1">+ {deal.includes.length - 3} dalších</p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Buy Now Button */}
+                        <Button
+                          className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-semibold h-12 text-lg shadow-lg hover:shadow-xl transition-all"
+                          onClick={() => {
+                            // Create a temporary project for this quick deal
+                            const quickDealProject = {
+                              id: `quick-deal-${deal.id}`,
+                              title: deal.title,
+                              description: deal.description,
+                              price: deal.price,
+                              type: 'direct',
+                              deliveryTimeDays: deal.deliveryDays,
+                              ownerId: userId,
+                            };
+                            onNavigate('checkout', { projectId: quickDealProject.id, quickDeal: deal });
+                          }}
+                        >
+                          <DollarSign className="w-5 h-5 mr-2" />
+                          Koupit nyní
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Žádné aktivní balíčky</h3>
+                <p className="text-gray-500">Talent momentálně nenabízí žádné služby k okamžitému zakoupení.</p>
               </div>
             )}
+          </TabsContent>
 
-            {/* Influencer Campaigns - Pro influencery */}
-            {talent.influencerCampaigns && (talent.category === 'Influencer' || talent.category === 'Tvůrce obsahu') && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {talent.influencerCampaigns.slice(0, 6).map((campaign) => (
-                  <Card key={campaign.id} className="group hover:shadow-xl transition-all border-2 hover:border-blue-200">
-                    {campaign.imageUrl && (
-                      <div className="relative h-40 overflow-hidden">
-                        <img
-                          src={campaign.imageUrl}
-                          alt={campaign.brandName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
+          <TabsContent value="events" className="mt-0">
+            <UpcomingEventsSection
+              userId={userId}
+              isOwnProfile={isOwnProfile}
+              currentUserRole={currentUserRole}
+              onNavigate={onNavigate}
+            />
+          </TabsContent>
+
+          <TabsContent value="track-record" className="mt-0">
+            {/* Track Record Section - Dynamic based on role */}
+            {(talent.sportsStats || talent.artistWorks || talent.influencerCampaigns) ? (
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-orange-500 flex items-center justify-center">
+                        <TrendingUp className="w-6 h-6 text-white" />
                       </div>
+                      {talent.category === 'Sportovec' ? 'Sportovní statistiky' : talent.category === 'Umělec' ? 'Portfolio děl' : 'Top kampaně'}
+                    </h2>
+                    <p className="text-gray-600 mt-1">
+                      {talent.category === 'Sportovec' ? 'Aktuální forma a nadcházející události' : talent.category === 'Umělec' ? 'Nejlepší díla a projekty' : 'Nejúspěšnější spolupráce'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Sports Stats - Pro sportovce */}
+                {talent.sportsStats && talent.category === 'Sportovec' && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Bilance */}
+                    <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="font-bold text-gray-900">Bilance sezóny</h3>
+                          <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center">
+                            <Star className="w-5 h-5 text-white" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <div className="text-2xl font-bold text-green-600">{talent.sportsStats.wins || 0}</div>
+                            <div className="text-xs text-gray-600">Výhry</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-gray-600">{talent.sportsStats.draws || 0}</div>
+                            <div className="text-xs text-gray-600">Remízy</div>
+                          </div>
+                          <div>
+                            <div className="text-2xl font-bold text-red-600">{talent.sportsStats.losses || 0}</div>
+                            <div className="text-xs text-gray-600">Prohry</div>
+                          </div>
+                        </div>
+                        {(talent.sportsStats.goals || talent.sportsStats.assists) && (
+                          <div className="mt-4 pt-4 border-t border-green-200 flex justify-around">
+                            {talent.sportsStats.goals && (
+                              <div className="text-center">
+                                <div className="text-xl font-bold text-gray-900">{talent.sportsStats.goals}</div>
+                                <div className="text-xs text-gray-600">Góly</div>
+                              </div>
+                            )}
+                            {talent.sportsStats.assists && (
+                              <div className="text-center">
+                                <div className="text-xl font-bold text-gray-900">{talent.sportsStats.assists}</div>
+                                <div className="text-xs text-gray-600">Asistence</div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Aktuální tým */}
+                    {talent.sportsStats.currentTeam && (
+                      <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-bold text-gray-900">Aktuální tým</h3>
+                            <Users className="w-10 h-10 text-blue-600" />
+                          </div>
+                          <div className="text-2xl font-bold text-blue-600 mb-2">{talent.sportsStats.currentTeam}</div>
+                          {talent.sportsStats.position && (
+                            <div className="text-sm text-gray-600">Pozice: {talent.sportsStats.position}</div>
+                          )}
+                        </CardContent>
+                      </Card>
                     )}
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-bold text-gray-900">{campaign.brandName}</h4>
-                        <Badge className="bg-blue-100 text-blue-700">
-                          {campaign.platform === 'instagram' && <Instagram className="w-3 h-3" />}
-                          {campaign.platform === 'tiktok' && <Tv className="w-3 h-3" />}
-                          {campaign.platform === 'youtube' && <div className="w-3 h-3 bg-red-600 rounded-sm" />}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{campaign.description}</p>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="bg-blue-50 rounded p-2 text-center">
-                          <div className="font-bold text-blue-600">{formatFollowers(campaign.reach)}</div>
-                          <div className="text-gray-600">Dosah</div>
+
+                    {/* Nadcházející zápas */}
+                    {talent.sportsStats.upcomingMatch && (
+                      <Card className="border-2 border-orange-100 bg-gradient-to-br from-orange-50 to-white">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-bold text-gray-900">Nadcházející zápas</h3>
+                            <Calendar className="w-10 h-10 text-orange-600" />
+                          </div>
+                          <div className="text-lg font-bold text-gray-900 mb-2">vs {talent.sportsStats.upcomingMatch.opponent}</div>
+                          <div className="text-sm text-gray-600 flex items-center gap-2 mb-1">
+                            <Calendar className="w-4 h-4" />
+                            {new Date(talent.sportsStats.upcomingMatch.date).toLocaleDateString('cs-CZ')}
+                          </div>
+                          <div className="text-sm text-gray-600 flex items-center gap-2">
+                            <MapPin className="w-4 h-4" />
+                            {talent.sportsStats.upcomingMatch.location}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                )}
+
+                {/* Artist Works - Pro umělce */}
+                {talent.artistWorks && talent.category === 'Umělec' && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {talent.artistWorks.filter(work => work.featured).slice(0, 8).map((work) => (
+                      <Card key={work.id} className="group overflow-hidden hover:shadow-xl transition-all">
+                        <div className="relative aspect-square overflow-hidden">
+                          <img
+                            src={work.imageUrl}
+                            alt={work.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                              <h4 className="font-bold text-sm mb-1">{work.title}</h4>
+                              <p className="text-xs opacity-90">{work.category}</p>
+                              {work.year && <p className="text-xs opacity-75">{work.year}</p>}
+                            </div>
+                          </div>
                         </div>
-                        <div className="bg-green-50 rounded p-2 text-center">
-                          <div className="font-bold text-green-600">{campaign.engagement}%</div>
-                          <div className="text-gray-600">Engagement</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </Card>
+                    ))}
+                  </div>
+                )}
+
+                {/* Influencer Campaigns - Pro influencery */}
+                {talent.influencerCampaigns && (talent.category === 'Influencer' || talent.category === 'Tvůrce obsahu') && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {talent.influencerCampaigns.slice(0, 6).map((campaign) => (
+                      <Card key={campaign.id} className="group hover:shadow-xl transition-all border-2 hover:border-blue-200">
+                        {campaign.imageUrl && (
+                          <div className="relative h-40 overflow-hidden">
+                            <img
+                              src={campaign.imageUrl}
+                              alt={campaign.brandName}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                            />
+                          </div>
+                        )}
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-bold text-gray-900">{campaign.brandName}</h4>
+                            <Badge className="bg-blue-100 text-blue-700">
+                              {campaign.platform === 'instagram' && <Instagram className="w-3 h-3" />}
+                              {campaign.platform === 'tiktok' && <Tv className="w-3 h-3" />}
+                              {campaign.platform === 'youtube' && <div className="w-3 h-3 bg-red-600 rounded-sm" />}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{campaign.description}</p>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-blue-50 rounded p-2 text-center">
+                              <div className="font-bold text-blue-600">{formatFollowers(campaign.reach)}</div>
+                              <div className="text-gray-600">Dosah</div>
+                            </div>
+                            <div className="bg-green-50 rounded p-2 text-center">
+                              <div className="font-bold text-green-600">{campaign.engagement}%</div>
+                              <div className="text-gray-600">Engagement</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Zatím žádné záznamy</h3>
+                <p className="text-gray-500">Sekce úspěchů je zatím prázdná.</p>
               </div>
             )}
-          </div>
-        )}
+          </TabsContent>
+        </Tabs>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
@@ -728,13 +768,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
 
           {/* Right Column */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Upcoming Events Section */}
-            <UpcomingEventsSection
-              userId={userId}
-              isOwnProfile={isOwnProfile}
-              currentUserRole={currentUserRole}
-              onNavigate={onNavigate}
-            />
+            {/* Upcoming Events moved to Tabs */}
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <Tabs defaultValue="portfolio" className="w-full">

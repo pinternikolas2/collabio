@@ -18,11 +18,14 @@ type MarketplaceProps = {
   onNavigate: (page: string, data?: any) => void;
   isLoggedIn: boolean;
   userRole?: 'talent' | 'company' | 'admin' | null;
+  initialMode?: 'leads' | 'packages' | 'all';
 };
 
-export default function Marketplace({ onNavigate, isLoggedIn, userRole }: MarketplaceProps) {
+export default function Marketplace({ onNavigate, isLoggedIn, userRole, initialMode = 'all' }: MarketplaceProps) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<'quick-buys' | 'projects'>('quick-buys');
+  const [activeTab, setActiveTab] = useState<'quick-buys' | 'projects'>(
+    initialMode === 'leads' ? 'projects' : 'quick-buys'
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all'); // all, offer, demand
@@ -127,7 +130,7 @@ export default function Marketplace({ onNavigate, isLoggedIn, userRole }: Market
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
-              {t('marketplace.title')}
+              {initialMode === 'leads' ? 'Nástěnka příležitostí' : initialMode === 'packages' ? 'Katalog balíčků' : t('marketplace.title')}
             </h1>
             <p className="text-gray-600">
               {t('marketplace.subtitle')}
@@ -177,18 +180,20 @@ export default function Marketplace({ onNavigate, isLoggedIn, userRole }: Market
         )}
 
         {/* Tabs for Quick Buys vs Projects */}
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'quick-buys' | 'projects')} className="mb-6">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-            <TabsTrigger value="quick-buys" className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              Bleskové nabídky
-            </TabsTrigger>
-            <TabsTrigger value="projects" className="flex items-center gap-2">
-              <Briefcase className="w-4 h-4" />
-              Poptávky & Projekty
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {initialMode === 'all' && (
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'quick-buys' | 'projects')} className="mb-6">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+              <TabsTrigger value="quick-buys" className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                Bleskové nabídky
+              </TabsTrigger>
+              <TabsTrigger value="projects" className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4" />
+                Poptávky & Projekty
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
 
         {/* Filters */}
         <Card className="mb-8 shadow-lg">
