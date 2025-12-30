@@ -79,7 +79,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         // User is signed in, fetch profile from Firestore
-        await loadUserProfile(firebaseUser.uid, firebaseUser.email, firebaseUser.emailVerified);
+        await loadUserProfile(
+          firebaseUser.uid,
+          firebaseUser.email,
+          firebaseUser.emailVerified,
+          firebaseUser.metadata.creationTime
+        );
       } else {
         // User is signed out
         setUser(null);
@@ -90,10 +95,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const loadUserProfile = async (uid: string, email: string | null, emailVerified: boolean = false) => {
+  const loadUserProfile = async (uid: string, email: string | null, emailVerified: boolean = false, creationTime?: string) => {
     try {
       const userDocRef = doc(db, 'users', uid);
-      const userDoc = await getDoc(userDocRef);
+      let userDoc = await getDoc(userDocRef);
+
+      // Fix Check: If user doc doesn't exist but account is fresh (< 10s), wait for signUp to write execution
+      if (!userDoc.exists() && creationTime) {
+        const accountAge = Date.now() - new Date(creationTime).getTime();
+        if (accountAge < 10000) { // 10 seconds buffer
+          console.log("New account detected, waiting for profile creation...");
+          await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5s
+          userDoc = await getDoc(userDocRef); // Retry fetch
+
+          if (!userDoc.exists()) {
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Wait another 1.5s
+            userDoc = await getDoc(userDocRef); // Final retry
+          }
+        }
+      }
 
       if (userDoc.exists()) {
         const userData = userDoc.data() as User;

@@ -37,7 +37,7 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
 
   const navItems = [
     { name: t('navigation.home'), page: 'landing', showWhen: 'always' },
-    { name: 'Příležitosti', page: 'leads', showWhen: 'always' },
+    { name: 'Nástěnka', page: 'leads', showWhen: 'always' },
     { name: 'Události', page: 'events', showWhen: 'always' },
     { name: 'Balíčky', page: 'packages', showWhen: 'always' },
     { name: t('navigation.talents'), page: 'talents', showWhen: 'always' },

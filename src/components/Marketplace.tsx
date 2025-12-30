@@ -130,7 +130,7 @@ export default function Marketplace({ onNavigate, isLoggedIn, userRole, initialM
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
-              {initialMode === 'leads' ? 'Nástěnka příležitostí' : initialMode === 'packages' ? 'Katalog balíčků' : t('marketplace.title')}
+              {initialMode === 'leads' ? 'Nástěnka' : initialMode === 'packages' ? 'Katalog balíčků' : t('marketplace.title')}
             </h1>
             <p className="text-gray-600">
               {t('marketplace.subtitle')}
