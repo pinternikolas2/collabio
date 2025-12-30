@@ -40,6 +40,8 @@ import TalentAnalytics from './components/TalentAnalytics';
 import CompanyAnalytics from './components/CompanyAnalytics';
 import DocumentationPage from './components/DocumentationPage';
 import SEO from './components/SEO';
+import CheckoutPage from './components/CheckoutPage';
+import CollaborationSetup from './components/CollaborationSetup';
 import { userApi } from './utils/api';
 
 function AppContent() {
@@ -484,6 +486,27 @@ function AppContent() {
       case 'meetings':
         return isLoggedIn && userId ? (
           <Meetings userId={userId} onNavigate={handleNavigate} />
+        ) : (
+          <LandingPage onNavigate={handleNavigate} isLoggedIn={false} />
+        );
+
+      case 'checkout':
+        return isLoggedIn && userId && pageData?.projectId ? (
+          <CheckoutPage
+            projectId={pageData.projectId}
+            onNavigate={handleNavigate}
+          />
+        ) : (
+          <LandingPage onNavigate={handleNavigate} isLoggedIn={false} />
+        );
+
+      case 'collaboration-setup':
+        return isLoggedIn && userId && pageData?.collaborationId && pageData?.projectId ? (
+          <CollaborationSetup
+            collaborationId={pageData.collaborationId}
+            projectId={pageData.projectId}
+            onNavigate={handleNavigate}
+          />
         ) : (
           <LandingPage onNavigate={handleNavigate} isLoggedIn={false} />
         );

@@ -46,6 +46,17 @@ export type PortfolioItem = {
   type: 'image' | 'video' | 'social' | 'project' | 'achievement';
 };
 
+export type ProjectType = 'direct' | 'negotiable';
+export type PaymentType = 'one-time' | 'milestones';
+
+export type Milestone = {
+  id: string;
+  title: string;
+  price: number;
+  status: 'pending' | 'in_progress' | 'completed' | 'approved';
+  order: number;
+};
+
 export type Project = {
   id: string;
   title: string;
@@ -67,9 +78,23 @@ export type Project = {
   // Event specific fields
   eventDate?: string;
   location?: string;
+  // Quick Buy & Milestones fields
+  type?: ProjectType;
+  paymentType?: PaymentType;
+  milestones?: Milestone[];
+  deliveryTimeDays?: number;
+  requirements?: string[];
 };
 
-export type CollaborationStatus = 'pending' | 'active' | 'completed' | 'cancelled' | 'escrow';
+export type CollaborationStatus = 'pending' | 'active' | 'completed' | 'cancelled' | 'escrow' | 'waiting_for_requirements';
+
+export type Evidence = {
+  milestoneIndex: number;
+  url: string;
+  type: 'image' | 'link' | 'file';
+  uploadedAt: string;
+  description?: string;
+};
 
 export type Collaboration = {
   id: string;
@@ -84,6 +109,10 @@ export type Collaboration = {
   updatedAt: string;
   escrowAmount?: number;
   escrowReleased: boolean;
+  // Milestones & Requirements fields
+  currentMilestoneIndex?: number;
+  evidence?: Evidence[];
+  requirementsData?: Record<string, string>;
 };
 
 export type Rating = {

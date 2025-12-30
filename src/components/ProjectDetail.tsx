@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Briefcase, DollarSign, Calendar, Users, Star, MessageSquare, Send, Building2, MapPin, CheckCircle, Clock, AlertCircle, Loader2, Edit, Trash2 } from 'lucide-react';
+import { Briefcase, DollarSign, Calendar, Users, Star, MessageSquare, Send, Building2, MapPin, CheckCircle, Clock, AlertCircle, Loader2, Edit, Trash2, Zap, Target, ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -27,7 +27,7 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
   const [ownerRatings, setOwnerRatings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [proposalPrice, setProposalPrice] = useState('');
   const [proposalMessage, setProposalMessage] = useState('');
   const [proposalDelivery, setProposalDelivery] = useState('');
@@ -43,16 +43,16 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
     try {
       setLoading(true);
       setError(null);
-      
+
       // Load project
       const projectData = await projectApi.getProject(projectId);
       setProject(projectData);
-      
+
       // Load owner
       if (projectData.ownerId) {
         const ownerData = await userApi.getUser(projectData.ownerId);
         setOwner(ownerData);
-        
+
         // Load owner ratings
         try {
           const ratings = await userApi.getUserRatings(projectData.ownerId);
@@ -223,6 +223,12 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
                         <StatusIcon className="w-3 h-3 mr-1" />
                         {status.label}
                       </Badge>
+                      {project.type === 'direct' && (
+                        <Badge className="bg-gradient-to-r from-blue-600 to-orange-500 text-white">
+                          <Zap className="w-3 h-3 mr-1" />
+                          Bleskový nákup
+                        </Badge>
+                      )}
                       {project.category && (
                         <Badge variant="secondary" className="bg-orange-100 text-orange-800">
                           {project.category}
@@ -240,14 +246,18 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                   <div className="text-center p-4 bg-blue-50 rounded-lg">
                     <DollarSign className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-1">Rozpočet</p>
+                    <p className="text-sm text-gray-600 mb-1">{project.type === 'direct' ? 'Cena' : 'Rozpočet'}</p>
                     <p className="font-bold">{formatPrice(project.price || 0)}</p>
                   </div>
 
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <Calendar className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-1">Délka</p>
-                    <p className="font-bold">{project.duration || '3 měsíce'}</p>
+                    <p className="text-sm text-gray-600 mb-1">{project.type === 'direct' ? 'Dodání' : 'Délka'}</p>
+                    <p className="font-bold">
+                      {project.type === 'direct' && project.deliveryTimeDays
+                        ? `${project.deliveryTimeDays} dní`
+                        : project.duration || '3 měsíce'}
+                    </p>
                   </div>
 
                   <div className="text-center p-4 bg-green-50 rounded-lg">
@@ -257,9 +267,15 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
                   </div>
 
                   <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <Briefcase className="w-6 h-6 text-orange-600 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600 mb-1">Typ</p>
-                    <p className="font-bold text-sm">{project.projectType || 'Dlouhodobé'}</p>
+                    {project.paymentType === 'milestones' ? (
+                      <Target className="w-6 h-6 text-orange-600 mx-auto mb-2" />
+                    ) : (
+                      <Briefcase className="w-6 h-6 text-orange-600 mx-auto mb-2" />
+                    )}
+                    <p className="text-sm text-gray-600 mb-1">Platba</p>
+                    <p className="font-bold text-sm">
+                      {project.paymentType === 'milestones' ? 'Po milnících' : 'Jednorázová'}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -290,6 +306,72 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
                         {tag}
                       </Badge>
                     ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Requirements */}
+            {project.requirements && project.requirements.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <h2 className="text-2xl font-semibold">Požadované podklady</h2>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {project.type === 'direct'
+                      ? 'Po zakoupení budete vyzváni k vyplnění následujících údajů:'
+                      : 'Pro zahájení spolupráce budete potřebovat:'}
+                  </p>
+                  <div className="space-y-2">
+                    {project.requirements.map((req, index) => (
+                      <div key={index} className="flex items-start gap-2 p-3 bg-gray-50 rounded-lg">
+                        <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                          {index + 1}
+                        </span>
+                        <span className="text-gray-700">{req}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Milestones */}
+            {project.milestones && project.milestones.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <h2 className="text-2xl font-semibold">Milníky projektu</h2>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Projekt je rozdělen na {project.milestones.length} milníků s postupným uvolňováním plateb.
+                  </p>
+                  <div className="space-y-3">
+                    {project.milestones.map((milestone, index) => (
+                      <div key={milestone.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-semibold">{milestone.title}</p>
+                            <p className="text-sm text-gray-500">Milník {index + 1} z {project.milestones.length}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-blue-600">{formatPrice(milestone.price)}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 pt-4 border-t">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Celková částka:</span>
+                      <span className="text-xl font-bold text-blue-600">
+                        {formatPrice(project.milestones.reduce((sum, m) => sum + m.price, 0))}
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -370,7 +452,39 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
             </Card>
 
             {/* Action Buttons */}
-            {canApply && (project.status === 'open' || project.status === 'active') && (
+            {project.type === 'direct' && !isOwnProject && (
+              <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-orange-50">
+                <CardContent className="pt-6">
+                  <Button
+                    className="w-full bg-gradient-to-r from-blue-600 to-orange-500 mb-3 h-12 text-lg"
+                    onClick={() => onNavigate('checkout', { projectId: project.id })}
+                  >
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Koupit nyní - {formatPrice(project.price || 0)}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleContactCompany}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Kontaktovat {owner.role === 'company' ? 'firmu' : 'talent'}
+                  </Button>
+
+                  <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                    <p className="text-sm text-green-800">
+                      <strong>🔒 Escrow ochrana</strong>
+                    </p>
+                    <p className="text-xs text-green-700 mt-1">
+                      Peníze budou uvolněny až po dokončení a schválení práce
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {canApply && project.type !== 'direct' && (project.status === 'open' || project.status === 'active') && (
               <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-orange-50">
                 <CardContent className="pt-6">
                   <Dialog open={isApplicationDialogOpen} onOpenChange={setIsApplicationDialogOpen}>
@@ -431,8 +545,8 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
 
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                           <p className="text-sm text-blue-800">
-                            <strong>💡 Tip:</strong> Zmiňte konkrétní zkušenosti a ukažte, že jste 
-                            si projekt pečlivě přečetli. Nabídky s personalizovanou zprávou mají 
+                            <strong>💡 Tip:</strong> Zmiňte konkrétní zkušenosti a ukažte, že jste
+                            si projekt pečlivě přečetli. Nabídky s personalizovanou zprávou mají
                             o 80% vyšší šanci na úspěch!
                           </p>
                         </div>
@@ -493,9 +607,9 @@ export default function ProjectDetail({ onNavigate, projectId, userId, userRole 
                   >
                     Zobrazit nabídky ({project.proposalCount || 0})
                   </Button>
-                  
+
                   <Separator className="my-3" />
-                  
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button

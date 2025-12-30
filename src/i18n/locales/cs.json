@@ -828,5 +828,28 @@
         "video_end": "Ukončit hovor",
         "video_connecting": "Připojování k zabezpečenému kanálu...",
         "video_permissions": "Prosím povolte přístup k mikrofonu a kameře"
+    },
+    "milestones": {
+        "title": "Milníky",
+        "add": "Přidat milník",
+        "remove": "Odebrat",
+        "upload_evidence": "Nahrát důkaz",
+        "approve": "Schválit a uvolnit platbu",
+        "status": {
+            "pending": "Čeká",
+            "in_progress": "Probíhá",
+            "completed": "Dokončeno",
+            "approved": "Schváleno"
+        }
+    },
+    "checkout": {
+        "title": "Pokladna",
+        "summary": "Shrnutí objednávky",
+        "total": "Celkem",
+        "pay_now": "Zaplatit"
+    },
+    "requirements": {
+        "title": "Požadované podklady",
+        "submit": "Odeslat a zahájit spolupráci"
     }
 }
