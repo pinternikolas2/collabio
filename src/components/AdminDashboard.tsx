@@ -88,6 +88,24 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
     }
   };
 
+  const handleSetVerified = async (userId: string, currentStatus: boolean) => {
+    try {
+      // Update user verification status
+      await adminApi.updateUser(userId, {
+        verified: !currentStatus,
+        verificationStatus: !currentStatus ? 'verified' : 'not_submitted'
+      });
+
+      toast.success(!currentStatus ? 'Uživatel byl ověřen ✅' : 'Ověření bylo zrušeno');
+
+      // Reload data
+      await loadDashboardData();
+    } catch (error) {
+      console.error('Failed to update verification:', error);
+      toast.error('Nepodařilo se aktualizovat ověření');
+    }
+  };
+
   // Derived Stats
   const totalUsers = users.length;
   const totalTalents = users.filter((u) => u.role === 'talent').length;
@@ -381,6 +399,30 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
+                              {/* Set Verified Button */}
+                              {user && (
+                                <Button
+                                  size="sm"
+                                  variant={user.verified ? "outline" : "default"}
+                                  className={user.verified ? "border-green-600 text-green-700 hover:bg-green-50" : "bg-green-600 hover:bg-green-700 text-white"}
+                                  onClick={() => handleSetVerified(user.id, user.verified)}
+                                >
+                                  <Shield className="w-4 h-4 mr-1" />
+                                  {user.verified ? 'Zrušit ověření' : 'Nastavit ověřený'}
+                                </Button>
+                              )}
+
+                              {/* Message User Button */}
+                              {user && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleMessageUser(user)}
+                                >
+                                  <MessageCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+
                               {doc.status === 'pending' && (
                                 <>
                                   <Button
