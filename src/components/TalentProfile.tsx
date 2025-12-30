@@ -233,7 +233,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                           Ověřený {talent.category === 'Sportovec' ? 'sportovec' : talent.category === 'Umělec' ? 'umělec' : 'talent'}
                         </Badge>
                       )}
-                      {avgRating >= 4.5 && ratings.length >= 5 && (
+                      {avgRating >= 4.5 && talentRatings.length >= 5 && (
                         <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 text-sm">
                           <Star className="w-3 h-3 mr-1 fill-white" />
                           Top Partner
