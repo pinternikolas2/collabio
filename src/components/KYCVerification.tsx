@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, FileText, CheckCircle, XCircle, Clock, AlertTriangle, Shield } from 'lucide-react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from './ui/alert';
 import { User, KYCDocument } from '../types';
 import { kycApi, userApi } from '../utils/api';
 import { toast } from 'sonner';
+
+type VerificationStatus = 'verified' | 'pending' | 'rejected' | 'not_submitted';
 
 type KYCVerificationProps = {
   userId: string;
