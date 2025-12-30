@@ -28,13 +28,23 @@ export type User = {
   facebook?: string;
   web?: string;
   skills?: string[];
-  languages?: string[];
+  languages?: string[]
+  ;
   hourlyRate?: number;
   showContactInfo?: boolean;
   // Company specific fields
   companyName?: string;
   ico?: string;
   portfolio?: PortfolioItem[];
+  // Professional profile fields
+  coverImage?: string; // Hero banner image
+  quickDeals?: QuickDeal[]; // Bleskové nabídky
+  sportsStats?: SportsStats; // Pro sportovce
+  artistWorks?: ArtistWork[]; // Pro umělce
+  influencerCampaigns?: InfluencerCampaign[]; // Pro influencery
+  audienceDemographics?: AudienceDemographics; // Demografie publika
+  avgResponseTime?: number; // Průměrná doba odezvy (hodiny)
+  completedProjects?: number; // Počet dokončených projektů
 };
 
 export type PortfolioItem = {
@@ -44,6 +54,62 @@ export type PortfolioItem = {
   imageUrl: string;
   link?: string;
   type: 'image' | 'video' | 'social' | 'project' | 'achievement';
+};
+
+// Professional Profile Types
+export type QuickDeal = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  deliveryDays: number;
+  imageUrl?: string;
+  includes: string[]; // Co je zahrnuto
+  active: boolean;
+};
+
+export type SportsStats = {
+  currentTeam?: string;
+  position?: string;
+  wins?: number;
+  losses?: number;
+  draws?: number;
+  goals?: number;
+  assists?: number;
+  seasonStats?: Record<string, any>;
+  upcomingMatch?: {
+    opponent: string;
+    date: string;
+    location: string;
+  };
+};
+
+export type ArtistWork = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  category: string; // malba, socha, digitální, atd.
+  year?: number;
+  featured: boolean;
+};
+
+export type InfluencerCampaign = {
+  id: string;
+  brandName: string;
+  description: string;
+  reach: number;
+  engagement: number;
+  platform: 'instagram' | 'tiktok' | 'youtube' | 'facebook';
+  date: string;
+  imageUrl?: string;
+};
+
+export type AudienceDemographics = {
+  ageGroups: { range: string; percentage: number }[]; // např. "18-24": 35%
+  gender: { male: number; female: number; other: number }; // procenta
+  topCountries: { country: string; percentage: number }[]; // top 5 zemí
+  avgEngagementRate: number; // průměrný engagement rate
 };
 
 export type ProjectType = 'direct' | 'negotiable';
