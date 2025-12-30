@@ -252,10 +252,10 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
               <div className="flex flex-col items-center flex-1">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${currentStep > step.number
-                      ? 'bg-green-600 text-white'
-                      : currentStep === step.number
-                        ? 'bg-blue-600 text-white ring-4 ring-blue-200'
-                        : 'bg-gray-200 text-gray-600'
+                    ? 'bg-green-600 text-white'
+                    : currentStep === step.number
+                      ? 'bg-blue-600 text-white ring-4 ring-blue-200'
+                      : 'bg-gray-200 text-gray-600'
                     }`}
                 >
                   {currentStep > step.number ? <Check className="w-5 h-5" /> : step.number}
@@ -629,7 +629,8 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
               Zpět
             </Button>
           )}
-          {currentStep < totalSteps && paymentType === 'milestones' ? (
+
+          {currentStep < totalSteps ? (
             <Button
               type="button"
               onClick={handleNext}
@@ -638,16 +639,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
               Další
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
-          ) : currentStep === 2 && paymentType === 'one-time' ? (
-            <Button
-              type="button"
-              onClick={handleNext}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500"
-            >
-              Další
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          ) : currentStep === totalSteps ? (
+          ) : (
             <Button
               type="button"
               onClick={handleSubmit}
@@ -666,7 +658,7 @@ export default function CreateProject({ onNavigate, userId, userRole, targetUser
                 </>
               )}
             </Button>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
