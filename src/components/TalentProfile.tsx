@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Star, Users, Instagram, Linkedin, MessageSquare, Briefcase, Calendar, TrendingUp, MapPin, Tv, Eye, Plus, X, DollarSign, Tag, Loader2, Share2, AlertTriangle, User, CheckCircle, Image, PenLine } from 'lucide-react';
+import { Star, Users, Instagram, Linkedin, MessageSquare, Briefcase, Calendar, TrendingUp, MapPin, Tv, Eye, Plus, X, DollarSign, Tag, Loader2, Share2, AlertTriangle, User, CheckCircle, Image, PenLine, Clock, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
@@ -231,7 +231,7 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
                           Ověřený {talent.category === 'Sportovec' ? 'sportovec' : talent.category === 'Umělec' ? 'umělec' : 'talent'}
                         </Badge>
                       )}
-                      {avgRating >= 4.5 && talentRatings.length >= 5 && (
+                      {avgRating >= 4.5 && ratings.length >= 5 && (
                         <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-1 text-sm">
                           <Star className="w-3 h-3 mr-1 fill-white" />
                           Top Partner
