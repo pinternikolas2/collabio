@@ -177,9 +177,9 @@ function AppContent() {
       if (user.role === 'admin') {
         handleNavigate('admin');
       } else if (user.role === 'company') {
-        handleNavigate('marketplace');
+        handleNavigate('leads');
       } else if (user.role === 'talent') {
-        handleNavigate('marketplace');
+        handleNavigate('leads');
       } else {
         handleNavigate('landing');
       }
