@@ -21,7 +21,7 @@ interface AuthFormsProps {
 
 export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = 'signin' }) => {
   const { t } = useTranslation();
-  const { signIn, signUp, loginAsMockUser } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   // Sign In State
   const [signInData, setSignInData] = useState({
@@ -68,23 +68,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
     }
   };
 
-  const handleTestLogin = async (role: 'talent' | 'company' | 'admin') => {
-    setError('');
-    setLoading(true);
 
-    try {
-      console.log(`[TestLogin] Mock logging in as ${role}...`);
-      await loginAsMockUser(role);
-      toast.success(t('auth.messages.test_login_success', {
-        role: role === 'talent' ? t('auth.roles.talent_title') :
-          role === 'company' ? t('auth.roles.company_title') : 'Administrátor'
-      }));
-    } catch (err: any) {
-      console.error('[TestLogin] Failed:', err);
-      setError(t('auth.messages.test_login_failed', { error: err.message }));
-      setLoading(false);
-    }
-  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,49 +266,7 @@ export const AuthForms: React.FC<AuthFormsProps> = ({ onNavigate, defaultTab = '
                     )}
                   </Button>
 
-                  {/* Test Login Buttons */}
-                  <div className="pt-6 mt-6 border-t border-gray-100">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="h-px bg-gray-200 flex-1"></div>
-                      <div className="text-xs text-gray-400 uppercase tracking-wider font-semibold whitespace-nowrap">
-                        Rychlé přihlášení (Demo)
-                      </div>
-                      <div className="h-px bg-gray-200 flex-1"></div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={loading}
-                        onClick={() => handleTestLogin('talent')}
-                        className="text-xs border-blue-100 text-blue-700 hover:bg-blue-50 hover:border-blue-200 transition-all"
-                      >
-                        <User className="w-3 h-3 mr-1.5" />
-                        {t('auth.test_login.talent')}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={loading}
-                        onClick={() => handleTestLogin('company')}
-                        className="text-xs border-orange-100 text-orange-700 hover:bg-orange-50 hover:border-orange-200 transition-all"
-                      >
-                        <Building2 className="w-3 h-3 mr-1.5" />
-                        {t('auth.test_login.company')}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={loading}
-                        onClick={() => handleTestLogin('admin')}
-                        className="text-xs border-purple-100 text-purple-700 hover:bg-purple-50 hover:border-purple-200 col-span-2 transition-all"
-                      >
-                        <Shield className="w-3 h-3 mr-1.5" />
-                        Admin Demo
-                      </Button>
-                    </div>
-                  </div>
                 </form>
               </TabsContent>
 
