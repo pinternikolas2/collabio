@@ -179,8 +179,8 @@ export default function Marketplace({ onNavigate, isLoggedIn, userRole, initialM
           </div>
         )}
 
-        {/* Tabs for Quick Buys vs Projects */}
-        {initialMode === 'all' && (
+        {/* Tabs for Quick Buys vs Projects - ONLY Show if mode is 'all' */}
+        {initialMode === 'all' ? (
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'quick-buys' | 'projects')} className="mb-6">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
               <TabsTrigger value="quick-buys" className="flex items-center gap-2">
@@ -193,7 +193,7 @@ export default function Marketplace({ onNavigate, isLoggedIn, userRole, initialM
               </TabsTrigger>
             </TabsList>
           </Tabs>
-        )}
+        ) : null}
 
         {/* Filters */}
         <Card className="mb-8 shadow-lg">
