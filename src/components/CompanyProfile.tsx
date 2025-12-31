@@ -123,8 +123,10 @@ export default function CompanyProfile({ onNavigate, userId, isOwnProfile = fals
         {/* Header Card */}
         <Card className="mb-8 max-w-full overflow-hidden border-none shadow-xl bg-white/80 backdrop-blur-md">
           {/* Cover - Full Gradient */}
-          <div className="h-48 md:h-64 bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 relative">
-            <div className="absolute inset-0 bg-black/10"></div>
+          <div className="h-56 md:h-72 bg-gradient-to-r from-orange-600 via-red-500 to-orange-400 relative">
+            <div className="absolute inset-0 bg-black/20"></div>
+            {/* Pattern overlay */}
+            <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '30px 30px' }}></div>
           </div>
 
           <CardContent className="relative pb-8 overflow-x-hidden max-w-full -mt-20 md:-mt-24 px-6 md:px-10">

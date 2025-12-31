@@ -352,7 +352,9 @@ export default function TalentProfile({ onNavigate, userId, isOwnProfile = false
               </div>
               <div className="p-6 text-center">
                 <div className="text-sm text-gray-500 font-medium mb-1 uppercase tracking-wider">{t('talent_profile.stats.member_since')}</div>
-                <div className="text-3xl font-bold text-gray-900">{new Date(talent.createdAt).getFullYear()}</div>
+                <div className="text-3xl font-bold text-gray-900">
+                  {talent.createdAt ? new Date(talent.createdAt).getFullYear() : new Date().getFullYear()}
+                </div>
               </div>
             </div>
 
