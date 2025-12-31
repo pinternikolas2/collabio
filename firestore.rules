@@ -31,7 +31,7 @@ service cloud.firestore {
       allow read: if true;
       
       // User can create/update their own profile (but CANNOT change role/verified status)
-      allow create: if isOwner(userId) && request.resource.data.role == 'talent'; // Default to talent on create
+      allow create: if isOwner(userId) && (request.resource.data.role == 'talent' || request.resource.data.role == 'company');
       allow update: if isOwner(userId) && (
         request.resource.data.role == resource.data.role && 
         request.resource.data.verified == resource.data.verified &&

@@ -24,7 +24,7 @@ type MarketplaceProps = {
 export default function Marketplace({ onNavigate, isLoggedIn, userRole, initialMode = 'all' }: MarketplaceProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'quick-buys' | 'projects'>(
-    initialMode === 'leads' ? 'projects' : 'quick-buys'
+    initialMode === 'packages' ? 'quick-buys' : 'projects'
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
