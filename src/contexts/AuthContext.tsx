@@ -100,17 +100,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userDocRef = doc(db, 'users', uid);
       let userDoc = await getDoc(userDocRef);
 
-      // Fix Check: If user doc doesn't exist but account is fresh (< 10s), wait for signUp to write execution
+      // Fix Check: If user doc doesn't exist but account is fresh (< 15s), wait for signUp to write execution
       if (!userDoc.exists() && creationTime) {
         const accountAge = Date.now() - new Date(creationTime).getTime();
-        if (accountAge < 10000) { // 10 seconds buffer
-          console.log("New account detected, waiting for profile creation...");
-          await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5s
-          userDoc = await getDoc(userDocRef); // Retry fetch
+        // Increased buffer to 15 seconds to handle slower Firestore writes
+        if (accountAge < 15000) {
+          console.log("New account detected, waiting for profile creation in Firestore...");
 
-          if (!userDoc.exists()) {
-            await new Promise(resolve => setTimeout(resolve, 1500)); // Wait another 1.5s
-            userDoc = await getDoc(userDocRef); // Final retry
+          // Retry loop with increasing backoff (total wait approx 15s)
+          for (let i = 1; i <= 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, i * 1000));
+            userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+              console.log(`Profile found after retry ${i}`);
+              break;
+            }
           }
         }
       }

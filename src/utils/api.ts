@@ -549,6 +549,21 @@ export const adminApi = {
     return { success: true };
   },
 
+  deleteProject: async (projectId: string) => {
+    await deleteDoc(doc(db, 'projects', projectId));
+    return { success: true };
+  },
+
+  deleteCollaboration: async (collabId: string) => {
+    await deleteDoc(doc(db, 'collaborations', collabId));
+    return { success: true };
+  },
+
+  updateCollaborationStatus: async (collabId: string, status: Collaboration['status']) => {
+    await updateDoc(doc(db, 'collaborations', collabId), { status });
+    return { success: true };
+  },
+
   getPlatformSettings: async () => {
     const docRef = doc(db, 'config', 'platform');
     const docSnap = await getDoc(docRef);

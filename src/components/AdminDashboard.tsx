@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Briefcase, DollarSign, TrendingUp, Download, Settings, Shield, Loader2, MessageCircle } from 'lucide-react';
+import { Users, Briefcase, DollarSign, TrendingUp, Download, Settings, Shield, Loader2, MessageCircle, Trash2, XCircle, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
@@ -13,6 +13,8 @@ import { adminApi } from '../utils/api';
 import { User, Project, Collaboration, Transaction, KYCDocument } from '../types';
 import { toast } from 'sonner';
 import { calculateServiceFee } from '../utils/fees';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 type AdminDashboardProps = {
   onNavigate: (page: string, data?: any) => void;
@@ -34,40 +36,61 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
   const [escrowReleaseDays, setEscrowReleaseDays] = useState('30');
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    // Real-time subscriptions
+    setLoading(true);
 
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [usersData, projectsData, collabsData, transData, kycData] = await Promise.all([
-        adminApi.getAllUsers(),
-        adminApi.getAllProjects(),
-        adminApi.getAllCollaborations(),
-        adminApi.getAllTransactions(),
-        adminApi.getPendingKYC() // Note: This might only get pending, we might want ALL for the tab
-      ]);
-
+    const unsubUsers = onSnapshot(query(collection(db, 'users'), orderBy('createdAt', 'desc')), (snapshot) => {
+      const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
       setUsers(usersData);
-      setProjects(projectsData);
-      setCollaborations(collabsData);
-      setTransactions(transData);
-      setKycDocuments(kycData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching users:", error);
+      toast.error("Chyba při načítání uživatelů");
+    });
 
-      // Load Settings
-      const settings = await adminApi.getPlatformSettings();
+    const unsubProjects = onSnapshot(query(collection(db, 'projects'), orderBy('createdAt', 'desc')), (snapshot) => {
+      const projectsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Project[];
+      setProjects(projectsData);
+    }, (error) => console.error(error));
+
+    const unsubCollabs = onSnapshot(query(collection(db, 'collaborations'), orderBy('createdAt', 'desc')), (snapshot) => {
+      const collabsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Collaboration[];
+      setCollaborations(collabsData);
+    }, (error) => console.error(error));
+
+    // Transactions & KYC stay on manual load for now or can be added similarly
+    // For performance, let's keep them fetch-on-mount or similar, but User explicitly asked for updates when deleting accounts.
+    // Ideally we subscribe to everything for a "live" dashboard.
+
+    const unsubTransactions = onSnapshot(query(collection(db, 'transactions'), orderBy('createdAt', 'desc')), (snapshot) => {
+      const transData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Transaction[];
+      setTransactions(transData);
+    });
+
+    const unsubKYC = onSnapshot(query(collection(db, 'kyc_documents'), orderBy('uploadedAt', 'desc')), (snapshot) => {
+      const kycData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as KYCDocument[];
+      setKycDocuments(kycData);
+    });
+
+    // Load Settings (Static)
+    adminApi.getPlatformSettings().then(settings => {
       if (settings) {
         setMinProjectPrice(settings.minProjectPrice?.toString() || '5000');
         setEscrowReleaseDays(settings.escrowReleaseDays?.toString() || '30');
       }
+    });
 
-    } catch (error) {
-      console.error('Error loading admin data:', error);
-      toast.error('Nepodařilo se načíst data dashboardu');
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => {
+      unsubUsers();
+      unsubProjects();
+      unsubCollabs();
+      unsubTransactions();
+      unsubKYC();
+    };
+  }, []);
+
+  // Removed manual loadDashboardData as it's replaced by subscriptions
+  const loadDashboardData = async () => { /* No-op or trigger manual refresh of static data if needed */ };
 
   const handleMessageUser = (user: User) => {
     onNavigate('chat-with-user', {
@@ -98,8 +121,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
 
       toast.success(!currentStatus ? 'Uživatel byl ověřen ✅' : 'Ověření bylo zrušeno');
 
-      // Reload data
-      await loadDashboardData();
+      // Data reloads automatically via onSnapshot
     } catch (error) {
       console.error('Failed to update verification:', error);
       toast.error('Nepodařilo se aktualizovat ověření');
@@ -305,6 +327,25 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                             <Button variant="ghost" size="sm">
                               {t('admin.users.detail')}
                             </Button>
+
+                            {/* Delete User Button */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={async () => {
+                                if (confirm(`Opravdu chcete smazat uživatele ${user.email}? Tato akce je nevratná!`)) {
+                                  try {
+                                    await adminApi.deleteUser(user.id);
+                                    toast.success("Uživatel smazán");
+                                  } catch (e) {
+                                    toast.error("Chyba při mazání");
+                                  }
+                                }
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -491,6 +532,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                       <TableHead>{t('admin.projects.table.status')}</TableHead>
                       <TableHead>{t('admin.projects.table.rating')}</TableHead>
                       <TableHead>{t('admin.projects.table.featured')}</TableHead>
+                      <TableHead>{t('admin.users.table.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -511,6 +553,25 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                         </TableCell>
                         <TableCell>
                           {project.featured && <Badge className="bg-orange-500">⭐ {t('admin.projects.badges.yes')}</Badge>}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                            onClick={async () => {
+                              if (confirm(`Smazat projekt "${project.title}"?`)) {
+                                try {
+                                  await adminApi.deleteProject(project.id);
+                                  toast.success("Projekt smazán");
+                                } catch (e) {
+                                  toast.error("Chyba při mazání");
+                                }
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -542,6 +603,7 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                       <TableHead>{t('admin.collaborations.table.price')}</TableHead>
                       <TableHead>{t('admin.collaborations.table.status')}</TableHead>
                       <TableHead>{t('admin.collaborations.table.escrow')}</TableHead>
+                      <TableHead>{t('admin.users.table.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -569,6 +631,55 @@ export default function AdminDashboard({ onNavigate }: AdminDashboardProps) {
                             ) : (
                               <Badge className="bg-purple-100 text-purple-800">{t('admin.collaborations.badges.held')}</Badge>
                             )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              {/* Force Complete */}
+                              {collab.status === 'active' && (
+                                <Button
+                                  variant="ghost" size="icon" title="Vynutit dokončení"
+                                  className="text-green-600 hover:bg-green-50"
+                                  onClick={async () => {
+                                    if (confirm('Vynutit DOKONČENÍ spolupráce?')) {
+                                      await adminApi.updateCollaborationStatus(collab.id, 'completed');
+                                      toast.success('Spolupráce dokončena');
+                                    }
+                                  }}
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+
+                              {/* Force Cancel */}
+                              {collab.status !== 'cancelled' && collab.status !== 'completed' && (
+                                <Button
+                                  variant="ghost" size="icon" title="Vynutit zrušení"
+                                  className="text-red-600 hover:bg-red-50"
+                                  onClick={async () => {
+                                    if (confirm('Vynutit ZRUŠENÍ spolupráce?')) {
+                                      await adminApi.updateCollaborationStatus(collab.id, 'cancelled');
+                                      toast.success('Spolupráce zrušena');
+                                    }
+                                  }}
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+
+                              {/* Delete Record */}
+                              <Button
+                                variant="ghost" size="icon" title="Smazat záznam"
+                                className="text-gray-400 hover:text-red-600"
+                                onClick={async () => {
+                                  if (confirm('Smazat záznam spolupráce?')) {
+                                    await adminApi.deleteCollaboration(collab.id);
+                                    toast.success('Smazáno');
+                                  }
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       );
