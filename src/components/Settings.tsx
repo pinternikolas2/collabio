@@ -832,10 +832,8 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
               </Card>
             </div>
           </TabsContent>
-        </Tabs >
-      </div >
-    </div >
+        </Tabs>
+      </div>
+    </div>
   );
 }
-
-

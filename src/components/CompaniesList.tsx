@@ -344,6 +344,6 @@ export default function CompaniesList({ onNavigate, isLoggedIn, currentUserRole 
         )}
 
       </div>
-    </div >
+    </div>
   );
 }

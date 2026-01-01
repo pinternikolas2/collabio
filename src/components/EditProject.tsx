@@ -9,9 +9,7 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { toast } from 'sonner';
 import { projectApi, storageApi } from '../utils/api';
-import { Project } from '../types';
 import { Project } from '../types';
 
 type EditProjectProps = {
@@ -351,81 +349,80 @@ export default function EditProject({ onNavigate, projectId }: EditProjectProps)
                 </div>
               )}
             </CardContent>
-          </CardContent>
-        </Card>
+          </Card>
 
-        {/* Media / Images */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-xl font-semibold">Galerie a přílohy</h3>
-            <CardDescription>
-              Přidejte obrázky pro zatraktivnění vaší nabídky (max 5MB)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {images.map((img, idx) => (
-                <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-                  <img src={img} alt={`Project ${idx + 1}`} className="w-full h-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-              <label className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group">
-                {uploadingImage ? (
-                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-                ) : (
-                  <>
-                    <Image className="w-8 h-8 text-gray-400 mb-2 group-hover:text-blue-500" />
-                    <span className="text-sm text-gray-500 group-hover:text-blue-600 font-medium">Nahrát</span>
-                  </>
-                )}
-                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
-              </label>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Media / Images */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-xl font-semibold">Galerie a přílohy</h3>
+              <CardDescription>
+                Přidejte obrázky pro zatraktivnění vaší nabídky (max 5MB)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {images.map((img, idx) => (
+                  <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                    <img src={img} alt={`Project ${idx + 1}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                <label className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group">
+                  {uploadingImage ? (
+                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+                  ) : (
+                    <>
+                      <Image className="w-8 h-8 text-gray-400 mb-2 group-hover:text-blue-500" />
+                      <span className="text-sm text-gray-500 group-hover:text-blue-600 font-medium">Nahrát</span>
+                    </>
+                  )}
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} />
+                </label>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Submit Buttons */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onNavigate('project-detail', { projectId })}
-                className="flex-1"
-                disabled={submitting}
-              >
-                {t('common.cancel')}
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    {t('project.form.saving')}
-                  </>
-                ) : (
-                  <>
-                    <Briefcase className="w-5 h-5 mr-2" />
-                    {t('common.save_changes')}
-                  </>
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </form>
+          {/* Submit Buttons */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onNavigate('project-detail', { projectId })}
+                  className="flex-1"
+                  disabled={submitting}
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      {t('project.form.saving')}
+                    </>
+                  ) : (
+                    <>
+                      <Briefcase className="w-5 h-5 mr-2" />
+                      {t('common.save_changes')}
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </div>
     </div>
-    </div >
   );
 }
