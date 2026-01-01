@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Lock, Bell, Shield, CreditCard, Trash2, Check, Camera, Instagram, Linkedin, Youtube, Facebook, Clock, AlertTriangle, Loader2, Globe, Moon, Sun, Monitor, Briefcase, Plus, X, Image, Video, Trophy, LayoutGrid, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import { Card, CardContent, CardHeader, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -212,9 +212,7 @@ export default function Settings({ onNavigate, userId }: SettingsProps) {
               {t('settings.subtitle')}
             </p>
           </div>
-          <div className="hidden md:block">
-            <LanguageSwitcher />
-          </div>
+
         </div>
 
 

@@ -143,11 +143,10 @@ export default function EventsList({ onNavigate }: { onNavigate: (page: string, 
                 <div className="mb-8 flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-blue-900 to-orange-500 bg-clip-text text-transparent">
-                            Události & Eventy
+                            Události
                         </h1>
                         <p className="text-gray-600">
-                            Najděte nadcházející události, jako jsou zápasy bojovníků,
-                            a využijte možnost zakoupit si reklamní místo na jejich plachtě nebo dresu.
+                            Exkluzivní reklamní plochy na zápasech a akcích – buďte vidět v centru dění přímo tam, kde jsou vaši fanoušci.
                         </p>
                     </div>
 

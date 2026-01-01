@@ -1,5 +1,6 @@
-import { db, storage } from '../config/firebase'; // Import Firestore and Storage instances
+import { db, storage, functions } from '../config/firebase'; // Import Firestore, Storage, and Functions instances
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { httpsCallable } from 'firebase/functions';
 import {
   collection,
   doc,
@@ -13,7 +14,6 @@ import {
   where,
   orderBy,
   onSnapshot,
-  Timestamp,
   limit
 } from 'firebase/firestore';
 import type {
@@ -25,7 +25,8 @@ import type {
   Notification,
   Contract,
   KYCDocument,
-  Transaction
+  Transaction,
+  Event as AppEvent // Rename to avoid conflict with DOM Event
 } from '../types';
 
 // ============================================================================
@@ -35,7 +36,8 @@ import type {
 // Helper to convert Firestore snapshot to typed array
 const getDocsData = async <T>(q: any): Promise<T[]> => {
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as T[];
+  // Cast data to any to avoid "Spread types may only be created from object types" error
+  return snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) })) as T[];
 };
 
 // ============================================================================
@@ -128,7 +130,7 @@ export const userApi = {
 // ============================================================================
 
 export const kycApi = {
-  // TODO: Integrate Firebase Storage for file uploads
+
   uploadDocument: async (
     userId: string,
     file: File,
@@ -449,6 +451,11 @@ export const ratingApi = {
     const newDoc = await getDoc(docRef);
     return { id: newDoc.id, ...newDoc.data() } as Rating;
   },
+
+  getUserRatings: async (userId: string) => {
+    const q = query(collection(db, 'ratings'), where('toUserId', '==', userId));
+    return getDocsData<Rating>(q);
+  },
 };
 
 // ============================================================================
@@ -496,12 +503,12 @@ export const contractApi = {
 // ============================================================================
 
 export const analyticsApi = {
-  getTalentAnalytics: async (userId: string) => {
+  getTalentAnalytics: async (_userId: string) => {
     // In real app, aggregate data via Cloud Functions
     return {};
   },
 
-  getCompanyAnalytics: async (userId: string) => {
+  getCompanyAnalytics: async (_userId: string) => {
     return {};
   },
 };
@@ -654,25 +661,25 @@ export const aiApi = {
 // ============================================================================
 
 export const eventApi = {
-  createEvent: async (data: Partial<Event>) => {
+  createEvent: async (data: Partial<AppEvent>) => {
     const docRef = await addDoc(collection(db, 'events'), {
       ...data,
       advertisingOptions: data.advertisingOptions || [],
       createdAt: new Date().toISOString()
     });
     const newDoc = await getDoc(docRef);
-    return { id: newDoc.id, ...newDoc.data() } as Event;
+    return { id: newDoc.id, ...newDoc.data() } as AppEvent;
   },
 
   getAllEvents: async () => {
     // In real app, filter by date >= today
     const q = query(collection(db, 'events'), orderBy('startDate', 'asc'));
-    return getDocsData<Event>(q);
+    return getDocsData<AppEvent>(q);
   },
 
   getUserEvents: async (userId: string) => {
     const q = query(collection(db, 'events'), where('userId', '==', userId));
-    return getDocsData<Event>(q);
+    return getDocsData<AppEvent>(q);
   },
 
   deleteEvent: async (eventId: string) => {

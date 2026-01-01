@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, Bell, User, LogOut, Settings, MessageSquare, Briefcase, DollarSign, LayoutDashboard, Calendar, FileText } from 'lucide-react';
+import { Menu, X, Bell, User, LogOut, Settings, MessageSquare, Briefcase, DollarSign, LayoutDashboard, Calendar, FileText, Megaphone, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -79,12 +79,17 @@ export default function Header({ onNavigate, isLoggedIn, userRole, userName, unr
 
           {/* Desktop Navigation - Absolutely centered */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8 xl:gap-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            {filteredNavItems.map((item) => (
+            {[
+              { name: 'Nástěnka příležitostí', page: 'leads', icon: Megaphone },
+              { name: 'Balíčky', page: 'packages', icon: ShoppingBag },
+              { name: 'Události', page: 'events', icon: Calendar }
+            ].map((item) => (
               <button
                 key={item.page}
                 onClick={() => onNavigate(item.page)}
-                className="transition-colors hover:text-blue-600 whitespace-nowrap text-sm lg:text-base text-gray-700"
+                className="flex items-center gap-2 transition-colors hover:text-blue-600 whitespace-nowrap text-sm lg:text-base text-gray-700"
               >
+                <item.icon className="w-4 h-4" />
                 {item.name}
               </button>
             ))}

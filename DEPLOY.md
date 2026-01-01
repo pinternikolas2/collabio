@@ -1,5 +1,8 @@
 # Návod na nasazení (Deployment)
 
+> **DŮLEŽITÉ:** Pro kompletní nastavení (API klíče, Pravidla databáze) si prosím přečtěte nejprve **[MANUAL_PRO_UZIVATELE.md](MANUAL_PRO_UZIVATELE.md)**.
+
+
 Vaše aplikace je připravena k nasazení na Firebase Hosting. Postupujte podle těchto kroků v příkazovém řádku (terminálu).
 
 **Předpoklad:** Máte nainstalované `firebase-tools`. Pokud ne, spusťte:

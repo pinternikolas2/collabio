@@ -14,9 +14,7 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
-// import { mockRatings, mockCollaborations, mockProjects, mockEvents } from '../data/seedData'; 
 // Use real data or empty arrays
-// Mock data imports removed
 
 import { Event, AdvertisingOptionType, User } from '../types';
 import { userApi, storageApi, eventApi } from '../utils/api';
@@ -1588,5 +1586,77 @@ function AddPortfolioItemForm({ userId, onSuccess }: { userId: string, onSuccess
         {loading ? <Loader2 className="animate-spin w-4 h-4" /> : "Přidat do portfolia"}
       </Button>
     </form>
+  );
+}
+
+function EditSkillsForm({ userId, currentSkills, onSuccess }: { userId: string, currentSkills: string[], onSuccess: () => void }) {
+  const [skills, setSkills] = useState<string[]>(currentSkills);
+  const [newSkill, setNewSkill] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+
+  const handleAddSkill = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
+      setSkills([...skills, newSkill.trim()]);
+      setNewSkill('');
+    }
+  };
+
+  const removeSkill = (skillToRemove: string) => {
+    setSkills(skills.filter(skill => skill !== skillToRemove));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await userApi.updateUser(userId, { skills });
+      toast.success(t('common.saved_success'));
+      onSuccess();
+    } catch (error: any) {
+      console.error('Failed to save skills:', error);
+      toast.error(t('common.error_saving'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <form onSubmit={handleAddSkill} className="flex gap-2">
+        <Input
+          value={newSkill}
+          onChange={(e) => setNewSkill(e.target.value)}
+          placeholder="Např. Marketing, Fotbal, Design..."
+          disabled={loading}
+        />
+        <Button type="submit" disabled={!newSkill.trim() || loading} variant="secondary">
+          <Plus className="w-4 h-4" />
+        </Button>
+      </form>
+
+      <div className="flex flex-wrap gap-2 min-h-[100px] border rounded-md p-3 bg-gray-50/50">
+        {skills.map((skill, index) => (
+          <Badge key={index} variant="secondary" className="px-3 py-1 bg-white border border-gray-200 text-gray-700 flex items-center gap-2">
+            {skill}
+            <button type="button" onClick={() => removeSkill(skill)} className="text-gray-400 hover:text-red-500 transition-colors">
+              <X className="w-3 h-3" />
+            </button>
+          </Badge>
+        ))}
+        {skills.length === 0 && (
+          <p className="text-gray-400 text-sm italic w-full text-center py-8">
+            Zatím žádné dovednosti. Přidejte nějaké nahoře!
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-end pt-4">
+        <Button onClick={handleSave} disabled={loading} className="w-full bg-blue-600">
+          {loading ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : <TrendingUp className="w-4 h-4 mr-2" />}
+          {t('common.save')}
+        </Button>
+      </div>
+    </div>
   );
 }
